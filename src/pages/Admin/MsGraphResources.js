@@ -1,43 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { listMsGraphResources, getMsGraphResource } from "graphql/queries";
+import { msGraphResourceMany, getMsGraphResource } from "graphql/queries";
 import { deleteMsGraphResource as deleteMsGraphResourceMutation } from "graphql/mutations";
 import { Link } from "react-router-dom";
-
+import { gql, useQuery } from '@apollo/client';
 
 // antd components
 import { Table, Button, Space } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 
 export default function MsGraphResources() {
-    const [msGraphresources, setResources] = useState([]);
-    const [loading, setLoading] = useState(false);
-
-
-    async function fetch() {
-        /*
-        setLoading(true);
-        try {
-            let resources = await API.graphql(graphqlOperation(listMsGraphResources));
-            console.log(resources);
-
-            resources = resources.data.listMSGraphResources.items;
-            setResources(resources);
-        } catch (err) {
-            console.error("error fetching Graph Resources");
-            console.log(err);
-        }
-        setLoading(false);*/
-    }
-
-
-    useEffect(() => {
-        fetch();
-    }, []);
+    const { loading, error, data = [] } = useQuery(msGraphResourceMany);
 
     const columns = [
         {
             title: "Id",
-            dataIndex: "id",
+            dataIndex: "_id",
         },
         {
             title: "Name",
@@ -93,7 +70,7 @@ export default function MsGraphResources() {
     return (
         <div>
             <h1>MsGraph Resources</h1>
-            <Table loading={loading} rowKey="id" columns={columns} dataSource={msGraphresources} onChange={onChange}></Table>
+            <Table loading={loading} rowKey="id" columns={columns} dataSource={data.msGraphResourceMany} onChange={onChange}></Table>
             <Button>
                 <Link to="/msGraphResourceAdd">
                     <PlusOutlined />

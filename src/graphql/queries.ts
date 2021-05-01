@@ -1,6 +1,20 @@
-/* tslint:disable */
-/* eslint-disable */
-// this is an auto generated file. This will be overwritten
+import { gql, useMutation } from '@apollo/client';
+
+export const msGraphResourceMany = gql`
+  query MsGraphResourceMany {
+    msGraphResourceMany {
+      _id,
+      name,
+      resource,
+      version,
+      createdAt,
+      updatedAt
+    }
+  }
+`
+
+
+/* Auto generated AWS stuff */
 
 export const getMsGraphResource = /* GraphQL */ `
   query GetMsGraphResource($id: ID!) {
