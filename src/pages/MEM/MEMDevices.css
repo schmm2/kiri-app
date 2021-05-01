@@ -1,0 +1,30 @@
+.card {
+    border: 1px solid #f0f0f0;
+    border-radius: 2px;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+    border-bottom-left-radius: 2px;
+    height: 100%;
+    background-color: white;
+}
+
+.ant-card-body{
+    text-align: center;
+}
+
+.dashboard{
+    background-color: #f0f2f5;
+}
+
+/* line connecting label text */
+.recharts-pie-label-line{
+    display: none;
+}
+
+
+/* card icon */
+.ant-card svg {
+    width: 25px;
+    height: 25px;
+}
