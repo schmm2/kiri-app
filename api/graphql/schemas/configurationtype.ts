@@ -1,4 +1,4 @@
-const { configurationTypeTC } = require("../../models/configurationType");
+const { configurationTypeTC } = require("../../models/configurationtype");
 
 export const configurationTypeQuery = {
     configurationTypeByIds: configurationTypeTC.getResolver("findByIds"),
@@ -7,5 +7,6 @@ export const configurationTypeQuery = {
 }
 
 export const configurationTypeMutation = {
-    configurationTypeCreateOne: configurationTypeTC.getResolver("createOne")
+    configurationTypeCreateOne: configurationTypeTC.getResolver("createOne"),
+    configurationTypeRemoveById: configurationTypeTC.getResolver("removeById")
 }

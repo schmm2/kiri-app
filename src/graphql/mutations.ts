@@ -10,6 +10,16 @@ export const msGraphResourceCreateOne = gql`
   }
 `;
 
+export const configurationTypeRemoveById = gql`
+  mutation ConfigurationTypeRemoveById($id: MongoID!) {
+    configurationTypeRemoveById(_id: $id) {
+      record {
+        odataType
+      }
+    }
+  }
+ `;
+
 export const configurationTypeCreateOne = gql`
   mutation ConfigurationTypeCreateOne($record: CreateOneConfigurationTypeInput!){
     configurationTypeCreateOne(record: $record){

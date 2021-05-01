@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { configurationTypeMany } from "graphql/queries";
-import { deleteConfigurationType as deleteConfigurationTypeMutation } from "graphql/mutations";
+import { configurationTypeRemoveById as configurationTypeRemoveByIdMutation } from "graphql/mutations";
 import { Link } from "react-router-dom";
-import { gql, useQuery } from '@apollo/client';
+import { gql, useQuery, useMutation } from '@apollo/client';
 
 // antd components
 import { Table, Button, Space } from "antd";
@@ -10,27 +10,12 @@ import { PlusOutlined } from "@ant-design/icons";
 
 export default function ConfigurationTypes() {
     const { loading, error, data = [] } = useQuery(configurationTypeMany);
-
-  
-    function deleteConfigurationType(configurationType) {
-        // console.log(configurationType);
-        // console.log(configurationType.id)
-        
-        /*
-        API.graphql(
-            graphqlOperation( deleteConfigurationTypeMutation, { input: { id: configurationType.id }})
-        ).then((result) => {
-            console.log("successfull sent data");
-            console.log(result);
-        }).catch(e => {
-            console.log(e);
-        });*/
-    }
+    const [deleteConfigurationType, configurationType] = useMutation(configurationTypeRemoveByIdMutation);
 
     const columns = [
         {
             title: "Id",
-            dataIndex: "id",
+            dataIndex: "_id",
         },
         {
             title: "odata Type",
@@ -53,7 +38,10 @@ export default function ConfigurationTypes() {
             key: 'action',
             render: (text, record) => (
                 <Space size="middle">
-                    <Button onClick={() => deleteConfigurationType(record)}>Delete</Button>
+                    <Button onClick={() => {
+                        console.log(record);
+                        deleteConfigurationType({ variables: { id: record._id } })
+                    }}>Delete</Button>
                 </Space>
             ),
         },

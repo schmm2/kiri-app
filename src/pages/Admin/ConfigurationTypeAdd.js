@@ -7,7 +7,6 @@ import { Button } from "antd"
 import { JSONSchemaBridge } from "uniforms-bridge-json-schema";
 import { gql, useQuery, useMutation } from '@apollo/client';
 import Ajv from "ajv";
-
 const ajv = new Ajv({ allErrors: true, useDefaults: true });
 
 export default function ConfigurationTypeAdd() {
@@ -125,6 +124,21 @@ export default function ConfigurationTypeAdd() {
             validator(model);
             return validator.errors?.length ? { details: validator.errors } : null;
         };
+    }
+
+
+    async function fetch() {
+        /*
+        // get current ms graph Resource data
+        let msGraphResourcesData = await API.graphql(graphqlOperation(listMsGraphResources));
+        // console.log(msGraphResourcesData);
+        msGraphResourcesData = msGraphResourcesData.data.listMSGraphResources.items;
+
+        let schema = buildSchema(msGraphResourcesData);
+        const schemaValidator = createValidator(schema);
+        let schemaBridge = new JSONSchemaBridge(schema, schemaValidator);
+        setConfigurationTypeSchema(schemaBridge);
+        setLoading(false);*/
     }
 
     return (
