@@ -1,30 +1,21 @@
 import React from "react";
-import { API, graphqlOperation } from "aws-amplify";
-import { createMsGraphResource as createMsGraphResourceMutation } from "graphql/mutations";
+import { msGraphResourceCreateOne as msGraphResourceCreateOneMutation } from "graphql/mutations";
 import { Link } from "react-router-dom";
 
 import { AutoForm } from 'uniforms-antd';
 import { bridge as addMsGraphResourceSchema } from 'forms/msGraphResourceAdd';
 import { Button } from "antd"
+import { gql, useMutation } from '@apollo/client';
 
 export default function MsGraphResourceAdd() {
 
-    function createMsGraphResource(values) {
-        console.log(values);
-
-        API.graphql(
-            graphqlOperation(createMsGraphResourceMutation, { input: values })
-        ).then((result) => {
-            console.log("successfull sent data");
-            console.log(result);
-        }).catch(e => {
-            console.log(e);
-        });
-    }
+    const [createMsGraphResource, { data }] = useMutation(msGraphResourceCreateOneMutation);
 
     return (
         <div>
-            <AutoForm schema={addMsGraphResourceSchema} onSubmit={createMsGraphResource} />
+            <AutoForm schema={addMsGraphResourceSchema} onSubmit={
+                data => { createMsGraphResource({ variables: { record: data } }) }
+            } />
             <Button>
                 <Link to={"/msGraphResources"}>Back</Link>
             </Button>

@@ -21,17 +21,7 @@ import MsGraphResourceAdd from 'pages/Admin/MsGraphResourceAdd';
 import TenantVerification from 'pages/TenantVerification';
 
 // CSS
-import '@aws-amplify/ui/dist/style.css';
 import './App.less';
-
-// AWS Amplify
-import { withAuthenticator } from 'aws-amplify-react';
-import Amplify from 'aws-amplify';
-import awsconfig from './aws-exports'; 
-
-
-
-Amplify.configure(awsconfig);
 
 function App() {
   return (
@@ -83,4 +73,4 @@ function App() {
 }
 
 //@ts-ignore
-export default withAuthenticator(App, { includeGreetings: false });
+export default App;

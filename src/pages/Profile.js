@@ -1,5 +1,4 @@
 import React from "react"
-import { Auth } from 'aws-amplify';
 
 export default function Profile() {
   return (
@@ -8,11 +7,11 @@ export default function Profile() {
       <div className="basicInformationTable">
         <div className="row">
           <span className="labelInfo">E-Mail</span>
-          <span>{Auth.user.attributes.email}</span>
+          <span></span>
         </div>
         <div className="row">
           <span className="labelInfo">Phone</span>
-          <span>{Auth.user.attributes.phone_number}</span>
+          <span></span>
         </div>
       </div>
     </div>

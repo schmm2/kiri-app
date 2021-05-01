@@ -9,10 +9,8 @@ import {
 
 import { Link } from "react-router-dom";
 import SideMenu from "components/SideMenu";
-import { API, graphqlOperation } from "aws-amplify";
 import { listTenants } from "graphql/queries";
 import TenantContext from 'components/TenantContext';
-import { Auth } from 'aws-amplify';
 
 import './MainLayout.css'
 
@@ -44,6 +42,7 @@ export default function MainLayout(props) {
   }
 
   async function fetchTenants() {
+    /*
     //console.log(props);
     try {
       let tenantData = await API.graphql(graphqlOperation(listTenants));
@@ -58,12 +57,12 @@ export default function MainLayout(props) {
       console.error("error fetching tenants");
       console.log(err);
       dispatch({ type: 'ERROR' })
-    }
+    }*/
   }
 
   async function signOut() {
     try {
-      await Auth.signOut();
+      //await Auth.signOut();
     } catch (error) {
       console.log('error signing out: ', error);
     }

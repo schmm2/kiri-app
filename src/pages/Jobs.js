@@ -1,10 +1,8 @@
 import React, { useEffect, useReducer } from "react";
-import { API, graphqlOperation } from "aws-amplify";
 import { listJobs } from "graphql/queries";
 import { Table, Button, Tag } from "antd";
 import { Link } from "react-router-dom";
 import { onCreateJob, onUpdateJob } from "graphql/subscriptions";
-import { Auth } from 'aws-amplify';
 import { renderDate } from 'util/renderDate'
 import moment from 'moment';
 
@@ -41,13 +39,14 @@ export default function Jobs(props) {
 
   async function fetchJobs() {
     try {
+      /*
       let jobsData = await API.graphql(graphqlOperation(listJobs));
       jobsData = jobsData.data.listJobs.items;
 
       if (params.tenantId) {
         jobsData = jobsData.filter((job) => job.tenant.id === params.tenantId);
       }
-      dispatch({ type: 'SET_JOBS', jobs: jobsData })
+      dispatch({ type: 'SET_JOBS', jobs: jobsData })*/
     } catch (err) {
       console.error("error fetching jobs");
       console.log(err);
@@ -58,8 +57,9 @@ export default function Jobs(props) {
   useEffect(() => {
     fetchJobs();
 
-    let userName = Auth.user.username;
+    let userName = "";
 
+    /*
     const subscriptionOnCreateJob = API.graphql({
       query: onCreateJob,
       variables: { owner: userName }
@@ -83,7 +83,7 @@ export default function Jobs(props) {
     return () => {
       subscriptionOnCreateJob.unsubscribe();
       subscriptionOnUpdateJob.unsubscribe();
-    }
+    }*/
   }, []);
 
   const columns = [

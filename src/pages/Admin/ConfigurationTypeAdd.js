@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { API, graphqlOperation } from "aws-amplify";
 import { createConfigurationType as createConfigurationTypeMutation } from "graphql/mutations";
 import { listMsGraphResources } from "graphql/queries";
 import { Link } from "react-router-dom";
@@ -114,6 +113,7 @@ export default function ConfigurationTypeAdd() {
 
 
     async function fetch() {
+        /*
         // get current ms graph Resource data
         let msGraphResourcesData = await API.graphql(graphqlOperation(listMsGraphResources));
         // console.log(msGraphResourcesData);
@@ -123,7 +123,7 @@ export default function ConfigurationTypeAdd() {
         const schemaValidator = createValidator(schema);
         let schemaBridge = new JSONSchemaBridge(schema, schemaValidator);
         setConfigurationTypeSchema(schemaBridge);
-        setLoading(false);
+        setLoading(false);*/
     }
 
     useEffect(() => {
@@ -131,7 +131,7 @@ export default function ConfigurationTypeAdd() {
     }, []);
 
     function createConfigurationType(values) {
-        console.log(values);
+        /*console.log(values);
 
         API.graphql(
             graphqlOperation(createConfigurationTypeMutation, { input: values })
@@ -140,7 +140,7 @@ export default function ConfigurationTypeAdd() {
             console.log(result);
         }).catch(e => {
             console.log(e);
-        });
+        });*/
     }
 
     return (

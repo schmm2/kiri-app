@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { API, graphqlOperation } from "aws-amplify";
 import { listTenants } from "graphql/queries";
 import { deleteTenant as deleteTenantMutation } from "graphql/mutations";
 import { Link } from "react-router-dom";
 import { triggerTenantUpdate as triggerTenantUpdateMutation } from "graphql/mutations";
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
+import { useQuery, gql } from '@apollo/client';
 
 // antd components
 import { Table, Button, Space } from "antd";
@@ -15,36 +15,25 @@ import {
 } from "@ant-design/icons";
 
 export default function Tenants() {
-  const [tenants, setTenants] = useState([]);
-  const [loading, setLoading] = useState(false);
   const aadappid = process.env.REACT_APP_AADAPPID;
 
-  async function fetchTenants() {
-    setLoading(true);
-    try {
-      let tenantData = await API.graphql(graphqlOperation(listTenants));
-      tenantData = tenantData.data.listTenants.items;
-      setTenants(tenantData);
-    } catch (err) {
-      console.error("error loading tenants");
-      console.log(err);
-    }
-    setLoading(false);
-  }
+  const { loading, error, tenants } = useQuery(listTenants);
 
-  async function deleteTenant(tenantId) {
+  /*
+  function deleteTenant(tenantId) {
+    const [deleteTenant, { data }] = useMutation(deleteTenantMutation);
     try {
-      await API.graphql(graphqlOperation(deleteTenantMutation, { input: { id: tenantId } }));
+       API.graphql(graphqlOperation(deleteTenantMutation, ));
     } catch (err) {
     }
-  }
+  }*/
 
   async function triggerTenantUpdate(tenantId) {
     console.log("update tenant data");
     console.log(tenantId);
 
     try {
-      let response = await API.graphql(graphqlOperation(triggerTenantUpdateMutation, { tenantId: tenantId }));
+      /*let response = await API.graphql(graphqlOperation(triggerTenantUpdateMutation, { tenantId: tenantId }));
       // console.log(response);
       if (response.data && response.data.triggerTenantUpdate) {
         let triggerTenantUpdateResponse = (JSON.parse(response.data.triggerTenantUpdate)).body;
@@ -53,15 +42,11 @@ export default function Tenants() {
         } else {
           openNotificationWithIcon('Pull Data', 'Unable to start job', 'error');
         }
-      }
+      }*/
     } catch (err) {
       console.log(err);
     }
   }
-
-  useEffect(() => {
-    fetchTenants();
-  }, []);
 
   const columns = [
     {

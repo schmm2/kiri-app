@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { API, graphqlOperation } from "aws-amplify";
 import { listDevices } from "graphql/queries";
 import { List, Avatar } from 'antd';
 import { Link } from "react-router-dom";
@@ -39,7 +38,7 @@ export default function MEMDeviceConfigurations() {
 
         setFetching(true);
         try {
-            let devicesData = await API.graphql(graphqlOperation(listDevices));
+            /*let devicesData = await API.graphql(graphqlOperation(listDevices));
             devicesData = devicesData.data.listDevices.items;
 
             devicesData.map(device => {
@@ -64,7 +63,7 @@ export default function MEMDeviceConfigurations() {
             })
 
             setDevices(devicesData);
-            console.log(devicesData);
+            console.log(devicesData);*/
 
         } catch (err) {
             console.error("error fetching devices");

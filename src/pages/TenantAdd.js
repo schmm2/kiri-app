@@ -1,5 +1,4 @@
 import React from "react";
-import { API, graphqlOperation } from "aws-amplify";
 import { createTenant as createTenantMutation } from "graphql/mutations";
 import { Link } from "react-router-dom";
 
@@ -12,14 +11,14 @@ export default function Tenants() {
   function createTenant(values) {
     // console.log(values);
     
-    API.graphql(
+    /*API.graphql(
       graphqlOperation(createTenantMutation, { input: values })
     ).then((result) =>{
       console.log("successfull sent data");
       console.log(result);
     }).catch(e =>{
       console.log(e);
-    });
+    });*/
   }
 
   return (

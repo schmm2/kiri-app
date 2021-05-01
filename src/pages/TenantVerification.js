@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { API, graphqlOperation } from "aws-amplify";
 import { triggerTenantVerification as triggerTenantMutation } from "graphql/mutations";
 import { Link, useLocation, BrowserRouter as Router } from "react-router-dom";
 
@@ -29,7 +28,7 @@ export default function TenantVerification() {
             // console.log(azureTenantId);
             
             try {
-                let response = await API.graphql(graphqlOperation(triggerTenantMutation, { tenantId: azureTenantId }));
+                /*let response = await API.graphql(graphqlOperation(triggerTenantMutation, { tenantId: azureTenantId }));
                 console.log(response);
 
                 if (response.data && response.data.triggerTenantVerification) {
@@ -39,7 +38,7 @@ export default function TenantVerification() {
                     } else {
                         setVerification(false);
                     }
-                }
+                }*/
             } catch (err) {
                 console.log(err);
             }

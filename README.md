@@ -1,7 +1,19 @@
-# kiri
+# kiri-app
 
-## Docs
-### Project
-- [Features](docs/features.md)
-### Concepts
-- [Naming Concept](docs/namingconcept.md)
+## GraphQL
+
+mutation {
+  MsGraphResourceCreateOne(record: {name:"test", version: "test", resource: "ssss"}){
+    record {
+      _id
+    }
+  }
+}
+
+## Get started
+### Install
+
+https://dotnet.microsoft.com/download
+
+### Help
+https://www.apollographql.com/docs/apollo-server/deployment/azure-functions/

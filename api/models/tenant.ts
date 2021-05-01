@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const { composeWithMongoose } = require("graphql-compose-mongoose");
+
 const tenantSchema = new Schema({
-    id: {
+    tenant: {
        type: String,
        required: true
     },
@@ -13,13 +14,11 @@ const tenantSchema = new Schema({
     verified: {
        type: String,
        required: true
-   }
+   },
+
 }, {
     timestamps: true
 });
 
-var Tenants = 
-module.exports = {
-    TenantSchema: mongoose.model('Tenant', tenantSchema),
-    TenantTC: composeWithMongoose(mongoose.model('Tenant', tenantSchema))
-};
+export const TenantTC = mongoose.model('Tenant', tenantSchema);
+    

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { API, graphqlOperation } from "aws-amplify";
 import { listMsGraphResources, getMsGraphResource } from "graphql/queries";
 import { deleteMsGraphResource as deleteMsGraphResourceMutation } from "graphql/mutations";
 import { Link } from "react-router-dom";
@@ -15,6 +14,7 @@ export default function MsGraphResources() {
 
 
     async function fetch() {
+        /*
         setLoading(true);
         try {
             let resources = await API.graphql(graphqlOperation(listMsGraphResources));
@@ -26,7 +26,7 @@ export default function MsGraphResources() {
             console.error("error fetching Graph Resources");
             console.log(err);
         }
-        setLoading(false);
+        setLoading(false);*/
     }
 
 
@@ -67,7 +67,7 @@ export default function MsGraphResources() {
     }
 
     async function deleteMsGraphResource(msGraphResource) {
-        let resource = await API.graphql(graphqlOperation(getMsGraphResource, { id: msGraphResource.id }));
+        /*let resource = await API.graphql(graphqlOperation(getMsGraphResource, { id: msGraphResource.id }));
         let configurationTypes = resource.data.getMSGraphResource.configurationTypes
         // console.log(msGraphResource);
         // console.log(resource);
@@ -87,7 +87,7 @@ export default function MsGraphResources() {
             }).catch(e => {
                 console.log(e);
             });
-        }
+        }*/
     }
 
     return (

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { API, graphqlOperation } from "aws-amplify";
 import { listConfigurationTypes } from "graphql/queries";
 import { deleteConfigurationType as deleteConfigurationTypeMutation } from "graphql/mutations";
 import { Link } from "react-router-dom";
@@ -15,7 +14,7 @@ export default function ConfigurationTypes() {
 
 
     async function fetch() {
-        setFetching(true);
+        /*setFetching(true);
         try {
             let configurationTypeData = await API.graphql(graphqlOperation(listConfigurationTypes));
             configurationTypeData = configurationTypeData.data.listConfigurationTypes.items;
@@ -24,7 +23,7 @@ export default function ConfigurationTypes() {
             console.error("error fetching ConfigurationTypes");
             console.log(err);
         }
-        setFetching(false);
+        setFetching(false);*/
     }
 
     
@@ -32,6 +31,7 @@ export default function ConfigurationTypes() {
         // console.log(configurationType);
         // console.log(configurationType.id)
         
+        /*
         API.graphql(
             graphqlOperation( deleteConfigurationTypeMutation, { input: { id: configurationType.id }})
         ).then((result) => {
@@ -39,7 +39,7 @@ export default function ConfigurationTypes() {
             console.log(result);
         }).catch(e => {
             console.log(e);
-        });
+        });*/
     }
 
 

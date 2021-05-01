@@ -1,5 +1,4 @@
 import React, { useEffect, useReducer } from "react";
-import { API, graphqlOperation } from "aws-amplify";
 import { getConfiguration } from "graphql/queries";
 import { triggerConfigurationUpdate } from "graphql/mutations";
 import { Link } from "react-router-dom";
@@ -8,12 +7,15 @@ import { renderDate } from 'util/renderDate';
 import ReactJson from 'react-json-view'
 import { findType } from 'util/findType';
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
+import { useQuery, gql } from '@apollo/client';
 
 import { Table, Button, Menu, Dropdown, Badge, Space, Tabs, Spin } from 'antd';
 import { render } from "@testing-library/react";
 const { TabPane } = Tabs;
 
 export default function MEMConfiguration(props) {
+
+    const { loading, error, configurationItem  } = useQuery(getConfiguration, {variables: { id: params.configurationId }})
 
     const { match: { params } } = props;
 
@@ -158,7 +160,7 @@ export default function MEMConfiguration(props) {
             if (params.configurationId) {
                 // console.log(params.configurationId)
 
-                let configurationItem = await API.graphql({ query: getConfiguration, variables: { id: params.configurationId } });
+                /*let configurationItem = await API.graphql({ query: getConfiguration, variables: { id: params.configurationId } });
                 configurationItem = configurationItem.data.getConfiguration;
 
                 let configurationVersionItems = configurationItem.configurationVersions.items;
@@ -206,7 +208,7 @@ export default function MEMConfiguration(props) {
                     //manageSelectedconfigurationVersion(configurationVersionItems[0]);
                 }
 
-                dispatch({ type: "SET_CONFIGURATION", newState });
+                dispatch({ type: "SET_CONFIGURATION", newState });*/
             } else {
                 throw "no id defined";
             }
@@ -255,6 +257,7 @@ export default function MEMConfiguration(props) {
         try {
             openNotificationWithIcon('Restore configuration', 'Starting restore', 'info');
 
+            /*
             let response = await API.graphql(graphqlOperation(triggerConfigurationUpdate, {
                 tenantId: state.configuration.tenant.id,
                 newConfigurationVersionId: state.selectedConfigurationVersion.id,
@@ -269,7 +272,7 @@ export default function MEMConfiguration(props) {
                 } else {
                     openNotificationWithIcon('Restore configuration', 'Unable to restore configuration', 'error');
                 }
-            }      
+            }    */  
         } catch (err) {
             console.log(err);
         }

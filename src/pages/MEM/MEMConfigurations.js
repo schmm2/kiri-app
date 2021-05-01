@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useContext, useReducer } from "react";
-import { API } from "aws-amplify";
 import { getTenantNewestConfigurationVersions } from "graphql/custom/getTenantNewestConfigurationVersions";
 import { Table } from 'antd';
 import { Link, useLocation } from "react-router-dom";
@@ -36,6 +35,7 @@ export default function MEMConfigurations(props) {
     try {
       let configurationCollection = [];
 
+      /*
       if (selectedTenant && selectedTenant.id) {
         let tenantData = await API.graphql({ query: getTenantNewestConfigurationVersions, variables: { id: selectedTenant.id } });
         let configurations = tenantData.data.getTenant.configurations;
@@ -68,7 +68,7 @@ export default function MEMConfigurations(props) {
       }
       console.log(props.category)
       dispatch({ type: "SET_CONFIGURATIONS", configurations: configurationCollection, category: props.category });
-
+      */
     } catch (err) {
       console.error("error fetching configuration Versions");
       console.log(err);

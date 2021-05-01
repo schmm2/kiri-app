@@ -1,6 +1,17 @@
-/* tslint:disable */
-/* eslint-disable */
-// this is an auto generated file. This will be overwritten
+import { gql, useMutation } from '@apollo/client';
+
+export const msGraphResourceCreateOne = gql`
+  mutation MsGraphResourceCreateOne($record: CreateOneMsGraphResourceInput!){
+    msGraphResourceCreateOne(record: $record){
+      record {
+        _id
+      }
+    }
+  }
+`;
+
+/* Auto generated AWS stuff */
+
 
 export const triggerTenantVerification = /* GraphQL */ `
   mutation TriggerTenantVerification($tenantId: String) {
@@ -127,33 +138,9 @@ export const deleteDevice = /* GraphQL */ `
     }
   }
 `;
-export const createMsGraphResource = /* GraphQL */ `
-  mutation CreateMsGraphResource(
-    $input: CreateMSGraphResourceInput!
-    $condition: ModelMSGraphResourceConditionInput
-  ) {
-    createMSGraphResource(input: $input, condition: $condition) {
-      id
-      name
-      resource
-      version
-      createdAt
-      updatedAt
-      configurationTypes {
-        items {
-          id
-          odataType
-          platform
-          category
-          label
-          createdAt
-          updatedAt
-        }
-        nextToken
-      }
-    }
-  }
-`;
+
+
+
 export const updateMsGraphResource = /* GraphQL */ `
   mutation UpdateMsGraphResource(
     $input: UpdateMSGraphResourceInput!
