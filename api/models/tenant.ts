@@ -20,5 +20,6 @@ const tenantSchema = new Schema({
     timestamps: true
 });
 
-export const TenantTC = mongoose.model('Tenant', tenantSchema);
+export const tenantTC = composeWithMongoose(mongoose.model('Tenant', tenantSchema));
+
     

@@ -1,10 +1,10 @@
-const { TenantTC } = require("../models/tenant");
+const { tenantTC } = require("../../models/tenant");
 
-export const TenantQuery = {
-    tenantById: TenantTC.getResolver("findById"),
-    tenantMany: TenantTC.getResolver('findMany'),
+export const tenantQuery = {
+    tenantById: tenantTC.getResolver("findById"),
+    tenantMany: tenantTC.getResolver('findMany'),
 }
 
-export const TenantMutation = {
-    tenantCreateOne: TenantTC.getResolver("createOne")
+export const tenantMutation = {
+    tenantCreateOne: tenantTC.getResolver("createOne")
 }

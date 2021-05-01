@@ -1,17 +1,21 @@
 const { SchemaComposer } = require('graphql-compose');
 const schemaComposer = new SchemaComposer();
 
-const { TenantQuery, TenantMutation } = require('./tenant');
-const { MsGraphResourceQuery, MsGraphResourceMutation } = require('./msgraphresource');
+const { tenantQuery, tenantMutation } = require('./tenant');
+const { msGraphResourceQuery, msGraphResourceMutation } = require('./msgraphresource');
+const { configurationTypeQuery, configurationTypeMutation } = require('./configurationType');
+
 
 schemaComposer.Query.addFields({
-    ...TenantQuery,
-    ...MsGraphResourceQuery
+    ...tenantQuery,
+    ...msGraphResourceQuery,
+    ...configurationTypeQuery
 })
 
 schemaComposer.Mutation.addFields({
-    ...TenantMutation,
-    ...MsGraphResourceMutation
+    ...tenantMutation,
+    ...msGraphResourceMutation,
+    ...configurationTypeMutation
 })
 
-module.exports = schemaComposer.buildSchema();
+module.exports = schemaComposer.buildSchema(); 

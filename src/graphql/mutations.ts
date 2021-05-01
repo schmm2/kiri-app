@@ -10,6 +10,16 @@ export const msGraphResourceCreateOne = gql`
   }
 `;
 
+export const configurationTypeCreateOne = gql`
+  mutation ConfigurationTypeCreateOne($record: CreateOneConfigurationTypeInput!){
+    configurationTypeCreateOne(record: $record){
+      record {
+        _id
+      }
+    }
+  }
+`;
+
 /* Auto generated AWS stuff */
 
 

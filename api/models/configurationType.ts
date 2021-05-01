@@ -2,25 +2,30 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const { composeWithMongoose } = require("graphql-compose-mongoose");
 
-const msgraphresourceSchema = new Schema({
-    name: {
+const configurationTypeSchema = new Schema({
+    odataType: {
         type: String,
         required: true
     },
-    resource: {
+    platform: {
         type: String,
         required: true
     },
-    version: {
+    category: {
         type: String,
         required: true
     },
-    configurationTypes: [{
+    label: {
+        type: String,
+        required: true
+    },
+    msGraphResource: {
         type: Schema.Types.ObjectId,
-        ref: 'ConfigurationType'
-      }]
+        ref: 'MsGraphResource',
+        require: true
+    }
 }, {
     timestamps: true
 });
 
-export const msGraphResourceTC = composeWithMongoose(mongoose.model('MsGraphResource', msgraphresourceSchema));
+export const configurationTypeTC = composeWithMongoose(mongoose.model('ConfigurationType', configurationTypeSchema));

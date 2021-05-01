@@ -9,7 +9,7 @@ import { gql, useMutation } from '@apollo/client';
 
 export default function MsGraphResourceAdd() {
 
-    const [createMsGraphResource, { data }] = useMutation(msGraphResourceCreateOneMutation);
+    const [createMsGraphResource, msGraphResource] = useMutation(msGraphResourceCreateOneMutation);
 
     return (
         <div>

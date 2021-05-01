@@ -1,23 +1,39 @@
-import React, { useEffect, useState } from "react";
-import { createConfigurationType as createConfigurationTypeMutation } from "graphql/mutations";
-import { listMsGraphResources } from "graphql/queries";
+import React, { useState } from "react";
+import { configurationTypeCreateOne as configurationTypeCreateOneMutation } from "graphql/mutations";
+import { msGraphResourceMany } from "graphql/queries";
 import { Link } from "react-router-dom";
 import { AutoForm } from 'uniforms-antd';
 import { Button } from "antd"
 import { JSONSchemaBridge } from "uniforms-bridge-json-schema";
+import { gql, useQuery, useMutation } from '@apollo/client';
 import Ajv from "ajv";
+
 const ajv = new Ajv({ allErrors: true, useDefaults: true });
 
 export default function ConfigurationTypeAdd() {
-
     const [configurationTypeSchema, setConfigurationTypeSchema] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [dataPrepared, setDataPrepared] = useState(false);
+    const [createConfigurationType, configurationType] = useMutation(configurationTypeCreateOneMutation);
+
+    const { loading, error, data = [] } = useQuery(msGraphResourceMany, {
+        onCompleted: data => {
+            let schema = buildSchema(data.msGraphResourceMany);
+            let schemaValidator = createValidator(schema);
+            let schemaBridge = new JSONSchemaBridge(schema, schemaValidator);
+
+            setConfigurationTypeSchema(schemaBridge);
+            setDataPrepared(true);
+
+            // console.log(data)
+            // console.log(schema);
+        }
+    });
 
     function buildSchema(msGraphResources) {
-        let msGraphResourceOptions = msGraphResources.map(resource =>{
+        let msGraphResourceOptions = msGraphResources.map(resource => {
             return {
                 label: resource.name,
-                value: resource.id
+                value: resource._id
             }
         });
 
@@ -27,7 +43,7 @@ export default function ConfigurationTypeAdd() {
             properties: {
                 odataType: { type: "string" },
                 label: { type: "string" },
-                configurationTypeMsGraphResourceId:{
+                msGraphResource: {
                     type: "string",
                     options: msGraphResourceOptions
                 },
@@ -98,7 +114,7 @@ export default function ConfigurationTypeAdd() {
                     ]
                 },
             },
-            required: ["configurationTypeMsGraphResourceId", "odataType", "platform", "category", "label"],
+            required: ["msGraphResource", "odataType", "platform", "category", "label"],
         };
         return schema;
     }
@@ -111,50 +127,23 @@ export default function ConfigurationTypeAdd() {
         };
     }
 
-
-    async function fetch() {
-        /*
-        // get current ms graph Resource data
-        let msGraphResourcesData = await API.graphql(graphqlOperation(listMsGraphResources));
-        // console.log(msGraphResourcesData);
-        msGraphResourcesData = msGraphResourcesData.data.listMSGraphResources.items;
-
-        let schema = buildSchema(msGraphResourcesData);
-        const schemaValidator = createValidator(schema);
-        let schemaBridge = new JSONSchemaBridge(schema, schemaValidator);
-        setConfigurationTypeSchema(schemaBridge);
-        setLoading(false);*/
-    }
-
-    useEffect(() => {
-        fetch();
-    }, []);
-
-    function createConfigurationType(values) {
-        /*console.log(values);
-
-        API.graphql(
-            graphqlOperation(createConfigurationTypeMutation, { input: values })
-        ).then((result) => {
-            console.log("successfull sent data");
-            console.log(result);
-        }).catch(e => {
-            console.log(e);
-        });*/
-    }
-
     return (
         <div>
             {loading ? (
                 <p>Loading...</p>
             ) : (
-                    <div>
-                        <AutoForm schema={configurationTypeSchema} onSubmit={createConfigurationType} />
-                        <Button>
-                            <Link to={"/configurationTypes"}>Back</Link>
-                        </Button>
-                    </div>
-                )}
+                <div>
+                    {
+                        dataPrepared &&
+                        <AutoForm schema={configurationTypeSchema} onSubmit={
+                            data => { createConfigurationType ({ variables: { record: data } }) }
+                        } />
+                    }
+                    <Button>
+                        <Link to={"/configurationTypes"}>Back</Link>
+                    </Button>
+                </div>
+            )}
         </div>
     );
 }

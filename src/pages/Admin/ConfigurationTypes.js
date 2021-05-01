@@ -1,32 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { listConfigurationTypes } from "graphql/queries";
+import { configurationTypeMany } from "graphql/queries";
 import { deleteConfigurationType as deleteConfigurationTypeMutation } from "graphql/mutations";
 import { Link } from "react-router-dom";
-
+import { gql, useQuery } from '@apollo/client';
 
 // antd components
 import { Table, Button, Space } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 
 export default function ConfigurationTypes() {
-    const [configurationTypes, setConfigurationTypes] = useState([]);
-    const [fetching, setFetching] = useState(false);
+    const { loading, error, data = [] } = useQuery(configurationTypeMany);
 
-
-    async function fetch() {
-        /*setFetching(true);
-        try {
-            let configurationTypeData = await API.graphql(graphqlOperation(listConfigurationTypes));
-            configurationTypeData = configurationTypeData.data.listConfigurationTypes.items;
-            setConfigurationTypes(configurationTypeData);
-        } catch (err) {
-            console.error("error fetching ConfigurationTypes");
-            console.log(err);
-        }
-        setFetching(false);*/
-    }
-
-    
+  
     function deleteConfigurationType(configurationType) {
         // console.log(configurationType);
         // console.log(configurationType.id)
@@ -41,11 +26,6 @@ export default function ConfigurationTypes() {
             console.log(e);
         });*/
     }
-
-
-    useEffect(() => {
-        fetch();
-    }, []);
 
     const columns = [
         {
@@ -86,19 +66,7 @@ export default function ConfigurationTypes() {
     return (
         <div>
             <h1>ConfigurationTypes</h1>
-            <div>
-                {fetching ? (
-                    <p>Fetching ConfigurationTypes...</p>
-                ) : (
-                        <>
-                            {configurationTypes.length > 0 ? (
-                                <Table rowKey="id" columns={columns} dataSource={configurationTypes} onChange={onChange}></Table>
-                            ) : (
-                                    <p>No ConfigurationTypes added yet</p>
-                                )}
-                        </>
-                    )}
-            </div>
+            <Table loading={loading} rowKey="id" columns={columns} dataSource={data.configurationTypeMany} onChange={onChange}></Table>
             <Button>
                 <Link to="/configurationTypeAdd">
                     <PlusOutlined />
