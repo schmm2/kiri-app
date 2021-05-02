@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { listTenants } from "graphql/queries";
+import { tenantMany } from "graphql/queries";
 import { deleteTenant as deleteTenantMutation } from "graphql/mutations";
 import { Link } from "react-router-dom";
 import { triggerTenantUpdate as triggerTenantUpdateMutation } from "graphql/mutations";
@@ -17,7 +17,7 @@ import {
 export default function Tenants() {
   const aadappid = process.env.REACT_APP_AADAPPID;
 
-  const { loading, error, tenants } = useQuery(listTenants);
+  const { loading, error, data = [] } = useQuery(tenantMany);
 
   /*
   function deleteTenant(tenantId) {
@@ -66,7 +66,7 @@ export default function Tenants() {
             record.verified ? (
               <CheckCircleTwoTone twoToneColor="#52c41a" />
             ) : (
-              <CloseCircleTwoTone twoToneColor="#ff0000"/>
+              <CloseCircleTwoTone twoToneColor="#ff0000" />
             )
           }
         </Space>
@@ -93,25 +93,13 @@ export default function Tenants() {
   return (
     <div>
       <h1>Tenants</h1>
-      <div>
-        {loading ? (
-          <p>loading tenants...</p>
-        ) : (
-          <>
-            {tenants.length > 0 ? (
-              <Table rowKey="id" columns={columns} dataSource={tenants} onChange={onChange}></Table>
-            ) : (
-              <p>No tenants added yet</p>
-            )}
-          </>
-        )}
-      </div>
+      <Table loading={loading} rowKey="id" columns={columns} dataSource={data.tenantMany} onChange={onChange}></Table>
       <Button>
         <Link to="/tenantAdd">
           <PlusOutlined />
           Add Tenant
         </Link>
       </Button>
-    </div>
+    </div >
   );
 }

@@ -1,5 +1,6 @@
 import { gql, useMutation } from '@apollo/client';
 
+// MS Graph Resource
 export const msGraphResourceMany = gql`
   query MsGraphResourceMany {
     msGraphResourceMany {
@@ -13,6 +14,7 @@ export const msGraphResourceMany = gql`
   }
 `
 
+// Configuration Type
 export const configurationTypeMany = gql`
   query ConfigurationTypeMany {
     configurationTypeMany { 
@@ -26,6 +28,22 @@ export const configurationTypeMany = gql`
     }
   }
 `
+
+// Tenant
+export const tenantMany = gql`
+  query tenantMany {
+    tenantMany { 
+      _id
+      tenantId
+      name
+      verified
+      createdAt
+      updatedAt
+    }
+  }
+`
+
+
 
 /* Auto generated AWS stuff */
 

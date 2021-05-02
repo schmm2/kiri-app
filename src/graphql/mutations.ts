@@ -1,5 +1,17 @@
 import { gql, useMutation } from '@apollo/client';
 
+// Tenant
+export const tenantCreateOne = gql`
+  mutation TenantCreateOne($record: CreateOneTenantInput!){
+    tenantCreateOne(record: $record){
+      record {
+        _id
+      }
+    }
+  }
+`;
+
+// MS Graph Resource
 export const msGraphResourceCreateOne = gql`
   mutation MsGraphResourceCreateOne($record: CreateOneMsGraphResourceInput!){
     msGraphResourceCreateOne(record: $record){
@@ -10,6 +22,7 @@ export const msGraphResourceCreateOne = gql`
   }
 `;
 
+// Configuration Type
 export const configurationTypeRemoveById = gql`
   mutation ConfigurationTypeRemoveById($id: MongoID!) {
     configurationTypeRemoveById(_id: $id) {
@@ -30,9 +43,10 @@ export const configurationTypeCreateOne = gql`
   }
 `;
 
+
+
+
 /* Auto generated AWS stuff */
-
-
 export const triggerTenantVerification = /* GraphQL */ `
   mutation TriggerTenantVerification($tenantId: String) {
     triggerTenantVerification(tenantId: $tenantId)

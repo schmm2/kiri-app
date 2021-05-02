@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 const { composeWithMongoose } = require("graphql-compose-mongoose");
 
 const tenantSchema = new Schema({
-    tenant: {
+    tenantId: {
        type: String,
        required: true
     },
@@ -12,10 +12,10 @@ const tenantSchema = new Schema({
        required: true
     },
     verified: {
-       type: String,
-       required: true
+       type: Boolean,
+       required: false,
+       default: false
    },
-
 }, {
     timestamps: true
 });
