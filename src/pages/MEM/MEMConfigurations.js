@@ -3,12 +3,12 @@ import { getTenantNewestConfigurationVersions } from "graphql/queries";
 import { configurationMany } from "graphql/queries";
 
 import { Table } from 'antd';
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import TenantContext from "components/TenantContext"
 import { renderDate } from 'util/renderDate';
 import moment from 'moment';
 
-import { gql, useQuery, useMutation } from '@apollo/client';
+import { gql, useQuery, useLazyQuery, useMutation } from '@apollo/client';
 
 export default function MEMConfigurations(props) {
 
@@ -24,8 +24,10 @@ export default function MEMConfigurations(props) {
 
   function reducer(state, action) {
     switch (action.type) {
+      case 'CLEAR':
+        return { ...state, loading: true, configurations: [], error: false }
       case 'SET_CONFIGURATIONS':
-        return { ...state, configurations: action.configurations, category: action.category, loading: false }
+        return { ...state, configurations: action.configurations, loading: action.loading }
       case 'ERROR':
         return { ...state, loading: false, error: true }
       default:
@@ -33,13 +35,15 @@ export default function MEMConfigurations(props) {
     }
   }
 
+
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const { data, dataLoading, dataError } = useQuery(getTenantNewestConfigurationVersions, {
-    skip: !selectedTenant,
+  const [getTenants, { data }] = useLazyQuery(getTenantNewestConfigurationVersions, {
     fetchPolicy: 'cache-and-network',
     variables: { id: selectedTenant?._id },
     onCompleted: (data) => {
+      console.log("render");
+
       //console.log(data)
       let configurations = data.tenantById.configurations;
       console.log(configurations);
@@ -69,9 +73,19 @@ export default function MEMConfigurations(props) {
         }
       })
       console.log(configurationCollection);
-      dispatch({ type: "SET_CONFIGURATIONS", configurations: configurationCollection, category: props.category });
+      dispatch({ type: "SET_CONFIGURATIONS", configurations: configurationCollection, loading: false });
     }
   })
+
+  function clear(){
+    dispatch({ type: "CLEAR"});
+  }
+
+  React.useEffect(() => {
+    clear();
+    if (!props.category || !selectedTenant) return;
+    getTenants();
+  }, [props.category]);
 
   const columns = [
     {

@@ -1,5 +1,5 @@
-import React, { useEffect, useReducer } from "react";
-import { getConfiguration } from "graphql/queries";
+import React, { useReducer } from "react";
+import { configurationById } from "graphql/queries";
 import { triggerConfigurationUpdate } from "graphql/mutations";
 import { Link } from "react-router-dom";
 import { updatedDiff } from 'deep-object-diff';
@@ -7,17 +7,62 @@ import { renderDate } from 'util/renderDate';
 import ReactJson from 'react-json-view'
 import { findType } from 'util/findType';
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
-import { useQuery, gql } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 
 import { Table, Button, Menu, Dropdown, Badge, Space, Tabs, Spin } from 'antd';
-import { render } from "@testing-library/react";
 const { TabPane } = Tabs;
 
 export default function MEMConfiguration(props) {
 
-    const { loading, error, configurationItem  } = useQuery(getConfiguration, {variables: { id: params.configurationId }})
-
     const { match: { params } } = props;
+    const { data, dataLoading, dataError } = useQuery(configurationById, {
+        variables: { id: params.configurationId },
+        onCompleted: (data) => {
+            console.log(data);
+            let configurationItem = data.configurationById;
+            let configurationVersions = data.configurationById.configurationVersions;
+            let newestConfigurationVersionItem = {};
+
+            let changedConfigurationVersions =  [];
+            configurationVersions.map(configurationVersion => {
+                let newConfigurationVersion = {...configurationVersion};
+                // convert json value back to js object
+                newConfigurationVersion.value = JSON.parse(newConfigurationVersion.value);
+                console.log(newConfigurationVersion);      
+
+                // find newest version
+                if (newConfigurationVersion.isNewest) {
+                    newestConfigurationVersionItem = newConfigurationVersion;
+                }
+                changedConfigurationVersions.push(newConfigurationVersion);
+            });
+
+            // define msGraphResource
+            let msGraphResource = "";
+            if (configurationItem.configurationType) {
+                let configurationType = configurationItem.configurationType;
+                if (configurationType.msGraphResource) {
+                    msGraphResource = configurationType.msGraphResource;
+                    console.log(msGraphResource);
+                }
+            }
+
+            // order by versions desc
+            changedConfigurationVersions.sort((a, b) => parseFloat(b.version) - parseFloat(a.version));
+
+            // update state
+            let newState = {
+                "configuration": configurationItem,
+                "configurationType": configurationItem.configurationType,
+                "selectedConfigurationVersion": changedConfigurationVersions[0],
+                "configurationVersions": changedConfigurationVersions,
+                "newestConfigurationVersion": newestConfigurationVersionItem,
+                "msGraphResource": msGraphResource
+            }
+            dispatch({ type: "SET_CONFIGURATION", newState });
+        }
+    });
+
 
     const initialState = {
         configuration: {},
@@ -155,69 +200,6 @@ export default function MEMConfiguration(props) {
         },
     ];
 
-    async function fetchConfiguration() {
-        try {
-            if (params.configurationId) {
-                // console.log(params.configurationId)
-
-                /*let configurationItem = await API.graphql({ query: getConfiguration, variables: { id: params.configurationId } });
-                configurationItem = configurationItem.data.getConfiguration;
-
-                let configurationVersionItems = configurationItem.configurationVersions.items;
-                let newestConfigurationVersionItem = {};
-
-                configurationVersionItems.map(configurationVersion => {
-                    // convert value back to js object
-                    configurationVersion.value = JSON.parse(JSON.parse(configurationVersion.value));
-
-                    // find newest version
-                    if (configurationVersion.isNewest) {
-                        newestConfigurationVersionItem = configurationVersion;
-                    }
-                    return configurationVersion;
-                });
-
-                // define msGraphResource
-                let msGraphResource = "";
-                if (configurationItem.configurationType) {
-                    let configurationType = configurationItem.configurationType;
-                    if (configurationType.msGraphResource) {
-                        msGraphResource = configurationType.msGraphResource;
-                        // console.log(msGraphResource);
-                    }
-                }
-
-                // order by versions desc
-                configurationVersionItems.sort((a, b) => parseFloat(b.version) - parseFloat(a.version));
-
-                // update state
-                let newState = {
-                    "configuration": configurationItem,
-                    "configurationType": configurationItem.configurationType,
-                    "selectedConfigurationVersion": configurationVersionItems[0],
-                    "configurationVersions": configurationVersionItems,
-                    "newestConfigurationVersion": newestConfigurationVersionItem,
-                    "msGraphResource": msGraphResource
-                }
-                // console.log(configurationItem);
-                // console.log(newState);
-
-                // set initial selected conf version
-                if (configurationVersionItems[0]) {
-                    // race condition state update
-                    //manageSelectedconfigurationVersion(configurationVersionItems[0]);
-                }
-
-                dispatch({ type: "SET_CONFIGURATION", newState });*/
-            } else {
-                throw "no id defined";
-            }
-        } catch (err) {
-            console.error("error fetching configuration versions");
-            console.log(err);
-            dispatch({ type: "ERROR" })
-        }
-    }
 
     const configurationVersionsMenu = (
         <Menu>
@@ -243,11 +225,6 @@ export default function MEMConfiguration(props) {
         </Space>
     );
 
-    useEffect(() => {
-        fetchConfiguration();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
     async function restoreVersion() {
         /*console.log("restore version");
         console.log(state.configuration.tenant.id);
@@ -272,7 +249,7 @@ export default function MEMConfiguration(props) {
                 } else {
                     openNotificationWithIcon('Restore configuration', 'Unable to restore configuration', 'error');
                 }
-            }    */  
+            }    */
         } catch (err) {
             console.log(err);
         }

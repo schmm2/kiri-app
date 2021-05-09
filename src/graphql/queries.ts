@@ -11,6 +11,27 @@ export const confgigurationMany = gql`
   }
 `
 
+export const configurationById = gql`
+  query ConfigurationById($id: MongoID!) {
+    configurationById(_id: $id) {
+      _id   
+      graphIsDeleted
+      configurationVersions {
+        _id
+        displayName
+        isNewest
+        graphModifiedAt
+        value
+      }
+      configurationType {
+        platform
+        category
+        name
+      }
+    }
+  }
+`
+
 export const getTenantNewestConfigurationVersions = gql`
   query GetTenantConfigurationVersions($id: MongoID!) {
     tenantById(_id: $id) {
@@ -105,6 +126,7 @@ export const getMsGraphResource = /* GraphQL */ `
     }
   }
 `;
+
 export const listMsGraphResources = /* GraphQL */ `
   query ListMsGraphResources(
     $filter: ModelMSGraphResourceFilterInput
