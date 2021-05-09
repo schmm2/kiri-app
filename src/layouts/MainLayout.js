@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from "react"
+import React, { useReducer } from "react"
 import { Layout, Menu, Dropdown, Button, Avatar } from 'antd';
 import {
   BellOutlined,
@@ -9,8 +9,10 @@ import {
 
 import { Link } from "react-router-dom";
 import SideMenu from "components/SideMenu";
-import { listTenants } from "graphql/queries";
 import TenantContext from 'components/TenantContext';
+
+import { useQuery } from '@apollo/client';
+import { tenantMany } from "graphql/queries";
 
 import './MainLayout.css'
 
@@ -18,19 +20,27 @@ const { Sider, Content, Header } = Layout;
 
 export default function MainLayout(props) {
 
+  const { data, tenantsLoading, tenantsError } = useQuery(tenantMany, {
+    onCompleted: data => {
+      console.log('data', data.tenantMany);
+      // if availble set first tenant as selected
+      if (data.tenantMany.length > 0) {
+        dispatch({ type: 'SET_SELECTEDTENANT', selectedTenant: data.tenantMany[0] })
+      }
+    }
+  });
+
   const initialState = {
     loading: true,
     collapsed: false,
-    tenants: [],
     selectedTenant: null,
     error: false
   };
 
   function reducer(state, action) {
     switch (action.type) {
-      case 'SET_TENANTS':
-        return { ...state, tenants: action.tenants, loading: false }
       case 'SET_SELECTEDTENANT':
+        console.log('selected-tenant', action.selectedTenant)
         return { ...state, selectedTenant: action.selectedTenant }
       case 'TOGGLE_COLLAPSE':
         return { ...state, collapsed: !state.collapsed }
@@ -41,25 +51,6 @@ export default function MainLayout(props) {
     }
   }
 
-  async function fetchTenants() {
-    /*
-    //console.log(props);
-    try {
-      let tenantData = await API.graphql(graphqlOperation(listTenants));
-      tenantData = tenantData.data.listTenants.items;
-      dispatch({ type: 'SET_TENANTS', tenants: tenantData })
-
-      // if availble set first tenant as selected
-      if (tenantData.length > 0) {
-        dispatch({ type: 'SET_SELECTEDTENANT', selectedTenant: tenantData[0] })
-      }
-    } catch (err) {
-      console.error("error fetching tenants");
-      console.log(err);
-      dispatch({ type: 'ERROR' })
-    }*/
-  }
-
   async function signOut() {
     try {
       //await Auth.signOut();
@@ -68,17 +59,13 @@ export default function MainLayout(props) {
     }
   }
 
-  useEffect(() => {
-    fetchTenants();
-  }, []);
-
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const tenantMenu = (
     <Menu>
-      {state.tenants.map((tenant, index) => {
+      {data && data.tenantMany && data.tenantMany.map((tenant, index) => {
         return (
-          <Menu.Item key={tenant.id} onClick={() => dispatch({ type: 'SET_SELECTEDTENANT', selectedTenant: tenant })}>
+          <Menu.Item key={tenant._id} onClick={() => dispatch({ type: 'SET_SELECTEDTENANT', selectedTenant: tenant })}>
             <span>{tenant.name}</span>
           </Menu.Item>
         )

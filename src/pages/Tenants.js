@@ -54,10 +54,6 @@ export default function Tenants() {
       dataIndex: "name",
     },
     {
-      title: "Id",
-      dataIndex: "tenantId",
-    },
-    {
       title: "Verified",
       key: "verified",
       render: (text, record) => (

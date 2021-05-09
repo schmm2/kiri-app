@@ -1,12 +1,19 @@
 import React, { useEffect, useState, useContext, useReducer } from "react";
-import { getTenantNewestConfigurationVersions } from "graphql/custom/getTenantNewestConfigurationVersions";
+import { getTenantNewestConfigurationVersions } from "graphql/queries";
+import { configurationMany } from "graphql/queries";
+
 import { Table } from 'antd';
 import { Link, useLocation } from "react-router-dom";
 import TenantContext from "components/TenantContext"
 import { renderDate } from 'util/renderDate';
 import moment from 'moment';
 
+import { gql, useQuery, useMutation } from '@apollo/client';
+
 export default function MEMConfigurations(props) {
+
+  const selectedTenant = useContext(TenantContext);
+  console.log(selectedTenant);
 
   const initialState = {
     configurations: [],
@@ -14,8 +21,6 @@ export default function MEMConfigurations(props) {
     loading: true,
     error: false
   }
-
-  const selectedTenant = useContext(TenantContext);
 
   function reducer(state, action) {
     switch (action.type) {
@@ -30,63 +35,49 @@ export default function MEMConfigurations(props) {
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  async function fetchNewestConfigurationVersions() {
-    
-    try {
+  const { data, dataLoading, dataError } = useQuery(getTenantNewestConfigurationVersions, {
+    skip: !selectedTenant,
+    fetchPolicy: 'cache-and-network',
+    variables: { id: selectedTenant?._id },
+    onCompleted: (data) => {
+      //console.log(data)
+      let configurations = data.tenantById.configurations;
+      console.log(configurations);
       let configurationCollection = [];
+      
+      configurations.map(configuration => {
+        let configurationType = configuration.configurationType;
+        console.log(props.category);
+        console.log(configurationType.category);
 
-      /*
-      if (selectedTenant && selectedTenant.id) {
-        let tenantData = await API.graphql({ query: getTenantNewestConfigurationVersions, variables: { id: selectedTenant.id } });
-        let configurations = tenantData.data.getTenant.configurations;
-        console.log("before filter");
-        console.log(configurations);
+        // Todo: find a better way to include this check into grapql query
+        if (props.category === configurationType.category) {
+          if (configuration.newestConfigurationVersions && configuration.newestConfigurationVersions[0]) {
+            let newConfigurationObject = {};
+            let configurationVersion = configuration.newestConfigurationVersions[0];
 
-        configurations.items.map(configuration => {
-          let configurationType = configuration.configurationType;
+            // build new config object
+            // adds pressure to client, makes iterating much easier
+            newConfigurationObject.id = configuration._id;
+            newConfigurationObject.displayName = configurationVersion.displayName;
+            newConfigurationObject.modifiedAt = configurationVersion.graphModifiedAt;
+            newConfigurationObject.platform = configurationType.platform;
+            newConfigurationObject.type = configurationType.name;
 
-          // Todo: find a better way to include this check into grapql query
-          if (props.category === configurationType.category) {
-            if (configuration.configurationVersions.items) {
-              let newConfigurationObject = {};
-              let configurationVersion = configuration.configurationVersions.items[0];
-
-
-              // build new config object
-              // adds pressure to client, makes iterating much easier
-              newConfigurationObject.id = configuration.id;
-              newConfigurationObject.displayName = configurationVersion.displayName;
-              newConfigurationObject.modifiedAt = configurationVersion.graphModifiedAt;
-              newConfigurationObject.platform = configurationType.platform;
-              newConfigurationObject.type = configurationType.label;
-
-              configurationCollection.push(newConfigurationObject);
-            }
+            configurationCollection.push(newConfigurationObject);
           }
-        })
-        // console.log(configurationCollection);
-      }
-      console.log(props.category)
+        }
+      })
+      console.log(configurationCollection);
       dispatch({ type: "SET_CONFIGURATIONS", configurations: configurationCollection, category: props.category });
-      */
-    } catch (err) {
-      console.error("error fetching configuration Versions");
-      console.log(err);
-      dispatch({ type: 'ERROR' })
     }
-  }
-
-  useEffect(() => {
-    fetchNewestConfigurationVersions();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedTenant, props.category]);
-
+  })
 
   const columns = [
     {
       title: "Name",
       dataIndex: "displayName",
-      render: (text, record) => <Link to={state.category + '/' + record.id}>{record.displayName}</Link>
+      render: (text, record) => <Link to={props.category + '/' + record.id}>{record.displayName}</Link>
     },
     {
       title: "Type",
@@ -117,4 +108,4 @@ export default function MEMConfigurations(props) {
       </div>
     </div>
   );
-} 
+}

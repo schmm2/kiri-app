@@ -18,8 +18,8 @@ export default function ConfigurationTypes() {
             dataIndex: "_id",
         },
         {
-            title: "odata Type",
-            dataIndex: "odataType",
+            title: "Name",
+            dataIndex: "name",
         },
         {
             title: "Platform",
@@ -28,10 +28,6 @@ export default function ConfigurationTypes() {
         {
             title: "Category",
             dataIndex: "category",
-        },
-        {
-            title: "Label",
-            dataIndex: "label",
         },
         {
             title: 'Action',

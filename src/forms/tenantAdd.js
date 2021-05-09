@@ -6,9 +6,10 @@ const schema = {
   type: "object",
   properties: {
     name: { type: "string" },
-    tenantId: { type: "string" }
+    tenantId: { type: "string" },
+    appId: { type: "string" }
   },
-  required: ["name", "tenantId"],
+  required: ["name", "tenantId", "appId"],
 };
 
 const ajv = new Ajv({ allErrors: true, useDefaults: true });

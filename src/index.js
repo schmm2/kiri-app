@@ -6,7 +6,7 @@ import { BrowserRouter as Router } from 'react-router-dom'
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 
 if (typeof window !== 'undefined') {
-  var path = window.location.protocol + '//' + window.location.hostname + ":7071";
+  var path = window.location.protocol + '//' + window.location.hostname + ":7077";
 }
 
 const client = new ApolloClient({

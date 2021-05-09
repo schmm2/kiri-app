@@ -1,5 +1,40 @@
 import { gql, useMutation } from '@apollo/client';
 
+// Configuration
+export const confgigurationMany = gql`
+  query ConfigurationMany {
+    configurationMany {
+      _id,
+      createdAt,
+      updatedAt
+    }
+  }
+`
+
+export const getTenantNewestConfigurationVersions = gql`
+  query GetTenantConfigurationVersions($id: MongoID!) {
+    tenantById(_id: $id) {
+      _id 
+      configurations {       
+        _id
+        graphIsDeleted
+        newestConfigurationVersions {
+          _id
+          displayName
+          isNewest
+          graphModifiedAt  
+        }
+        configurationType {
+          platform
+          category
+          name
+        }
+      }
+    }
+  }
+`
+
+
 // MS Graph Resource
 export const msGraphResourceMany = gql`
   query MsGraphResourceMany {
@@ -19,10 +54,9 @@ export const configurationTypeMany = gql`
   query ConfigurationTypeMany {
     configurationTypeMany { 
       _id
-      odataType
       platform
       category
-      label
+      name
       createdAt
       updatedAt
     }
@@ -31,7 +65,7 @@ export const configurationTypeMany = gql`
 
 // Tenant
 export const tenantMany = gql`
-  query tenantMany {
+  query TenantMany {
     tenantMany { 
       _id
       tenantId
