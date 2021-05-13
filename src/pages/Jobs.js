@@ -1,90 +1,32 @@
-import React, { useEffect, useReducer } from "react";
-import { listJobs } from "graphql/queries";
+import React, { useEffect } from "react";
+import { jobMany, tenantById } from "graphql/queries";
 import { Table, Button, Tag } from "antd";
 import { Link } from "react-router-dom";
-import { onCreateJob, onUpdateJob } from "graphql/subscriptions";
 import { renderDate } from 'util/renderDate'
 import moment from 'moment';
+import { useLazyQuery, gql } from '@apollo/client';
 
 export default function Jobs(props) {
   const { match: { params } } = props;
 
-  const initialState = {
-    jobs: [],
-    loading: true,
-    error: false
-  }
-
-  function reducer(state, action) {
-    switch (action.type) {
-      case 'SET_JOBS':
-        return { ...state, jobs: action.jobs, loading: false }
-      case 'ADD_JOB':
-        return { ...state, jobs: [action.job, ...state.jobs] }
-      case 'UPDATE_JOB':
-        return {
-          ...state,
-          jobs: state.jobs.map(
-            (job, i) => job.id === action.job.id ? action.job : job
-          )
-        }
-      case 'ERROR':
-        return { ...state, loading: false, error: true }
-      default:
-        return state
-    }
-  }
-
-  const [state, dispatch] = useReducer(reducer, initialState);
-
-  async function fetchJobs() {
-    try {
-      /*
-      let jobsData = await API.graphql(graphqlOperation(listJobs));
-      jobsData = jobsData.data.listJobs.items;
-
-      if (params.tenantId) {
-        jobsData = jobsData.filter((job) => job.tenant.id === params.tenantId);
-      }
-      dispatch({ type: 'SET_JOBS', jobs: jobsData })*/
-    } catch (err) {
-      console.error("error fetching jobs");
-      console.log(err);
-      dispatch({ type: 'ERROR' })
-    }
-  }
+  const [getJobs, { loadingJobs, data: jobdata }] = useLazyQuery(jobMany,
+    { onCompleted: (data) => console.log(jobdata) });
+  const [getTenantById, { loadingTenant, data: tenantdata }] = useLazyQuery(tenantById,
+    { onCompleted: (data) => console.log(tenantdata) });
 
   useEffect(() => {
-    fetchJobs();
-
-    let userName = "";
-
-    /*
-    const subscriptionOnCreateJob = API.graphql({
-      query: onCreateJob,
-      variables: { owner: userName }
-    }).subscribe({
-      next: jobData => {
-        const job = jobData.value.data.onCreateJob;
-        dispatch({ type: 'ADD_JOB', job })
-      },
-    })
-
-    const subscriptionOnUpdateJob = API.graphql({
-      query: onUpdateJob,
-      variables: { owner: userName }
-    }).subscribe({
-      next: jobData => {
-        const job = jobData.value.data.onUpdateJob;
-        dispatch({ type: 'UPDATE_JOB', job })
-      },
-    })
-
-    return () => {
-      subscriptionOnCreateJob.unsubscribe();
-      subscriptionOnUpdateJob.unsubscribe();
-    }*/
-  }, []);
+    console.log(params.tenantId);
+    if (params.tenantId) {
+      getJobs({
+        variables: { filter: { tenant: params.tenantId } }
+      });
+      getTenantById({
+        variables: { id: params.tenantId }
+      })
+    } else {
+      getJobs();
+    }
+  }, [params.tenantId]);
 
   const columns = [
     {
@@ -111,7 +53,7 @@ export default function Jobs(props) {
           default:
             break;
         }
-        
+
         return (
           <Tag color={color} key={state}>
             {state}
@@ -120,12 +62,8 @@ export default function Jobs(props) {
       },
     },
     {
-      title: "Message",
-      dataIndex: "message",
-    },
-    {
       title: "Job Type",
-      dataIndex: "jobType",
+      dataIndex: "type",
     },
     {
       title: "Last Update",
@@ -142,9 +80,13 @@ export default function Jobs(props) {
 
   return (
     <div>
-      <h1>Jobs</h1>
+      {
+        tenantdata && tenantdata.tenantById
+        ? <h1>Jobs - {tenantdata.tenantById.name}</h1>
+        : <h1>Jobs</h1>
+      }
       <div>
-        <Table loading={state.loading} rowKey="id" columns={columns} dataSource={state.jobs} onChange={onChange} />
+        <Table loading={loadingJobs} rowKey="id" columns={columns} dataSource={jobdata && jobdata.jobMany} onChange={onChange} />
       </div>
       <Button>
         <Link to={"/tenants"}>Back</Link>

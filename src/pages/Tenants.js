@@ -16,8 +16,9 @@ import {
 
 export default function Tenants() {
   const aadappid = process.env.REACT_APP_AADAPPID;
+  const apiurlbase = process.env.REACT_APP_APIURL;
 
-  const { loading, error, data = [] } = useQuery(tenantMany);
+  const { loading, error, data } = useQuery(tenantMany);
 
   /*
   function deleteTenant(tenantId) {
@@ -32,21 +33,26 @@ export default function Tenants() {
     console.log("update tenant data");
     console.log(tenantId);
 
-    try {
-      /*let response = await API.graphql(graphqlOperation(triggerTenantUpdateMutation, { tenantId: tenantId }));
-      // console.log(response);
-      if (response.data && response.data.triggerTenantUpdate) {
-        let triggerTenantUpdateResponse = (JSON.parse(response.data.triggerTenantUpdate)).body;
-        if (triggerTenantUpdateResponse && triggerTenantUpdateResponse.ok === true) {
+    if (apiurlbase) {
+      let functionToCall = "/orchestrators/SOL0001AzureDataCollectOrchestrator"
+      let apiurl = apiurlbase + functionToCall;
+
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tenantDbId: tenantId })
+      };
+
+      fetch(apiurl, requestOptions)
+        .then(response => response.json())
+        .then(data => {
           openNotificationWithIcon('Pull Data', 'Job started', 'success');
-        } else {
-          openNotificationWithIcon('Pull Data', 'Unable to start job', 'error');
-        }
-      }*/
-    } catch (err) {
-      console.log(err);
+        }).catch((error) => {
+          openNotificationWithIcon('Pull Data', 'Job error', 'error');
+        });
     }
   }
+
 
   const columns = [
     {
@@ -73,9 +79,9 @@ export default function Tenants() {
       key: 'action',
       render: (text, record) => (
         <Space size="middle">
-          <Link to={"/jobs/" + record.id}>Jobs</Link>
+          <Link to={"/jobs/" + record._id}>Jobs</Link>
           <a rel={'external'} target="_blank" href={"https://login.microsoftonline.com/" + record.tenantId + "/adminconsent?client_id=" + aadappid}>Grant Permission</a>
-          <a href="#" onClick={() => triggerTenantUpdate(record.id)}>Pull Data</a>
+          <a href="#" onClick={() => triggerTenantUpdate(record._id)}>Pull Data</a>
           <a>Delete</a>
         </Space>
       ),
@@ -89,7 +95,7 @@ export default function Tenants() {
   return (
     <div>
       <h1>Tenants</h1>
-      <Table loading={loading} rowKey="id" columns={columns} dataSource={data.tenantMany} onChange={onChange}></Table>
+      <Table loading={loading} rowKey="id" columns={columns} dataSource={data && data.tenantMany} onChange={onChange}></Table>
       <Button>
         <Link to="/tenantAdd">
           <PlusOutlined />
@@ -97,5 +103,5 @@ export default function Tenants() {
         </Link>
       </Button>
     </div >
-  );
+  )
 }

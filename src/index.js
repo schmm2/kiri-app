@@ -5,12 +5,11 @@ import * as serviceWorker from './serviceWorker';
 import { BrowserRouter as Router } from 'react-router-dom'
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 
-if (typeof window !== 'undefined') {
-  var path = window.location.protocol + '//' + window.location.hostname + ":7077";
-}
+const apiurl = process.env.REACT_APP_APIURL;
+console.log("API_URL", apiurl)
 
 const client = new ApolloClient({
-  uri: path + '/api/graphql',
+  uri: apiurl + '/graphql',
   cache: new InMemoryCache(),
   fetchOptions: {
     mode: 'no-cors',
@@ -21,7 +20,7 @@ ReactDOM.render(
   <React.StrictMode>
     <Router>
       <ApolloProvider client={client}>
-        <App />
+        <App/>
       </ApolloProvider>
     </Router>
   </React.StrictMode>,

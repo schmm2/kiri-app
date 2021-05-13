@@ -1,7 +1,7 @@
-import { gql, useMutation } from '@apollo/client';
+import { gql } from '@apollo/client';
 
 // Configuration
-export const confgigurationMany = gql`
+export const configurationMany = gql`
   query ConfigurationMany {
     configurationMany {
       _id,
@@ -55,6 +55,20 @@ export const getTenantNewestConfigurationVersions = gql`
   }
 `
 
+// Jobs
+export const jobMany = gql`
+  query JobMany($filter: FilterFindManyJobInput) {
+    jobMany(filter: $filter) {
+      _id,
+      type,
+      state,
+      updatedAt,
+      tenant {
+        name
+      }
+    }
+  }
+`
 
 // MS Graph Resource
 export const msGraphResourceMany = gql`
@@ -98,7 +112,14 @@ export const tenantMany = gql`
   }
 `
 
-
+export const tenantById = gql`
+  query TenantById($id: MongoID!) {
+    tenantById(_id: $id) {
+      _id   
+      name
+    }
+  }
+`
 
 /* Auto generated AWS stuff */
 
