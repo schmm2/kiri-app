@@ -34,7 +34,7 @@ export default function Tenants() {
     console.log(tenantId);
 
     if (apiurlbase) {
-      let functionToCall = "/orchestrators/SOL0001AzureDataCollectOrchestrator"
+      let functionToCall = "/orchestrators/ORC1000AzureDataCollect"
       let apiurl = apiurlbase + functionToCall;
 
       const requestOptions = {

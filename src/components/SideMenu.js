@@ -64,6 +64,11 @@ export default function SideMenu(props) {
             Update Ring
           </Link>
         </Menu.Item>
+        <Menu.Item key="/autopilot">
+          <Link to="/autopilot">
+            Autopilot
+          </Link>
+        </Menu.Item>
       </SubMenu>
       <Menu.Item key="/tenants" icon={<ApartmentOutlined />}>
         <Link to="/tenants">
