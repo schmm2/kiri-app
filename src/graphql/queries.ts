@@ -23,10 +23,18 @@ export const configurationById = gql`
         graphModifiedAt
         value
       }
+      tenant{
+        _id,
+        name
+      }
       configurationType {
         platform
         category
         name
+        msGraphResource{
+          name,
+          resource
+        }
       }
     }
   }

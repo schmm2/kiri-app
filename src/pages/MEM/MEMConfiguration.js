@@ -11,6 +11,7 @@ import { useQuery } from '@apollo/client';
 
 import { Table, Button, Menu, Dropdown, Badge, Space, Tabs, Spin } from 'antd';
 const { TabPane } = Tabs;
+const apiurlbase = process.env.REACT_APP_APIURL;
 
 export default function MEMConfiguration(props) {
 
@@ -23,12 +24,12 @@ export default function MEMConfiguration(props) {
             let configurationVersions = data.configurationById.configurationVersions;
             let newestConfigurationVersionItem = {};
 
-            let changedConfigurationVersions =  [];
+            let changedConfigurationVersions = [];
             configurationVersions.map(configurationVersion => {
-                let newConfigurationVersion = {...configurationVersion};
+                let newConfigurationVersion = { ...configurationVersion };
                 // convert json value back to js object
                 newConfigurationVersion.value = JSON.parse(newConfigurationVersion.value);
-                console.log(newConfigurationVersion);      
+                console.log(newConfigurationVersion);
 
                 // find newest version
                 if (newConfigurationVersion.isNewest) {
@@ -59,6 +60,7 @@ export default function MEMConfiguration(props) {
                 "newestConfigurationVersion": newestConfigurationVersionItem,
                 "msGraphResource": msGraphResource
             }
+            console.log(newState);
             dispatch({ type: "SET_CONFIGURATION", newState });
         }
     });
@@ -227,31 +229,35 @@ export default function MEMConfiguration(props) {
 
     async function restoreVersion() {
         /*console.log("restore version");
-        console.log(state.configuration.tenant.id);
-        console.log(state.newestConfigurationVersion.id);
+        console.log(state.configuration.tenant._id);
+        console.log(state.selectedConfigurationVersion._id);
         console.log(state.msGraphResource);*/
 
-        try {
-            openNotificationWithIcon('Restore configuration', 'Starting restore', 'info');
+        if (apiurlbase) {
+            let functionToCall = "/orchestrators/ORC1100MEMConfigurationUpdate"
+            let apiurl = apiurlbase + functionToCall;
 
-            /*
-            let response = await API.graphql(graphqlOperation(triggerConfigurationUpdate, {
-                tenantId: state.configuration.tenant.id,
-                newConfigurationVersionId: state.selectedConfigurationVersion.id,
-                msGraphResource: JSON.stringify(state.msGraphResource)
-            }));
-            console.log(response);
+            let tenantDbId = state.configuration.tenant._id;
+            let configurationVersionDbId = state.selectedConfigurationVersion._id;
+            let msGraphResource = state.msGraphResource;
 
-            if (response.data && response.data.triggerConfigurationUpdate) {
-                let triggerConfigurationUpdateResponse = JSON.parse(response.data.triggerConfigurationUpdate).body;
-                if (triggerConfigurationUpdateResponse.ok && triggerConfigurationUpdateResponse.ok === true) {
-                    openNotificationWithIcon('Restore configuration', 'All done', 'success');
-                } else {
-                    openNotificationWithIcon('Restore configuration', 'Unable to restore configuration', 'error');
-                }
-            }    */
-        } catch (err) {
-            console.log(err);
+            const requestOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    tenantDbId: tenantDbId,
+                    configurationVersionDbId: configurationVersionDbId,
+                    msGraphResource: msGraphResource
+                })
+            };
+
+            fetch(apiurl, requestOptions)
+                .then(response => response.json())
+                .then(data => {
+                    openNotificationWithIcon('Restore Configuration', 'Job started', 'info');
+                }).catch((error) => {
+                    openNotificationWithIcon('Restore Configuration', 'Job error', 'error');
+                });
         }
     }
 
