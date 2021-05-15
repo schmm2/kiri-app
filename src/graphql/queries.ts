@@ -1,5 +1,17 @@
 import { gql } from '@apollo/client';
 
+// Devices
+export const deviceMany = gql`
+  query DeviceMany {
+    deviceMany{
+      _id,
+      deviceId,
+      manufacturer,
+      value
+    }
+  }
+`
+
 // Configuration
 export const configurationMany = gql`
   query ConfigurationMany {
@@ -70,6 +82,7 @@ export const jobMany = gql`
       _id,
       type,
       state,
+      message,
       updatedAt,
       tenant {
         name

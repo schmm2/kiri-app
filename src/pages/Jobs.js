@@ -44,6 +44,9 @@ export default function Jobs(props) {
           case "STARTED":
             color = "blue";
             break;
+          case "RUNNING":
+            color = "blue";
+            break;
           case "ERROR":
             color = "red";
             break;
@@ -66,6 +69,10 @@ export default function Jobs(props) {
       dataIndex: "type",
     },
     {
+      title: "Message",
+      dataIndex: "message",
+    },
+    {
       title: "Last Update",
       dataIndex: "updatedAt",
       render: (text, record) => renderDate(text),
@@ -82,8 +89,8 @@ export default function Jobs(props) {
     <div>
       {
         tenantdata && tenantdata.tenantById
-        ? <h1>Jobs - {tenantdata.tenantById.name}</h1>
-        : <h1>Jobs</h1>
+          ? <h1>Jobs - {tenantdata.tenantById.name}</h1>
+          : <h1>Jobs</h1>
       }
       <div>
         <Table loading={loadingJobs} rowKey="id" columns={columns} dataSource={jobdata && jobdata.jobMany} onChange={onChange} />

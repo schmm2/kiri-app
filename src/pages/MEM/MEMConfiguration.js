@@ -254,6 +254,7 @@ export default function MEMConfiguration(props) {
             fetch(apiurl, requestOptions)
                 .then(response => response.json())
                 .then(data => {
+                    console.log(data)
                     openNotificationWithIcon('Restore Configuration', 'Job started', 'info');
                 }).catch((error) => {
                     openNotificationWithIcon('Restore Configuration', 'Job error', 'error');
