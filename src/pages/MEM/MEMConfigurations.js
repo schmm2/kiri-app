@@ -42,8 +42,6 @@ export default function MEMConfigurations(props) {
     fetchPolicy: 'cache-and-network',
     variables: { id: selectedTenant?._id },
     onCompleted: (data) => {
-      console.log("render");
-
       //console.log(data)
       let configurations = data.tenantById.configurations;
       console.log(configurations);
@@ -51,8 +49,8 @@ export default function MEMConfigurations(props) {
       
       configurations.map(configuration => {
         let configurationType = configuration.configurationType;
-        console.log(props.category);
-        console.log(configurationType.category);
+        // console.log(props.category);
+        // console.log(configurationType.category);
 
         // Todo: find a better way to include this check into grapql query
         if (props.category === configurationType.category) {

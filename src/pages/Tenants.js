@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { tenantMany } from "graphql/queries";
+import { tenantById, tenantMany } from "graphql/queries";
 import { deleteTenant as deleteTenantMutation } from "graphql/mutations";
 import { Link } from "react-router-dom";
-import { triggerTenantUpdate as triggerTenantUpdateMutation } from "graphql/mutations";
+//import { triggerTenantUpdate as triggerTenantUpdateMutation } from "graphql/mutations";
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
 import { useQuery, gql } from '@apollo/client';
+
 
 // antd components
 import { Table, Button, Space } from "antd";
@@ -13,6 +14,9 @@ import {
   CheckCircleTwoTone,
   CloseCircleTwoTone
 } from "@ant-design/icons";
+
+var fileDownload = require('js-file-download');
+
 
 export default function Tenants() {
   const aadappid = process.env.REACT_APP_AADAPPID;
@@ -53,6 +57,45 @@ export default function Tenants() {
     }
   }
 
+  async function triggerBackup(tenantDbId) {
+    console.log("backup config for tenant " + tenantDbId);
+
+    if (apiurlbase) {
+      let functionToCall = "/TRG2000ConfigurationBackupCreate"
+      let apiurl = apiurlbase + functionToCall;
+      let fileName = "export.zip";
+
+      openNotificationWithIcon('Backup', 'Backup Job started', 'success', 8.0);
+
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tenantDbId: tenantDbId })
+      };
+
+      fetch(apiurl, requestOptions)
+        .then(response => {
+          // console.log(response);
+          // build filename, returned in header, built serverside
+          let contentDisposition = response.headers.get('Content-Disposition')
+          // console.log(contentDisposition);
+          if (contentDisposition) {
+            fileName = contentDisposition.split('filename=')[1]
+            // console.log(fileName)
+          }
+          // read blob data
+          return response.blob()
+        })
+        .then(data => {
+          // console.log(data);
+          openNotificationWithIcon('Backup', 'Backup created successfully, start download', 'success')
+          fileDownload(data, fileName)
+        }).catch((error) => {
+          // console.log(error);
+          openNotificationWithIcon('Backup', error, 'error')
+        });
+    }
+  }
 
   const columns = [
     {
@@ -79,7 +122,7 @@ export default function Tenants() {
       key: 'action',
       render: (text, record) => (
         <Space size="middle">
-          <Link to={"/jobs/" + record._id}>Jobs</Link>
+          <a href="#" onClick={() => triggerBackup(record._id)}>Backup</a>
           <a rel={'external'} target="_blank" href={"https://login.microsoftonline.com/" + record.tenantId + "/adminconsent?client_id=" + aadappid}>Grant Permission</a>
           <a href="#" onClick={() => triggerTenantUpdate(record._id)}>Pull Data</a>
           <a>Delete</a>

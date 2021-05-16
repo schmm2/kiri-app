@@ -1,9 +1,10 @@
 import { notification } from "antd";
 
-const openNotificationWithIcon = (title, description, type) => {
+const openNotificationWithIcon = (title, description, type, duration = 5) => {
     notification[type]({
         message: title,
-        description: description
+        description: description,
+        duration: duration
     });
 };
 
