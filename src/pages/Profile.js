@@ -1,8 +1,9 @@
 import React from "react"
+import DefaultPage from '../layouts/DefaultPage';
 
 export default function Profile() {
   return (
-    <div>
+    <DefaultPage>
       <h1>Profile</h1>
       <div className="basicInformationTable">
         <div className="row">
@@ -14,6 +15,6 @@ export default function Profile() {
           <span></span>
         </div>
       </div>
-    </div>
+    </DefaultPage>
   );
-} 
+}

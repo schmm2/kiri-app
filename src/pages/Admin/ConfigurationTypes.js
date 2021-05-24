@@ -3,6 +3,7 @@ import { configurationTypeMany } from "graphql/queries";
 import { configurationTypeRemoveById as configurationTypeRemoveByIdMutation } from "graphql/mutations";
 import { Link } from "react-router-dom";
 import { gql, useQuery, useMutation } from '@apollo/client';
+import DefaultPage from '../../layouts/DefaultPage';
 
 // antd components
 import { Table, Button, Space } from "antd";
@@ -48,7 +49,7 @@ export default function ConfigurationTypes() {
     }
 
     return (
-        <div>
+        <DefaultPage>
             <h1>ConfigurationTypes</h1>
             <Table loading={loading} rowKey="id" columns={columns} dataSource={data.configurationTypeMany} onChange={onChange}></Table>
             <Button>
@@ -57,6 +58,6 @@ export default function ConfigurationTypes() {
                     Add Type
                 </Link>
             </Button>
-        </div>
+        </DefaultPage>
     );
 }

@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { renderDate } from 'util/renderDate'
 import moment from 'moment';
 import { useLazyQuery, gql } from '@apollo/client';
+import DefaultPage from '../layouts/DefaultPage';
 
 export default function Jobs(props) {
   const { match: { params } } = props;
@@ -86,7 +87,7 @@ export default function Jobs(props) {
   }
 
   return (
-    <div>
+    <DefaultPage>
       {
         tenantdata && tenantdata.tenantById
           ? <h1>Jobs - {tenantdata.tenantById.name}</h1>
@@ -98,6 +99,6 @@ export default function Jobs(props) {
       <Button>
         <Link to={"/tenants"}>Back</Link>
       </Button>
-    </div>
+    </DefaultPage>
   );
 }

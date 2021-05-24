@@ -1,3 +1,9 @@
+.memDevices{
+    padding: 2vh;
+    background-color: #F5F7FA;
+    min-height: 100%;
+}
+
 .card {
     border: 1px solid #f0f0f0;
     border-radius: 2px;
@@ -11,10 +17,6 @@
 
 .ant-card-body{
     text-align: center;
-}
-
-.dashboard{
-    background-color: #f0f2f5;
 }
 
 /* line connecting label text */

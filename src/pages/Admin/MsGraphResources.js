@@ -7,6 +7,7 @@ import { gql, useQuery } from '@apollo/client';
 // antd components
 import { Table, Button, Space } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
+import DefaultPage from '../../layouts/DefaultPage';
 
 export default function MsGraphResources() {
     const { loading, error, data = [] } = useQuery(msGraphResourceMany);
@@ -68,7 +69,7 @@ export default function MsGraphResources() {
     }
 
     return (
-        <div>
+        <DefaultPage>
             <h1>MsGraph Resources</h1>
             <Table loading={loading} rowKey="id" columns={columns} dataSource={data.msGraphResourceMany} onChange={onChange}></Table>
             <Button>
@@ -77,6 +78,6 @@ export default function MsGraphResources() {
                     Add Resource
                 </Link>
             </Button>
-        </div>
+        </DefaultPage>
     );
 }

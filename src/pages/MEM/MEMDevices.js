@@ -79,7 +79,7 @@ export default function MEMDeviceConfigurations() {
     }
 
     return (
-        <div>
+        <div className="memDevices">
             <h1>Devices</h1>
             <Tabs defaultActiveKey="1">
                 <TabPane

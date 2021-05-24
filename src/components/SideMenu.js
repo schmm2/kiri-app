@@ -29,10 +29,10 @@ export default function SideMenu(props) {
         </Link>
       </Menu.Item>
       <Menu.Item key="/memDevices" icon={<DesktopOutlined />}>
-          <Link to="/memDevices">
-            Devices
+        <Link to="/memDevices">
+          Devices
           </Link>
-        </Menu.Item>
+      </Menu.Item>
       <SubMenu key="/mem" icon={<FormOutlined />} title="Configurations">
         <Menu.Item key="/configurationprofile">
           <Link to="/configurationprofile">
@@ -70,11 +70,18 @@ export default function SideMenu(props) {
           </Link>
         </Menu.Item>
       </SubMenu>
-      <Menu.Item key="/tenants" icon={<ApartmentOutlined />}>
-        <Link to="/tenants">
-          Tenants
+      <SubMenu key="/tenants" icon={<ApartmentOutlined />} title="Tenants">
+        <Menu.Item key="/tenantsOverview">
+          <Link to="/tenants">
+            Overview
         </Link>
-      </Menu.Item>
+        </Menu.Item>
+        <Menu.Item key="/jobs">
+          <Link to="/jobs">
+            Jobs
+          </Link>
+        </Menu.Item>
+      </SubMenu>
       <SubMenu key="/admin" icon={<SettingOutlined />} title="Admin">
         <Menu.Item key="/configurationTypes">
           <Link to="/configurationTypes">

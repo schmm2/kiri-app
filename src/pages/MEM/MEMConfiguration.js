@@ -8,6 +8,7 @@ import ReactJson from 'react-json-view'
 import { findType } from 'util/findType';
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
 import { useQuery } from '@apollo/client';
+import DefaultPage from '../../layouts/DefaultPage';
 
 import { Table, Button, Menu, Dropdown, Badge, Space, Tabs, Spin } from 'antd';
 const { TabPane } = Tabs;
@@ -263,7 +264,7 @@ export default function MEMConfiguration(props) {
     }
 
     return (
-        <div>
+        <DefaultPage>
             <div>
                 {state.loading ? (
                     <div>
@@ -347,6 +348,6 @@ export default function MEMConfiguration(props) {
                     </Button>
                 </Space>
             </div>
-        </div>
+        </DefaultPage>
     );
 }

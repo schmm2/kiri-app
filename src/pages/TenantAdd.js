@@ -5,18 +5,19 @@ import { bridge as addTenantSchema } from 'forms/tenantAdd';
 import { Button } from "antd"
 import { tenantCreateOne } from "graphql/mutations";
 import { gql, useMutation } from '@apollo/client';
+import DefaultPage from '../layouts/DefaultPage';
 
 export default function Tenants() {
   const [createTenant, tenant] = useMutation(tenantCreateOne);
 
   return (
-    <div>
+    <DefaultPage>
       <AutoForm schema={addTenantSchema} onSubmit={
         data => { createTenant({ variables: { record: data } }) }
       } />
       <Button>
         <Link to={"/tenants"}>Back</Link>
       </Button>
-    </div>
+    </DefaultPage>
   );
 }

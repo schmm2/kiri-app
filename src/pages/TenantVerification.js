@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { triggerTenantVerification as triggerTenantMutation } from "graphql/mutations";
 import { Link, useLocation, BrowserRouter as Router } from "react-router-dom";
+import DefaultPage from '../layouts/DefaultPage';
 
 export default function TenantVerification() {
     let query = new URLSearchParams(useLocation().search);
@@ -26,7 +27,7 @@ export default function TenantVerification() {
 
             // console.log(adminConsent);
             // console.log(azureTenantId);
-            
+
             try {
                 /*let response = await API.graphql(graphqlOperation(triggerTenantMutation, { tenantId: azureTenantId }));
                 console.log(response);
@@ -47,11 +48,11 @@ export default function TenantVerification() {
 
 
     return (
-        <div>
+        <DefaultPage>
             <h1>Tenant Verification</h1>
-            <p>Tenant { azureTenantId }</p>
-            <p>isVerified { isVerified.toString() }</p>
-        </div>
+            <p>Tenant {azureTenantId}</p>
+            <p>isVerified {isVerified.toString()}</p>
+        </DefaultPage>
     );
 }
 

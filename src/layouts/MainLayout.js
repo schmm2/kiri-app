@@ -97,11 +97,14 @@ export default function MainLayout(props) {
             onClick: () => { dispatch({ type: 'TOGGLE_COLLAPSE' }) },
           })}
           <Menu id="headerMenu">
-            <Dropdown overlay={tenantMenu} placement="bottomRight">
-              <Button ghost>{
-                state.selectedTenant ? state.selectedTenant.name : 'Tenant'
-              }</Button>
-            </Dropdown>
+            {
+              data && data.tenantMany && data.tenantMany.length > 0 &&
+              <Dropdown overlay={tenantMenu} placement="bottomRight">
+                <Button ghost>{
+                  state.selectedTenant ? state.selectedTenant.name : 'No Tenants'
+                }</Button>
+              </Dropdown>
+            }
             <Menu.Item key="mail" icon={<BellOutlined />}>
               <Link to="/jobs"></Link>
             </Menu.Item>

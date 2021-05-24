@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 //import { triggerTenantUpdate as triggerTenantUpdateMutation } from "graphql/mutations";
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
 import { useQuery, gql } from '@apollo/client';
-
+import DefaultPage from '../layouts/DefaultPage';
 
 // antd components
 import { Table, Button, Space } from "antd";
@@ -136,7 +136,7 @@ export default function Tenants() {
   }
 
   return (
-    <div>
+    <div className="defaultPage">
       <h1>Tenants</h1>
       <Table loading={loading} rowKey="id" columns={columns} dataSource={data && data.tenantMany} onChange={onChange}></Table>
       <Button>

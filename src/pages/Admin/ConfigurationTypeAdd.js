@@ -7,7 +7,10 @@ import { Button } from "antd"
 import { JSONSchemaBridge } from "uniforms-bridge-json-schema";
 import { gql, useQuery, useMutation } from '@apollo/client';
 import Ajv from "ajv";
+import DefaultPage from '../../layouts/DefaultPage';
+
 const ajv = new Ajv({ allErrors: true, useDefaults: true });
+
 
 export default function ConfigurationTypeAdd() {
     const [configurationTypeSchema, setConfigurationTypeSchema] = useState(null);
@@ -142,7 +145,7 @@ export default function ConfigurationTypeAdd() {
     }
 
     return (
-        <div>
+        <DefaultPage>
             {loading ? (
                 <p>Loading...</p>
             ) : (
@@ -158,6 +161,6 @@ export default function ConfigurationTypeAdd() {
                     </Button>
                 </div>
             )}
-        </div>
+        </DefaultPage>
     );
 }

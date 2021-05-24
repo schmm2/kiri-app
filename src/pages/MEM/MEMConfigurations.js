@@ -113,7 +113,7 @@ export default function MEMConfigurations(props) {
   }
 
   return (
-    <div>
+    <div className="defaultPage">
       <h1>{props.title}</h1>
       <div>
         <Table rowKey="id" loading={state.loading} pagination={{ pageSize: 25 }} columns={columns} dataSource={state.configurations} onChange={onChange} />
