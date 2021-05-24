@@ -20,6 +20,7 @@
     "deep-object-diff": "^1.1.0",
     "formik": "^2.2.0",
     "graphql": "^15.5.0",
+    "http-server": "^0.12.3",
     "js-file-download": "^0.4.12",
     "moment": "^2.29.1",
     "react": "^16.14.0",
@@ -36,7 +37,8 @@
     "uniforms-bridge-json-schema": "^3.0.0-rc.5"
   },
   "scripts": {
-    "start": "craco start",
+    "start": "http-server ./build -p 443",
+    "dev": "craco start",
     "build": "craco build",
     "test": "craco test",
     "eject": "craco eject"
@@ -58,11 +60,11 @@
   },
   "devDependencies": {
     "@graphql-codegen/cli": "1.21.4",
-    "@graphql-codegen/typescript-react-apollo": "2.2.4",
+    "@graphql-codegen/introspection": "1.18.2",
+    "@graphql-codegen/typescript": "1.22.0",
     "@graphql-codegen/typescript-document-nodes": "1.17.11",
     "@graphql-codegen/typescript-graphql-files-modules": "1.18.1",
-    "@graphql-codegen/typescript": "1.22.0",
     "@graphql-codegen/typescript-operations": "1.17.16",
-    "@graphql-codegen/introspection": "1.18.2"
+    "@graphql-codegen/typescript-react-apollo": "2.2.4"
   }
 }
