@@ -58,7 +58,7 @@
     ]
   },
   "engines": {
-    "node": "14.0"
+    "node": "14.16.0"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "1.21.4",
