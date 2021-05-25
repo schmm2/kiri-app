@@ -37,8 +37,7 @@
     "uniforms-bridge-json-schema": "^3.0.0-rc.5"
   },
   "scripts": {
-    "start": "http-server ./build -p 443",
-    "dev": "craco start",
+    "start": "craco start",
     "build": "craco build",
     "test": "craco test",
     "eject": "craco eject"
