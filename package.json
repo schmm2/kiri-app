@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.3.16",
-    "@craco/craco": "^6.1.1",
+    "@craco/craco": "^6.1.2",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
@@ -64,6 +64,7 @@
     "@graphql-codegen/typescript-document-nodes": "1.17.11",
     "@graphql-codegen/typescript-graphql-files-modules": "1.18.1",
     "@graphql-codegen/typescript-operations": "1.17.16",
-    "@graphql-codegen/typescript-react-apollo": "2.2.4"
+    "@graphql-codegen/typescript-react-apollo": "2.2.4",
+    "craco-esbuild": "^0.3.2"
   }
 }
