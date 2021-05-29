@@ -5,6 +5,9 @@ const CracoLessPlugin = require('craco-less');
 const CracoEsbuildPlugin = require('craco-esbuild');
 
 module.exports = {
+    eslint: {
+        enabled: false
+    },
     plugins: [
         {
             plugin: CracoLessPlugin, CracoEsbuildPlugin,
