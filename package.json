@@ -34,7 +34,8 @@
     "uniform": "^0.5.1",
     "uniforms": "^3.0.0-rc.5",
     "uniforms-antd": "^3.0.0-rc.5",
-    "uniforms-bridge-json-schema": "^3.0.0-rc.5"
+    "uniforms-bridge-json-schema": "^3.0.0-rc.5",
+    "craco-esbuild": "^0.3.2"
   },
   "scripts": {
     "start": "craco start",
@@ -65,7 +66,6 @@
     "@graphql-codegen/typescript-document-nodes": "1.17.11",
     "@graphql-codegen/typescript-graphql-files-modules": "1.18.1",
     "@graphql-codegen/typescript-operations": "1.17.16",
-    "@graphql-codegen/typescript-react-apollo": "2.2.4",
-    "craco-esbuild": "^0.3.2"
+    "@graphql-codegen/typescript-react-apollo": "2.2.4"
   }
 }
