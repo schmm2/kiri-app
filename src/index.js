@@ -9,7 +9,7 @@ const apiurl = process.env.REACT_APP_APIURL;
 console.log("API_URL", apiurl)
 
 const client = new ApolloClient({
-  uri: apiurl + '/graphql',
+  uri: apiurl,
   cache: new InMemoryCache(),
   fetchOptions: {
     mode: 'no-cors',
