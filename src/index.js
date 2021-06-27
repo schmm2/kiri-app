@@ -6,7 +6,7 @@ import { BrowserRouter as Router } from 'react-router-dom'
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 
 const backendApiUrl = process.env.REACT_APP_BACKENDAPIURL;
-const functionKey = process.env.REAT_APP_FUNCTIONKEY;
+const functionKey = process.env.REACT_APP_FUNCTIONKEY;
 
 const graphqlUrl = backendApiUrl + "/graphql"
 
