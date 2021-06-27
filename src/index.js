@@ -5,11 +5,20 @@ import * as serviceWorker from './serviceWorker';
 import { BrowserRouter as Router } from 'react-router-dom'
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 
-const apiurl = process.env.REACT_APP_APIURL;
-console.log("API_URL", apiurl)
+const backendApiUrl = process.env.REACT_APP_BACKENDAPIURL;
+const functionKey = process.env.REAT_APP_FUNCTIONKEY;
+
+const graphqlUrl = backendApiUrl + "/graphql"
+
+console.log("GRAPHQL API URL", graphqlUrl)
+
+// add key to authenticate
+if(functionKey){
+  graphqlUrl = graphqlUrl + "?code=" + functionKey;
+}
 
 const client = new ApolloClient({
-  uri: apiurl,
+  uri: graphqlUrl,
   cache: new InMemoryCache(),
   fetchOptions: {
     mode: 'no-cors',
