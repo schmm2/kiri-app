@@ -8,7 +8,7 @@ import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 const backendApiUrl = process.env.REACT_APP_BACKENDAPIURL;
 const functionKey = process.env.REACT_APP_FUNCTIONKEY;
 
-const graphqlUrl = backendApiUrl + "/graphql"
+let graphqlUrl = backendApiUrl + "/graphql"
 
 console.log("GRAPHQL API URL", graphqlUrl)
 
