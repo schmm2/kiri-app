@@ -14,6 +14,7 @@ console.log("GRAPHQL API URL", graphqlUrl)
 
 // add key to authenticate
 if(functionKey){
+  console.log("found function key");
   graphqlUrl = graphqlUrl + "?code=" + functionKey;
 }
 
