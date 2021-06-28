@@ -22,6 +22,7 @@ import TenantVerification from 'pages/TenantVerification';
 
 // CSS
 import './App.less';
+import AdminOverview from 'pages/Admin/AdminOverview';
 
 function App() {
   return (
@@ -68,6 +69,7 @@ function App() {
           <Route path="/tenantAdd" component={TenantAdd} />
           <Route path="/jobs/:tenantId" component={Jobs} />
           <Route path="/jobs" component={Jobs} />
+          <Route path="/adminOverview" component={AdminOverview} />
           <Route path="/tenantverification" component={TenantVerification} />
         </Switch>
       </Main>

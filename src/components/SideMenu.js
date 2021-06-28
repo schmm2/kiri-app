@@ -83,6 +83,11 @@ export default function SideMenu(props) {
         </Menu.Item>
       </SubMenu>
       <SubMenu key="/admin" icon={<SettingOutlined />} title="Admin">
+      <Menu.Item key="/adminoverview">
+          <Link to="/adminoverview">
+            Overview
+          </Link>
+        </Menu.Item>
         <Menu.Item key="/configurationTypes">
           <Link to="/configurationTypes">
             Configurations Types

@@ -24,7 +24,11 @@ export default function Tenants() {
   const backendApiUrlBase = process.env.REACT_APP_BACKENDAPIURL;
   const functionKey = process.env.REACT_APP_FUNCTIONKEY;
 
-  const { loading, error, data } = useQuery(tenantMany);
+  const { loading, error, data, refetch } = useQuery(tenantMany, {
+    fetchPolicy: "network-only"
+  });
+
+  console.log("load tenants")
 
   /*
   function deleteTenant(tenantId) {
@@ -43,7 +47,7 @@ export default function Tenants() {
       let functionToCall = "/orchestrators/ORC1000AzureDataCollect"
       let backendApiUrl = backendApiUrlBase + functionToCall;
 
-      if(functionKey){
+      if (functionKey) {
         backendApiUrl = backendApiUrl + "?code=" + functionKey
       }
 
@@ -73,7 +77,7 @@ export default function Tenants() {
       let functionToCall = "/TRG2000ConfigurationBackupCreate"
       let backendApiUrl = backendApiUrlBase + functionToCall;
 
-      if(functionKey){
+      if (functionKey) {
         backendApiUrl = backendApiUrl + "?code=" + functionKey
       }
       let fileName = "export.zip";

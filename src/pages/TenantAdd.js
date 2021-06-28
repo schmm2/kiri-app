@@ -6,14 +6,24 @@ import { Button } from "antd"
 import { tenantCreateOne } from "graphql/mutations";
 import { gql, useMutation } from '@apollo/client';
 import DefaultPage from '../layouts/DefaultPage';
+import { useHistory } from "react-router-dom";
 
 export default function Tenants() {
-  const [createTenant, tenant] = useMutation(tenantCreateOne);
+  const history = useHistory();
+  
+  const [createTenant, tenant] = useMutation(tenantCreateOne, {
+    onCompleted(data) {
+      console.log(data);
+      history.push("/tenants");
+    }
+  });
 
   return (
     <DefaultPage>
       <AutoForm schema={addTenantSchema} onSubmit={
-        data => { createTenant({ variables: { record: data } }) }
+        data => { 
+          createTenant({ variables: { record: data } }); 
+        }
       } />
       <Button>
         <Link to={"/tenants"}>Back</Link>
