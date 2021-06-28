@@ -20,7 +20,9 @@ var fileDownload = require('js-file-download');
 
 export default function Tenants() {
   const aadappid = process.env.REACT_APP_AADAPPID;
-  const apiurlbase = process.env.REACT_APP_APIURL;
+
+  const backendApiUrlBase = process.env.REACT_APP_BACKENDAPIURL;
+  const functionKey = process.env.REACT_APP_FUNCTIONKEY;
 
   const { loading, error, data } = useQuery(tenantMany);
 
@@ -37,9 +39,13 @@ export default function Tenants() {
     console.log("update tenant data");
     console.log(tenantId);
 
-    if (apiurlbase) {
+    if (backendApiUrlBase) {
       let functionToCall = "/orchestrators/ORC1000AzureDataCollect"
-      let apiurl = apiurlbase + functionToCall;
+      let backendApiUrl = backendApiUrlBase + functionToCall;
+
+      if(functionKey){
+        backendApiUrl = backendApiUrl + "?code=" + functionKey
+      }
 
       const requestOptions = {
         method: 'POST',
@@ -47,7 +53,7 @@ export default function Tenants() {
         body: JSON.stringify({ tenantDbId: tenantId })
       };
 
-      fetch(apiurl, requestOptions)
+      fetch(backendApiUrl, requestOptions)
         .then(response => response.json())
         .then(data => {
           openNotificationWithIcon('Pull Data', 'Job started', 'success');
@@ -55,14 +61,21 @@ export default function Tenants() {
           openNotificationWithIcon('Pull Data', 'Job error', 'error');
         });
     }
+    else {
+      console.log("api endpoint not defined")
+    }
   }
 
   async function triggerBackup(tenantDbId) {
     console.log("backup config for tenant " + tenantDbId);
 
-    if (apiurlbase) {
+    if (backendApiUrlBase) {
       let functionToCall = "/TRG2000ConfigurationBackupCreate"
-      let apiurl = apiurlbase + functionToCall;
+      let backendApiUrl = backendApiUrlBase + functionToCall;
+
+      if(functionKey){
+        backendApiUrl = backendApiUrl + "?code=" + functionKey
+      }
       let fileName = "export.zip";
 
       openNotificationWithIcon('Backup', 'Backup Job started', 'success', 8.0);
@@ -73,7 +86,7 @@ export default function Tenants() {
         body: JSON.stringify({ tenantDbId: tenantDbId })
       };
 
-      fetch(apiurl, requestOptions)
+      fetch(backendApiUrl, requestOptions)
         .then(response => {
           // console.log(response);
           // build filename, returned in header, built serverside
@@ -94,6 +107,9 @@ export default function Tenants() {
           // console.log(error);
           openNotificationWithIcon('Backup', error, 'error')
         });
+    }
+    else {
+      console.log("api endpoint not defined")
     }
   }
 
