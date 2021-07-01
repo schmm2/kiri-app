@@ -130,20 +130,6 @@ export default function ConfigurationTypeAdd() {
     }
 
 
-    async function fetch() {
-        /*
-        // get current ms graph Resource data
-        let msGraphResourcesData = await API.graphql(graphqlOperation(listMsGraphResources));
-        // console.log(msGraphResourcesData);
-        msGraphResourcesData = msGraphResourcesData.data.listMSGraphResources.items;
-
-        let schema = buildSchema(msGraphResourcesData);
-        const schemaValidator = createValidator(schema);
-        let schemaBridge = new JSONSchemaBridge(schema, schemaValidator);
-        setConfigurationTypeSchema(schemaBridge);
-        setLoading(false);*/
-    }
-
     return (
         <DefaultPage>
             {loading ? (

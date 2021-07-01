@@ -7,10 +7,17 @@ import { bridge as addMsGraphResourceSchema } from 'forms/msGraphResourceAdd';
 import { Button } from "antd"
 import { gql, useMutation } from '@apollo/client';
 import DefaultPage from '../../layouts/DefaultPage';
+import { useHistory } from "react-router-dom";
 
 export default function MsGraphResourceAdd() {
+    const history = useHistory();
 
-    const [createMsGraphResource, msGraphResource] = useMutation(msGraphResourceCreateOneMutation);
+    const [createMsGraphResource, msGraphResource] = useMutation(msGraphResourceCreateOneMutation, {
+        onCompleted(data) {
+            console.log(data);
+            history.push("/msGraphResources");
+        }
+    });
 
     return (
         <DefaultPage>

@@ -30,14 +30,10 @@ export default function Tenants() {
 
   console.log("load tenants")
 
-  /*
-  function deleteTenant(tenantId) {
-    const [deleteTenant, { data }] = useMutation(deleteTenantMutation);
-    try {
-       API.graphql(graphqlOperation(deleteTenantMutation, ));
-    } catch (err) {
-    }
-  }*/
+  
+  function deleteTenant(tenant) {
+    console.log(tenant);
+  }
 
   async function triggerTenantUpdate(tenantId) {
     console.log("update tenant data");
@@ -145,7 +141,7 @@ export default function Tenants() {
           <a href="#" onClick={() => triggerBackup(record._id)}>Backup</a>
           <a rel={'external'} target="_blank" href={"https://login.microsoftonline.com/" + record.tenantId + "/adminconsent?client_id=" + aadappid}>Grant Permission</a>
           <a href="#" onClick={() => triggerTenantUpdate(record._id)}>Pull Data</a>
-          <a>Delete</a>
+          <a href="#" onClick={() => deleteTenant(record)}>Delete</a>
         </Space>
       ),
     },

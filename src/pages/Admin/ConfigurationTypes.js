@@ -10,8 +10,15 @@ import { Table, Button, Space } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 
 export default function ConfigurationTypes() {
-    const { loading, error, data = [] } = useQuery(configurationTypeMany);
-    const [deleteConfigurationType, configurationType] = useMutation(configurationTypeRemoveByIdMutation);
+    const { loading, error, data = [] } = useQuery(configurationTypeMany, {
+        fetchPolicy: "network-only"
+    });
+
+    const [deleteConfigurationType, configurationType] = useMutation(configurationTypeRemoveByIdMutation, {
+        onCompleted(data) {
+            console.log(data);
+        }
+    });
 
     const columns = [
         {

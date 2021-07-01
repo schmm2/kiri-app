@@ -10,7 +10,9 @@ import { PlusOutlined } from "@ant-design/icons";
 import DefaultPage from '../../layouts/DefaultPage';
 
 export default function MsGraphResources() {
-    const { loading, error, data = [] } = useQuery(msGraphResourceMany);
+    const { loading, error, data = [] } = useQuery(msGraphResourceMany, {
+        fetchPolicy: "network-only"
+    });
 
     const columns = [
         {
