@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
 import { configurationTypeMany } from "graphql/queries";
 import { configurationTypeRemoveById as configurationTypeRemoveByIdMutation } from "graphql/mutations";
 import { Link } from "react-router-dom";
-import { gql, useQuery, useMutation } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
+import { openNotificationWithIcon } from 'util/openNotificationWithIcon';
 import DefaultPage from '../../layouts/DefaultPage';
-import { apipost } from "util/api";
 
 // antd components
 import { Table, Button, Space } from "antd";
@@ -15,9 +14,12 @@ export default function ConfigurationTypes() {
         fetchPolicy: "network-only"
     });
 
-    const [deleteConfigurationType, configurationType] = useMutation(configurationTypeRemoveByIdMutation, {
+    const [deleteConfigurationType] = useMutation(configurationTypeRemoveByIdMutation, {
         onCompleted(data) {
-            console.log(data);
+            // console.log(data);
+            if (!data.configurationTypeRemoveById) {
+                openNotificationWithIcon('Delete', 'error deleting object', 'error');
+            }
         }
     });
 
@@ -45,7 +47,12 @@ export default function ConfigurationTypes() {
                 <Space size="middle">
                     <Button onClick={() => {
                         console.log(record);
-                        deleteConfigurationType({ variables: { id: record._id } })
+                        deleteConfigurationType({
+                            variables: { id: record._id },
+                            refetchQueries: [
+                                { query: configurationTypeMany }
+                            ]
+                        })
                     }}>Delete</Button>
                 </Space>
             ),

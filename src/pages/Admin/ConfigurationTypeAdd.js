@@ -5,17 +5,24 @@ import { Link } from "react-router-dom";
 import { AutoForm } from 'uniforms-antd';
 import { Button } from "antd"
 import { JSONSchemaBridge } from "uniforms-bridge-json-schema";
-import { gql, useQuery, useMutation } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
 import Ajv from "ajv";
 import DefaultPage from '../../layouts/DefaultPage';
+import { useHistory } from "react-router-dom";
 
 const ajv = new Ajv({ allErrors: true, useDefaults: true });
-
 
 export default function ConfigurationTypeAdd() {
     const [configurationTypeSchema, setConfigurationTypeSchema] = useState(null);
     const [dataPrepared, setDataPrepared] = useState(false);
-    const [createConfigurationType, configurationType] = useMutation(configurationTypeCreateOneMutation);
+    const history = useHistory();
+
+    const [createConfigurationType] = useMutation(configurationTypeCreateOneMutation, {
+        onCompleted(data) {
+            console.log(data);
+            history.push("/configurationTypes");
+        }
+    });
 
     const { loading, error, data = [] } = useQuery(msGraphResourceMany, {
         onCompleted: data => {
@@ -25,9 +32,6 @@ export default function ConfigurationTypeAdd() {
 
             setConfigurationTypeSchema(schemaBridge);
             setDataPrepared(true);
-
-            // console.log(data)
-            // console.log(schema);
         }
     });
 
@@ -138,7 +142,7 @@ export default function ConfigurationTypeAdd() {
                     {
                         dataPrepared &&
                         <AutoForm schema={configurationTypeSchema} onSubmit={
-                            data => { createConfigurationType ({ variables: { record: data } }) }
+                            data => { createConfigurationType({ variables: { record: data } }) }
                         } />
                     }
                     <Button>

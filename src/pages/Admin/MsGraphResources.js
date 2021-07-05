@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
 import { msGraphResourceMany, getMsGraphResource } from "graphql/queries";
 import { msGraphResourceRemoveById as msGraphResourceRemoveByIdMutation } from "graphql/mutations";
 import { Link } from "react-router-dom";
-import { gql, useQuery, useMutation } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
 import { openNotificationWithIcon } from 'util/openNotificationWithIcon';
 
 // antd components
@@ -16,7 +15,7 @@ export default function MsGraphResources() {
         fetchPolicy: "network-only"
     });
 
-    const [deleteMsGraphResource, msGraphResource] = useMutation(msGraphResourceRemoveByIdMutation, {
+    const [deleteMsGraphResource] = useMutation(msGraphResourceRemoveByIdMutation, {
         onCompleted(data) {
             // console.log(data);
             if (!data.msGraphResourceRemoveById) {
@@ -56,7 +55,12 @@ export default function MsGraphResources() {
                 <Space size="middle">
                     <Button onClick={() => {
                         console.log(record);
-                        deleteMsGraphResource({ variables: { id: record._id } })
+                        deleteMsGraphResource({
+                            variables: { id: record._id },
+                            refetchQueries: [
+                                { query: msGraphResourceMany }
+                            ]
+                        });
                     }}>Delete</Button>
                 </Space>
             ),
