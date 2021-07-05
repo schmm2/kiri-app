@@ -1,17 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { msGraphResourceMany, getMsGraphResource } from "graphql/queries";
-import { deleteMsGraphResource as deleteMsGraphResourceMutation } from "graphql/mutations";
+import { msGraphResourceRemoveById as msGraphResourceRemoveByIdMutation } from "graphql/mutations";
 import { Link } from "react-router-dom";
-import { gql, useQuery } from '@apollo/client';
+import { gql, useQuery, useMutation } from '@apollo/client';
+import { openNotificationWithIcon } from 'util/openNotificationWithIcon';
 
 // antd components
 import { Table, Button, Space } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import DefaultPage from '../../layouts/DefaultPage';
 
+
 export default function MsGraphResources() {
     const { loading, error, data = [] } = useQuery(msGraphResourceMany, {
         fetchPolicy: "network-only"
+    });
+
+    const [deleteMsGraphResource, msGraphResource] = useMutation(msGraphResourceRemoveByIdMutation, {
+        onCompleted(data) {
+            // console.log(data);
+            if (!data.msGraphResourceRemoveById) {
+                openNotificationWithIcon('Delete', 'error deleting object', 'error');
+            }
+        }
     });
 
     const columns = [
@@ -28,15 +39,25 @@ export default function MsGraphResources() {
             dataIndex: "resource",
         },
         {
-            title: "Version",
+            title: "API Version",
             dataIndex: "version",
+        },
+        {
+            title: "Number of ConfigurationTypes",
+            key: "countconfigurationtypes",
+            render: (text, record) => (
+                <span>{record.configurationTypes.length}</span>
+            )
         },
         {
             title: 'Action',
             key: 'action',
             render: (text, record) => (
                 <Space size="middle">
-                    <Button onClick={() => deleteMsGraphResource(record)}>Delete</Button>
+                    <Button onClick={() => {
+                        console.log(record);
+                        deleteMsGraphResource({ variables: { id: record._id } })
+                    }}>Delete</Button>
                 </Space>
             ),
         },
@@ -44,30 +65,6 @@ export default function MsGraphResources() {
 
     function onChange(pagination, filters, sorter, extra) {
         console.log("params", pagination, filters, sorter, extra);
-    }
-
-    async function deleteMsGraphResource(msGraphResource) {
-        /*let resource = await API.graphql(graphqlOperation(getMsGraphResource, { id: msGraphResource.id }));
-        let configurationTypes = resource.data.getMSGraphResource.configurationTypes
-        // console.log(msGraphResource);
-        // console.log(resource);
-
-        // check if dependend objects exist
-        if (configurationTypes.items && configurationTypes.items.length > 0) {
-            // unable to delete, object still in use
-            console.log("unable to delete, still in use");
-        } else {
-            console.log("delete");
-
-            API.graphql(
-                graphqlOperation( deleteMsGraphResourceMutation, { input: { id: msGraphResource.id }})
-            ).then((result) => {
-                console.log("successfull sent data");
-                console.log(result);
-            }).catch(e => {
-                console.log(e);
-            });
-        }*/
     }
 
     return (

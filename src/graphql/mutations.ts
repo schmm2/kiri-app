@@ -15,20 +15,24 @@ export const tenantCreateOne = gql`
 export const msGraphResourceCreateOne = gql`
   mutation MsGraphResourceCreateOne($record: CreateOneMsGraphResourceInput!){
     msGraphResourceCreateOne(record: $record){
-      record {
-        _id
-      }
+      recordId
     }
   }
 `;
+
+export const msGraphResourceRemoveById = gql`
+  mutation MsGraphResourceRemoveById($id: MongoID!) {
+    msGraphResourceRemoveById(_id: $id) {
+      recordId
+    }
+  }
+ `;
 
 // Configuration Type
 export const configurationTypeRemoveById = gql`
   mutation ConfigurationTypeRemoveById($id: MongoID!) {
     configurationTypeRemoveById(_id: $id) {
-      record {
-        odataType
-      }
+      recordId
     }
   }
  `;

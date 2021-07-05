@@ -100,7 +100,10 @@ export const msGraphResourceMany = gql`
       resource,
       version,
       createdAt,
-      updatedAt
+      updatedAt,
+      configurationTypes{
+        name
+      }
     }
   }
 `

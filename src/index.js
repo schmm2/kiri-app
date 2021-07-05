@@ -7,13 +7,17 @@ import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 
 const backendApiUrl = process.env.REACT_APP_BACKENDAPIURL;
 const functionKey = process.env.REACT_APP_FUNCTIONKEY;
+let graphqlUrl = "";
 
-let graphqlUrl = backendApiUrl + "/graphql"
-
-console.log("GRAPHQL API URL", graphqlUrl)
+if (backendApiUrl) {
+  graphqlUrl = backendApiUrl + "/graphql"
+  console.log("GRAPHQL BACKEND API URL", graphqlUrl)
+} else {
+  console.log("GRAPHQL BACKEND API URL not defined");
+}
 
 // add key to authenticate
-if(functionKey){
+if (functionKey) {
   console.log("found function key");
   graphqlUrl = graphqlUrl + "?code=" + functionKey;
 }
@@ -30,7 +34,7 @@ ReactDOM.render(
   <React.StrictMode>
     <Router>
       <ApolloProvider client={client}>
-        <App/>
+        <App />
       </ApolloProvider>
     </Router>
   </React.StrictMode>,

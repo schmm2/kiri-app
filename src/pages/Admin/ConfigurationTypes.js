@@ -4,6 +4,7 @@ import { configurationTypeRemoveById as configurationTypeRemoveByIdMutation } fr
 import { Link } from "react-router-dom";
 import { gql, useQuery, useMutation } from '@apollo/client';
 import DefaultPage from '../../layouts/DefaultPage';
+import { apipost } from "util/api";
 
 // antd components
 import { Table, Button, Space } from "antd";

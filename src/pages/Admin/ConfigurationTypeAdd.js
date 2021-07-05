@@ -43,12 +43,7 @@ export default function ConfigurationTypeAdd() {
             title: "Add Configuration Type",
             type: "object",
             properties: {
-                odataType: { type: "string" },
-                label: { type: "string" },
-                msGraphResource: {
-                    type: "string",
-                    options: msGraphResourceOptions
-                },
+                name: { type: "string" },
                 platform: {
                     type: "string",
                     options: [
@@ -115,8 +110,12 @@ export default function ConfigurationTypeAdd() {
                         }
                     ]
                 },
+                msGraphResource: {
+                    type: "string",
+                    options: msGraphResourceOptions
+                }
             },
-            required: ["msGraphResource", "odataType", "platform", "category", "label"],
+            required: ["msGraphResource", "platform", "category", "name"],
         };
         return schema;
     }
