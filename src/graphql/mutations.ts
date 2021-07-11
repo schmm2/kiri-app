@@ -11,6 +11,17 @@ export const tenantCreateOne = gql`
   }
 `;
 
+export const tenantVerify = gql`
+  mutation($tenantId: String!, $verified: Boolean!){
+    tenantUpdateOne(filter: {tenantId: $tenantId}, record: { verified: $verified }){
+      record {
+        _id,
+        verified
+      }
+    }
+  }
+`;
+
 // MS Graph Resource
 export const msGraphResourceCreateOne = gql`
   mutation MsGraphResourceCreateOne($record: CreateOneMsGraphResourceInput!){

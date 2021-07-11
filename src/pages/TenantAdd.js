@@ -4,7 +4,7 @@ import { AutoForm } from 'uniforms-antd';
 import { bridge as addTenantSchema } from 'forms/tenantAdd';
 import { Button } from "antd"
 import { tenantCreateOne } from "graphql/mutations";
-import { gql, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import DefaultPage from '../layouts/DefaultPage';
 import { useHistory } from "react-router-dom";
 

@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { tenantById, tenantMany } from "graphql/queries";
-import { deleteTenant as deleteTenantMutation } from "graphql/mutations";
+import {  tenantMany } from "graphql/queries";
 import { Link } from "react-router-dom";
-//import { triggerTenantUpdate as triggerTenantUpdateMutation } from "graphql/mutations";
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
-import { useQuery, gql } from '@apollo/client';
-import DefaultPage from '../layouts/DefaultPage';
+import { useQuery } from '@apollo/client';
+import { apipost } from 'util/api';
 
 // antd components
 import { Table, Button, Space } from "antd";
@@ -17,100 +15,55 @@ import {
 
 var fileDownload = require('js-file-download');
 
-
 export default function Tenants() {
-  const aadappid = process.env.REACT_APP_AADAPPID;
-
-  const backendApiUrlBase = process.env.REACT_APP_BACKENDAPIURL;
-  const functionKey = process.env.REACT_APP_FUNCTIONKEY;
+  const aadappid = process.env.REACT_APP_AADAPPID_MANAGEMENT;
 
   const { loading, error, data, refetch } = useQuery(tenantMany, {
     fetchPolicy: "network-only"
   });
 
-  console.log("load tenants")
-
-  
   function deleteTenant(tenant) {
     console.log(tenant);
   }
 
-  async function triggerTenantUpdate(tenantId) {
-    console.log("update tenant data");
-    console.log(tenantId);
+  async function triggerTenantUpdate(tenantMongoDbId) {
+    console.log("update tenant data for tenantId: " + tenantMongoDbId);
+    openNotificationWithIcon('Pull Data', 'start Job', 'success');
 
-    if (backendApiUrlBase) {
-      let functionToCall = "/orchestrators/ORC1000AzureDataCollect"
-      let backendApiUrl = backendApiUrlBase + functionToCall;
-
-      if (functionKey) {
-        backendApiUrl = backendApiUrl + "?code=" + functionKey
-      }
-
-      const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tenantDbId: tenantId })
-      };
-
-      fetch(backendApiUrl, requestOptions)
-        .then(response => response.json())
-        .then(data => {
-          openNotificationWithIcon('Pull Data', 'Job started', 'success');
-        }).catch((error) => {
-          openNotificationWithIcon('Pull Data', 'Job error', 'error');
-        });
-    }
-    else {
-      console.log("api endpoint not defined")
-    }
+    apipost("orchestrators/ORC1000AzureDataCollect", { tenantMongoDbId: tenantMongoDbId })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        openNotificationWithIcon('Pull Data', 'Job started', 'success');
+      }).catch((error) => {
+        openNotificationWithIcon('Pull Data', 'Job error', 'error');
+        console.log(error);
+      });
   }
 
   async function triggerBackup(tenantDbId) {
     console.log("backup config for tenant " + tenantDbId);
+    openNotificationWithIcon('Backup', 'Backup Job started', 'success', 8.0);
+    let fileName = "export.zip";
 
-    if (backendApiUrlBase) {
-      let functionToCall = "/TRG2000ConfigurationBackupCreate"
-      let backendApiUrl = backendApiUrlBase + functionToCall;
-
-      if (functionKey) {
-        backendApiUrl = backendApiUrl + "?code=" + functionKey
-      }
-      let fileName = "export.zip";
-
-      openNotificationWithIcon('Backup', 'Backup Job started', 'success', 8.0);
-
-      const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tenantDbId: tenantDbId })
-      };
-
-      fetch(backendApiUrl, requestOptions)
-        .then(response => {
-          // console.log(response);
-          // build filename, returned in header, built serverside
-          let contentDisposition = response.headers.get('Content-Disposition')
-          // console.log(contentDisposition);
-          if (contentDisposition) {
-            fileName = contentDisposition.split('filename=')[1]
-            // console.log(fileName)
-          }
-          // read blob data
-          return response.blob()
-        })
-        .then(data => {
-          // console.log(data);
-          openNotificationWithIcon('Backup', 'Backup created successfully, start download', 'success')
-          fileDownload(data, fileName)
-        }).catch((error) => {
-          // console.log(error);
-          openNotificationWithIcon('Backup', error, 'error')
-        });
-    }
-    else {
-      console.log("api endpoint not defined")
-    }
+    apipost("TRG2000ConfigurationBackupCreate", { tenantDbId: tenantDbId })
+      .then(response => {
+        let contentDisposition = response.headers.get('Content-Disposition')
+        // console.log(contentDisposition);
+        if (contentDisposition) {
+          fileName = contentDisposition.split('filename=')[1]
+          // console.log(fileName)
+        }
+        // read blob data
+        return response.blob()
+      })
+      .then(data => {
+        openNotificationWithIcon('Backup', 'Backup created successfully, start download', 'success')
+        fileDownload(data, fileName);
+      }).catch((error) => {
+        openNotificationWithIcon('Backup', error, 'error')
+        console.log(error);
+      });
   }
 
   const columns = [

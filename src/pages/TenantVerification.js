@@ -1,57 +1,72 @@
-import React, { useEffect, useState } from "react";
-import { triggerTenantVerification as triggerTenantMutation } from "graphql/mutations";
-import { Link, useLocation, BrowserRouter as Router } from "react-router-dom";
-import DefaultPage from '../layouts/DefaultPage';
+import React, { useEffect, useState } from "react"
+import { tenantVerify as tenantVerifyMutation } from "graphql/mutations"
+import { Link, useLocation, useHistory, BrowserRouter as Router } from "react-router-dom"
+import DefaultPage from '../layouts/DefaultPage'
+import { useMutation } from '@apollo/client';
+import { openNotificationWithIcon } from "util/openNotificationWithIcon";
+
+function useQuery() {
+    return new URLSearchParams(useLocation().search)
+}
 
 export default function TenantVerification() {
-    let query = new URLSearchParams(useLocation().search);
+    let query = useQuery();
+    const history = useHistory();
 
-    const [azureTenantId, setAzureTenantId] = useState();
-    const [isVerified, setVerification] = useState(false);
+    const [error, setError] = useState()
 
-    useEffect(() => {
-        let azureTenantId = query.get("tenant");
-        let adminConsent = query.get("admin_consent");
-
-        /*console.log("admin consent");
-        console.log(adminConsent);
-        console.log("tenant");
-        console.log(azureTenantId);*/
-
-        triggerTenantVerification(adminConsent, azureTenantId);
-    }, []);
-
-    async function triggerTenantVerification(adminConsent, azureTenantId) {
-        if (adminConsent && azureTenantId) {
-            setAzureTenantId(azureTenantId);
-
-            // console.log(adminConsent);
-            // console.log(azureTenantId);
-
-            try {
-                /*let response = await API.graphql(graphqlOperation(triggerTenantMutation, { tenantId: azureTenantId }));
-                console.log(response);
-
-                if (response.data && response.data.triggerTenantVerification) {
-                    let triggerTenantVerificationResponse = (JSON.parse(response.data.triggerTenantVerification)).body;
-                    if (triggerTenantVerificationResponse && triggerTenantVerificationResponse.ok === true) {
-                        setVerification(true);
-                    } else {
-                        setVerification(false);
-                    }
-                }*/
-            } catch (err) {
-                console.log(err);
+    const [verifiyTenant, { data }] = useMutation(tenantVerifyMutation, {
+        onError: (err) => {
+            setError({
+                title: "GraphQL Error",
+                description: err.toString()
+            });
+        },
+        onCompleted(data) {
+            if (data.tenantUpdateOne && data.tenantUpdateOne.record) {
+                let record = data.tenantUpdateOne.record;
+                console.log(record);
+                if (record.verified) {
+                    // tenant verified status was updated in backend
+                    openNotificationWithIcon('Tenant Verification', 'verified', 'success');
+                    history.push("/tenants");
+                }
+                else {
+                    // something went wrong updating the tenant status in the backend
+                    openNotificationWithIcon('Tenant Verification', 'error', 'error');
+                }
             }
         }
-    }
+    });
 
+    useEffect(() => {
+        let error = query.get("error")
+
+        if (error) {
+            // something went wrong during azure workflow or user canceled
+            let errorDescription = query.get("error_description")
+            setError({
+                title: error,
+                description: errorDescription
+            });
+        } else {
+            console.log("tenant verification successful")
+            let azureTenantId = query.get("tenant")
+            verifiyTenant({ variables: { tenantId: azureTenantId, verified: true } })
+        }
+    }, []);
+
+    if (error) return (
+        <DefaultPage>
+            <h1>Granting access failed</h1>
+            <p>error: {error.title}</p>
+            <p>description: {error.description}</p>
+        </DefaultPage>
+    )
 
     return (
         <DefaultPage>
-            <h1>Tenant Verification</h1>
-            <p>Tenant {azureTenantId}</p>
-            <p>isVerified {isVerified.toString()}</p>
+            <h1>Granting access successfully</h1>
         </DefaultPage>
     );
 }
