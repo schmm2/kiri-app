@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import {  tenantMany } from "graphql/queries";
+import { tenantMany } from "graphql/queries";
+import { tenantRemoveById } from "graphql/mutations";
 import { Link } from "react-router-dom";
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
-import { useQuery } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
 import { apipost } from 'util/api';
 
 // antd components
@@ -22,9 +23,14 @@ export default function Tenants() {
     fetchPolicy: "network-only"
   });
 
-  function deleteTenant(tenant) {
-    console.log(tenant);
-  }
+  const [deleteTenant] = useMutation(tenantRemoveById, {
+    onCompleted(data) {
+      // console.log(data);
+      if (!data.tenantRemoveById) {
+        openNotificationWithIcon('Delete', 'error deleting object', 'error');
+      }
+    }
+  });
 
   async function triggerTenantUpdate(tenantMongoDbId) {
     console.log("update tenant data for tenantId: " + tenantMongoDbId);
@@ -94,7 +100,14 @@ export default function Tenants() {
           <a href="#" onClick={() => triggerBackup(record._id)}>Backup</a>
           <a rel={'external'} target="_blank" href={"https://login.microsoftonline.com/" + record.tenantId + "/adminconsent?client_id=" + aadappid}>Grant Permission</a>
           <a href="#" onClick={() => triggerTenantUpdate(record._id)}>Pull Data</a>
-          <a href="#" onClick={() => deleteTenant(record)}>Delete</a>
+          <a href="#" onClick={() => {
+            deleteTenant({
+              variables: { id: record._id },
+              refetchQueries: [
+                { query: tenantMany }
+              ]
+            });
+          }}>Delete</a>
         </Space>
       ),
     },

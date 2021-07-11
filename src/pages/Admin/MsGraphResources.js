@@ -54,7 +54,6 @@ export default function MsGraphResources() {
             render: (text, record) => (
                 <Space size="middle">
                     <Button onClick={() => {
-                        console.log(record);
                         deleteMsGraphResource({
                             variables: { id: record._id },
                             refetchQueries: [

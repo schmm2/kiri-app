@@ -11,6 +11,14 @@ export const tenantCreateOne = gql`
   }
 `;
 
+export const tenantRemoveById = gql`
+  mutation($id: MongoID!) {
+    tenantRemoveById(_id: $id) {
+      recordId
+    }
+  }
+ `;
+
 export const tenantVerify = gql`
   mutation($tenantId: String!, $verified: Boolean!){
     tenantUpdateOne(filter: {tenantId: $tenantId}, record: { verified: $verified }){
