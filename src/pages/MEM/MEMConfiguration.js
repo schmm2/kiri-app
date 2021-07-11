@@ -1,18 +1,17 @@
 import React, { useReducer } from "react";
 import { configurationById } from "graphql/queries";
-import { triggerConfigurationUpdate } from "graphql/mutations";
 import { Link } from "react-router-dom";
 import { updatedDiff } from 'deep-object-diff';
 import { renderDate } from 'util/renderDate';
-import ReactJson from 'react-json-view'
 import { findType } from 'util/findType';
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
 import { useQuery } from '@apollo/client';
+import { apipost } from 'util/api';
+import ReactJson from 'react-json-view'
 import DefaultPage from '../../layouts/DefaultPage';
 
 import { Table, Button, Menu, Dropdown, Badge, Space, Tabs, Spin } from 'antd';
 const { TabPane } = Tabs;
-const apiurlbase = process.env.REACT_APP_APIURL;
 
 export default function MEMConfiguration(props) {
 
@@ -127,7 +126,7 @@ export default function MEMConfiguration(props) {
                 activeVersion: state.newestConfigurationVersion.value[key],
                 previousVersion: selectedConfigurationVersion.value[key]
             }
-            console.log(newDataEntry);
+            // console.log(newDataEntry);
             dataSourceTmp.push(newDataEntry);
             index++;
 
@@ -161,9 +160,8 @@ export default function MEMConfiguration(props) {
     }
 
     function renderData(record) {
-
         let type = findType(record);
-        console.log("found type " + type + " for data " + record);
+        // console.log("found type " + type + " for data " + record);
 
         switch (type) {
             case "array":
@@ -229,38 +227,23 @@ export default function MEMConfiguration(props) {
     );
 
     async function restoreVersion() {
-        /*console.log("restore version");
-        console.log(state.configuration.tenant._id);
-        console.log(state.selectedConfigurationVersion._id);
-        console.log(state.msGraphResource);*/
+        let tenantDbId = state.configuration.tenant._id;
+        let configurationVersionDbId = state.selectedConfigurationVersion._id;
+        let msGraphResource = state.msGraphResource;
 
-        if (apiurlbase) {
-            let functionToCall = "/orchestrators/ORC1100MEMConfigurationUpdate"
-            let apiurl = apiurlbase + functionToCall;
-
-            let tenantDbId = state.configuration.tenant._id;
-            let configurationVersionDbId = state.selectedConfigurationVersion._id;
-            let msGraphResource = state.msGraphResource;
-
-            const requestOptions = {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    tenantDbId: tenantDbId,
-                    configurationVersionDbId: configurationVersionDbId,
-                    msGraphResource: msGraphResource
-                })
-            };
-
-            fetch(apiurl, requestOptions)
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data)
-                    openNotificationWithIcon('Restore Configuration', 'Job started', 'info');
-                }).catch((error) => {
-                    openNotificationWithIcon('Restore Configuration', 'Job error', 'error');
-                });
-        }
+        apipost("orchestrators/ORC1100MEMConfigurationUpdate", {
+            tenantDbId: tenantDbId,
+            configurationVersionDbId: configurationVersionDbId,
+            msGraphResource: msGraphResource
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                openNotificationWithIcon('Restore Configuration', 'Job started', 'info');
+            }).catch((error) => {
+                openNotificationWithIcon('Restore Configuration', 'Job error', 'error');
+                console.log(error);
+            });
     }
 
     return (
@@ -297,10 +280,10 @@ export default function MEMConfiguration(props) {
                                 </div>
                                 <div className="row">
                                     <div className="labelInfo">Type</div>
-                                    <span>{state.configurationType.label}</span>
+                                    <span>{state.configurationType.name}</span>
                                 </div>
                                 <div className="row">
-                                    <div className="labelInfo">Id</div>
+                                    <div className="labelInfo">Id in MEM</div>
                                     <span>{state.configuration.graphId}</span>
                                 </div>
                                 <div className="row">

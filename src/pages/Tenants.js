@@ -47,12 +47,12 @@ export default function Tenants() {
       });
   }
 
-  async function triggerBackup(tenantDbId) {
-    console.log("backup config for tenant " + tenantDbId);
-    openNotificationWithIcon('Backup', 'Backup Job started', 'success', 8.0);
+  async function triggerBackup(tenantMongoDbId) {
     let fileName = "export.zip";
+    console.log("backup config for tenant " + tenantMongoDbId);
+    openNotificationWithIcon('Backup', 'Backup Job started', 'success', 8.0);
 
-    apipost("TRG2000ConfigurationBackupCreate", { tenantDbId: tenantDbId })
+    apipost("TRG2000ConfigurationBackupCreate", { tenantMongoDbId: tenantMongoDbId })
       .then(response => {
         let contentDisposition = response.headers.get('Content-Disposition')
         // console.log(contentDisposition);
