@@ -81,9 +81,14 @@ export default function SideMenu(props) {
             Jobs
           </Link>
         </Menu.Item>
+        <Menu.Item key="/changeManagement">
+          <Link to="/changeManagement">
+            Change Management
+        </Link>
+        </Menu.Item>
       </SubMenu>
       <SubMenu key="/admin" icon={<SettingOutlined />} title="Admin">
-      <Menu.Item key="/adminoverview">
+        <Menu.Item key="/adminoverview">
           <Link to="/adminoverview">
             Overview
           </Link>

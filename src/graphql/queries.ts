@@ -23,11 +23,31 @@ export const configurationMany = gql`
   }
 `
 
+export const configurationVersionManySortModified = gql`
+query configurationVersionManySortModified{
+  configurationVersionMany(sort: GRAPHMODIFIEDAT_DESC){
+      displayName,
+      graphModifiedAt,
+      _id,
+      state
+      configuration{
+        _id
+        tenant{
+          _id
+        },
+        configurationType{
+          name,
+          category
+        }
+      }
+    }
+  }
+`
+
 export const configurationById = gql`
   query ConfigurationById($id: MongoID!) {
     configurationById(_id: $id) {
       _id   
-      graphIsDeleted
       graphId
       graphCreatedAt
       configurationVersions {
@@ -36,6 +56,7 @@ export const configurationById = gql`
         isNewest
         graphModifiedAt
         value
+        state
       }
       tenant{
         _id,
@@ -59,13 +80,13 @@ export const getTenantNewestConfigurationVersions = gql`
     tenantById(_id: $id) {
       _id 
       configurations {       
-        _id
-        graphIsDeleted
-        newestConfigurationVersions {
+        _id 
+        newestActiveConfigurationVersions {
           _id
           displayName
           isNewest
           graphModifiedAt  
+          state
         }
         configurationType {
           platform

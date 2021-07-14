@@ -12,7 +12,7 @@ import { useHistory } from "react-router-dom";
 export default function MsGraphResourceAdd() {
     const history = useHistory();
 
-    const [createMsGraphResource, msGraphResource] = useMutation(msGraphResourceCreateOneMutation, {
+    const [createMsGraphResource] = useMutation(msGraphResourceCreateOneMutation, {
         onCompleted(data) {
             console.log(data);
             history.push("/msGraphResources");

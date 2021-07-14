@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { tenantVerify as tenantVerifyMutation } from "graphql/mutations"
-import { Link, useLocation, useHistory, BrowserRouter as Router } from "react-router-dom"
-import DefaultPage from '../layouts/DefaultPage'
+import { useLocation, useHistory, BrowserRouter as Router } from "react-router-dom"
+import DefaultPage from '../../layouts/DefaultPage'
 import { useMutation } from '@apollo/client';
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
 

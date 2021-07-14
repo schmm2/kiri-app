@@ -5,10 +5,9 @@ import { Link } from "react-router-dom";
 import { Tabs } from 'antd';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 
-
 import DoughnutChart from 'components/DoughnutChart'
 import { Card } from 'antd';
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 
 import {
     AndroidOutlined,
@@ -22,10 +21,7 @@ import {
 import './MEMDevices.css'
 
 const { TabPane } = Tabs;
-
 const ResponsiveGridLayout = WidthProvider(Responsive);
-
-//const { Meta } = Card;
 
 export default function MEMDeviceConfigurations() {
 
@@ -147,7 +143,6 @@ export default function MEMDeviceConfigurations() {
                     }
                 </TabPane>
             </Tabs>
-
         </div >
     );
 }

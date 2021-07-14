@@ -9,8 +9,9 @@ import Home from 'pages/Home';
 import Profile from 'pages/Profile';
 import Team from 'pages/Team';
 import MEMConfiguration from 'pages/MEM/MEMConfiguration';
-import Tenants from 'pages/Tenants';
-import TenantAdd from 'pages/TenantAdd';
+import Tenants from 'pages/Tenants/Tenants';
+import TenantAdd from 'pages/Tenants/TenantAdd';
+import ChangeManagement from 'pages/Tenants/ChangeManagement';
 import Jobs from 'pages/Jobs';
 import MEMDevices from 'pages/MEM/MEMDevices';
 import MEMConfigurations from 'pages/MEM/MEMConfigurations';
@@ -18,7 +19,7 @@ import ConfigurationTypes from 'pages/Admin/ConfigurationTypes';
 import ConfigurationTypeAdd from 'pages/Admin/ConfigurationTypeAdd';
 import MsGraphResources from 'pages/Admin/MsGraphResources';
 import MsGraphResourceAdd from 'pages/Admin/MsGraphResourceAdd';
-import TenantVerification from 'pages/TenantVerification';
+import TenantVerification from 'pages/Tenants/TenantVerification';
 
 // CSS
 import './App.less';
@@ -67,6 +68,7 @@ function App() {
           <Route path="/team" component={Team} />
           <Route path="/profile" component={Profile} />
           <Route path="/tenantAdd" component={TenantAdd} />
+          <Route path="/changeManagement" component={ChangeManagement} />
           <Route path="/jobs/:tenantId" component={Jobs} />
           <Route path="/jobs" component={Jobs} />
           <Route path="/adminOverview" component={AdminOverview} />

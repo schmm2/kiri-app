@@ -1,7 +1,5 @@
 import React, { useEffect, useState, useContext, useReducer } from "react";
 import { getTenantNewestConfigurationVersions } from "graphql/queries";
-import { configurationMany } from "graphql/queries";
-
 import { Table } from 'antd';
 import { Link, useLocation, useParams } from "react-router-dom";
 import TenantContext from "components/TenantContext"
@@ -13,7 +11,7 @@ import { gql, useQuery, useLazyQuery, useMutation } from '@apollo/client';
 export default function MEMConfigurations(props) {
 
   const selectedTenant = useContext(TenantContext);
-  console.log(selectedTenant);
+  //console.log(selectedTenant);
 
   const initialState = {
     configurations: [],
@@ -42,9 +40,9 @@ export default function MEMConfigurations(props) {
     fetchPolicy: 'cache-and-network',
     variables: { id: selectedTenant?._id },
     onCompleted: (data) => {
-      //console.log(data)
+      // console.log(data)
       let configurations = data.tenantById.configurations;
-      console.log(configurations);
+      // console.log(configurations);
       let configurationCollection = [];
       
       configurations.map(configuration => {
@@ -53,10 +51,10 @@ export default function MEMConfigurations(props) {
         // console.log(configurationType.category);
 
         // Todo: find a better way to include this check into grapql query
-        if (props.category === configurationType.category) {
-          if (configuration.newestConfigurationVersions && configuration.newestConfigurationVersions[0]) {
+        if (props.category && (props.category === configurationType.category)) {
+          if (configuration.newestActiveConfigurationVersions && configuration.newestActiveConfigurationVersions[0]) {
             let newConfigurationObject = {};
-            let configurationVersion = configuration.newestConfigurationVersions[0];
+            let configurationVersion = configuration.newestActiveConfigurationVersions[0];
 
             // build new config object
             // adds pressure to client, makes iterating much easier

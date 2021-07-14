@@ -16,7 +16,6 @@ export default function Jobs(props) {
     { onCompleted: (data) => console.log(tenantdata) });
 
   useEffect(() => {
-    console.log(params.tenantId);
     if (params.tenantId) {
       getJobs({
         variables: { filter: { tenant: params.tenantId } }

@@ -5,10 +5,10 @@ import { bridge as addTenantSchema } from 'forms/tenantAdd';
 import { Button } from "antd"
 import { tenantCreateOne } from "graphql/mutations";
 import { useMutation } from '@apollo/client';
-import DefaultPage from '../layouts/DefaultPage';
+import DefaultPage from '../../layouts/DefaultPage';
 import { useHistory } from "react-router-dom";
 
-export default function Tenants() {
+export default function TenantAdd() {
   const history = useHistory();
   
   const [createTenant, tenant] = useMutation(tenantCreateOne, {
