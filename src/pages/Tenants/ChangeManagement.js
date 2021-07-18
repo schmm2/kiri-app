@@ -26,8 +26,10 @@ export default function ChangeManagement() {
         onCompleted: (data) => {
             // console.log(data);
             // console.log(selectedTenant);
-            let filteredConfigurationVersions = data.configurationVersionMany.filter(configurationVersion => configurationVersion.configuration.tenant._id === selectedTenant._id)
-            setConfigurationVersions(filteredConfigurationVersions);
+            if(selectedTenant && selectedTenant._id){
+                let filteredConfigurationVersions = data.configurationVersionMany.filter(configurationVersion => configurationVersion.configuration.tenant._id === selectedTenant._id)
+                setConfigurationVersions(filteredConfigurationVersions);
+            }
             setLoading(false);
         }
     });

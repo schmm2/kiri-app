@@ -56,9 +56,9 @@ function App() {
           <Route path="/appconfiguration">
             <MEMConfigurations title={"App Configuration"} category={'appconfiguration'} />
           </Route>
-          <Route path="/updatering/:configurationId" component={MEMConfiguration} />
-          <Route path="/updatering">
-            <MEMConfigurations title={"Update Ring"} category={'updatering'} />
+          <Route path="/update/:configurationId" component={MEMConfiguration} />
+          <Route path="/update">
+            <MEMConfigurations title={"Update Ring"} category={'update'} />
           </Route>
           <Route path="/autopilot">
             <MEMConfigurations title={"Autopilot"} category={'autopilot'} />

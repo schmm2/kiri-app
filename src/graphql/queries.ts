@@ -50,7 +50,7 @@ export const configurationById = gql`
       _id   
       graphId
       graphCreatedAt
-      configurationVersions {
+      configurationVersions(sort: GRAPHMODIFIEDAT_DESC) {
         _id
         displayName
         isNewest

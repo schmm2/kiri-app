@@ -11,19 +11,18 @@ export default function Jobs(props) {
   const { match: { params } } = props;
 
   const [getJobs, { loadingJobs, data: jobdata }] = useLazyQuery(jobMany,
-    { onCompleted: (data) => console.log(jobdata) });
-  const [getTenantById, { loadingTenant, data: tenantdata }] = useLazyQuery(tenantById,
-    { onCompleted: (data) => console.log(tenantdata) });
+    { 
+      onCompleted: (data) => console.log(jobdata),
+      fetchPolicy: "network-only"
+    });
 
   useEffect(() => {
     if (params.tenantId) {
       getJobs({
         variables: { filter: { tenant: params.tenantId } }
       });
-      getTenantById({
-        variables: { id: params.tenantId }
-      })
     } else {
+      console.log("no tenant defined, load all jobs");
       getJobs();
     }
   }, [params.tenantId]);
@@ -87,14 +86,8 @@ export default function Jobs(props) {
 
   return (
     <DefaultPage>
-      {
-        tenantdata && tenantdata.tenantById
-          ? <h1>Jobs - {tenantdata.tenantById.name}</h1>
-          : <h1>Jobs</h1>
-      }
-      <div>
-        <Table loading={loadingJobs} rowKey="id" columns={columns} dataSource={jobdata && jobdata.jobMany} onChange={onChange} />
-      </div>
+       <h1>Jobs</h1>
+      <Table loading={loadingJobs} rowKey="id" columns={columns} dataSource={jobdata && jobdata.jobMany} onChange={onChange} />
       <Button>
         <Link to={"/tenants"}>Back</Link>
       </Button>

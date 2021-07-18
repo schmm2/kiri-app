@@ -59,8 +59,8 @@ export default function SideMenu(props) {
             Enrollment
           </Link>
         </Menu.Item>
-        <Menu.Item key="/updatering">
-          <Link to="/updatering">
+        <Menu.Item key="/update">
+          <Link to="/update">
             Update Ring
           </Link>
         </Menu.Item>
