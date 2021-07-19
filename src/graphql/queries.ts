@@ -75,13 +75,36 @@ export const configurationById = gql`
   }
 `
 
-export const getTenantNewestConfigurationVersions = gql`
+export const getTenantNewestActiveConfigurationVersions = gql`
   query GetTenantConfigurationVersions($id: MongoID!) {
     tenantById(_id: $id) {
       _id 
       configurations {       
         _id 
         newestActiveConfigurationVersions {
+          _id
+          displayName
+          isNewest
+          graphModifiedAt  
+          state
+        }
+        configurationType {
+          platform
+          category
+          name
+        }
+      }
+    }
+  }
+`
+
+export const getTenantNewestConfigurationVersions = gql`
+  query GetTenantConfigurationVersions($id: MongoID!) {
+    tenantById(_id: $id) {
+      _id 
+      configurations {       
+        _id 
+        newestConfigurationVersions {
           _id
           displayName
           isNewest

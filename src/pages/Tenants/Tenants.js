@@ -17,8 +17,6 @@ import {
 var fileDownload = require('js-file-download');
 
 export default function Tenants() {
-  const aadappid = process.env.REACT_APP_AADAPPID_MANAGEMENT;
-
   const { loading, error, data, refetch } = useQuery(tenantMany, {
     fetchPolicy: "network-only"
   });
@@ -98,7 +96,7 @@ export default function Tenants() {
       render: (text, record) => (
         <Space size="middle">
           <a href="#" onClick={() => triggerBackup(record._id)}>Backup</a>
-          <a rel={'external'} target="_blank" href={"https://login.microsoftonline.com/" + record.tenantId + "/adminconsent?client_id=" + aadappid}>Grant Permission</a>
+          <a rel={'external'} target="_blank" href={"https://login.microsoftonline.com/" + record.tenantId + "/adminconsent?client_id=" + record.appId}>Grant Permission</a>
           <a href="#" onClick={() => triggerTenantUpdate(record._id)}>Pull Data</a>
           <a href="#" onClick={() => {
             deleteTenant({

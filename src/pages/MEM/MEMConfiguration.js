@@ -129,7 +129,6 @@ export default function MEMConfiguration(props) {
             // console.log(newDataEntry);
             dataSourceTmp.push(newDataEntry);
             index++;
-
         }
 
         // update state
@@ -141,6 +140,7 @@ export default function MEMConfiguration(props) {
     }
 
     function renderDataFullObject(record) {
+        console.log(record);
         // handle administrative templates
         if (state.msGraphResource && state.msGraphResource.name === "groupPolicyConfigurations") {
             // quick and dirty object clone
@@ -151,7 +151,7 @@ export default function MEMConfiguration(props) {
                     <h3>Configuration</h3>
                     <ReactJson name={false} enableClipboard={false} displayDataTypes={false} src={baseObject} />
                     <h3>Settings</h3>
-                    <ReactJson name={false} enableClipboard={false} displayDataTypes={false} src={record.gpoSettings} />
+                    <ReactJson name={false} enableClipboard={true} displayDataTypes={false} src={record.gpoSettings} />
                 </span>
             )
         }
@@ -165,9 +165,9 @@ export default function MEMConfiguration(props) {
 
         switch (type) {
             case "array":
-                return (<ReactJson name={false} enableClipboard={false} displayDataTypes={false} src={record} />)
+                return (<ReactJson name={false} enableClipboard={true} displayDataTypes={false} src={record} />)
             case "object":
-                return (<ReactJson name={false} enableClipboard={false} displayDataTypes={false} src={record} />)
+                return (<ReactJson name={false} enableClipboard={true} displayDataTypes={false} src={record} />)
             case "date":
                 return renderDate(record);
                 break;
