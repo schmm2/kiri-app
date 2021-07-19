@@ -175,6 +175,7 @@ export const tenantMany = gql`
       _id
       tenantId
       name
+      appId
       verified
       createdAt
       updatedAt
