@@ -1,0 +1,72 @@
+{
+  "name": "kiri-app",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@apollo/client": "^3.3.16",
+    "@craco/craco": "^6.1.2",
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.3.2",
+    "@testing-library/user-event": "^7.1.2",
+    "@types/antd": "^1.0.0",
+    "@types/jest": "^26.0.14",
+    "@types/node": "^14.11.10",
+    "@types/react": "^16.9.53",
+    "@types/react-dom": "^16.9.8",
+    "@types/react-router-dom": "^5.1.6",
+    "@types/recharts": "^1.8.17",
+    "antd": "^4.7.0",
+    "craco-esbuild": "^0.3.2",
+    "craco-less": "^1.17.1",
+    "deep-object-diff": "^1.1.0",
+    "express": "^4.17.1",
+    "formik": "^2.2.0",
+    "graphql": "^15.5.0",
+    "http-server": "^0.12.3",
+    "js-file-download": "^0.4.12",
+    "moment": "^2.29.1",
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0",
+    "react-grid-layout": "^1.2.0",
+    "react-json-view": "^1.19.1",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "4.0.3",
+    "recharts": "^1.8.5",
+    "typescript": "^4.3.2",
+    "uniform": "^0.5.1",
+    "uniforms": "^3.0.0-rc.5",
+    "uniforms-antd": "^3.0.0-rc.5",
+    "uniforms-bridge-json-schema": "^3.0.0-rc.5"
+  },
+  "scripts": {
+    "start": "craco start",
+    "build": "craco --max_old_space_size=1024 build",
+    "test": "craco test",
+    "postinstall": "npm run build",
+    "eject": "craco eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "1.21.4",
+    "@graphql-codegen/introspection": "1.18.2",
+    "@graphql-codegen/typescript": "1.22.0",
+    "@graphql-codegen/typescript-document-nodes": "1.17.11",
+    "@graphql-codegen/typescript-graphql-files-modules": "1.18.1",
+    "@graphql-codegen/typescript-operations": "1.17.16",
+    "@graphql-codegen/typescript-react-apollo": "2.2.4"
+  }
+}

@@ -1,0 +1,44 @@
+.site-layout {
+    min-height: 100vh !important;
+}
+
+.site-content{
+    background-color: white;
+}
+
+.ant-layout-header{
+    background: none !important;
+}
+
+.trigger{
+    padding: 0 24px;
+}
+
+.ant-layout-header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Header */
+#headerMenu {
+    background-color: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2vh;
+}
+
+#headerMenu .ant-btn-background-ghost{
+    border-color: grey;
+    color: grey;
+}
+
+#headerMenu .ant-menu-item-selected{
+    background-color: transparent;
+    color: black;
+}
+
+.ant-layout-header {
+    padding: 0px !important;
+}
