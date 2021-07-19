@@ -22,7 +22,6 @@
     "express": "^4.17.1",
     "formik": "^2.2.0",
     "graphql": "^15.5.0",
-    "http-server": "^0.12.3",
     "js-file-download": "^0.4.12",
     "moment": "^2.29.1",
     "react": "^16.14.0",

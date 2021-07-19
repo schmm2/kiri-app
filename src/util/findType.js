@@ -1,8 +1,6 @@
-import { type } from 'os';
 import { isIsoDate } from './isIsoDate';
 
 var arrayConstructor = [].constructor;
-
 
 const findType = (object) => {
     // console.log(typeof object);
@@ -14,7 +12,7 @@ const findType = (object) => {
         return "undefined";
     }
 
-    if(typeof object === "number"){
+    if (typeof object === "number") {
         return "number"
     }
 
@@ -37,5 +35,4 @@ const findType = (object) => {
         return "error";
     }
 }
-
 export { findType };
