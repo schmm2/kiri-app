@@ -39,7 +39,7 @@
   },
   "scripts": {
     "start": "craco start",
-    "build": "craco --max_old_space_size=1024 build",
+    "build": "craco --max_old_space_size=3072 build",
     "test": "craco test",
     "postinstall": "npm run build",
     "eject": "craco eject"
