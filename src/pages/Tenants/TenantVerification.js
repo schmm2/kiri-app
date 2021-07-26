@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { tenantVerify as tenantVerifyMutation } from "graphql/mutations"
-import { useLocation, useHistory, BrowserRouter as Router } from "react-router-dom"
+import { useLocation, useHistory } from "react-router-dom"
 import DefaultPage from '../../layouts/DefaultPage'
 import { useMutation } from '@apollo/client';
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
@@ -23,6 +23,7 @@ export default function TenantVerification() {
             });
         },
         onCompleted(data) {
+            console.log(data);
             if (data.tenantUpdateOne && data.tenantUpdateOne.record) {
                 let record = data.tenantUpdateOne.record;
                 console.log(record);

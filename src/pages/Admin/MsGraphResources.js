@@ -1,3 +1,4 @@
+import React from "react"
 import { msGraphResourceMany, getMsGraphResource } from "graphql/queries";
 import { msGraphResourceRemoveById as msGraphResourceRemoveByIdMutation } from "graphql/mutations";
 import { Link } from "react-router-dom";

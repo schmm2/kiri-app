@@ -1,3 +1,4 @@
+import React from "react"
 import { configurationTypeMany } from "graphql/queries";
 import { configurationTypeRemoveById as configurationTypeRemoveByIdMutation } from "graphql/mutations";
 import { Link } from "react-router-dom";
