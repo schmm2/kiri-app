@@ -29,6 +29,7 @@ export default function MEMDeviceConfigurations() {
     const [manufacturerCount, setManufacturerCount] = useState([]);
 
     const { loading, error, deviceData } = useQuery(deviceMany, {
+        fetchPolicy: 'cache-and-network',
         onCompleted: (data) => {
             let devices = [];
             let manufacturerCount = [];

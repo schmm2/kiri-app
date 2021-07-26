@@ -17,8 +17,8 @@ import {
 var fileDownload = require('js-file-download');
 
 export default function Tenants() {
-  const { loading, error, data, refetch } = useQuery(tenantMany, {
-    fetchPolicy: "network-only"
+  const { loading, error, data } = useQuery(tenantMany, {
+    fetchPolicy: "cache-and-network"
   });
 
   const [deleteTenant] = useMutation(tenantRemoveById, {

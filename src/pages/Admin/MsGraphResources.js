@@ -13,7 +13,7 @@ import DefaultPage from '../../layouts/DefaultPage';
 
 export default function MsGraphResources() {
     const { loading, error, data = [] } = useQuery(msGraphResourceMany, {
-        fetchPolicy: "network-only"
+        fetchPolicy: "cache-and-network"
     });
 
     const [deleteMsGraphResource] = useMutation(msGraphResourceRemoveByIdMutation, {

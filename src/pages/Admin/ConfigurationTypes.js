@@ -12,7 +12,7 @@ import { PlusOutlined } from "@ant-design/icons";
 
 export default function ConfigurationTypes() {
     const { loading, error, data = [] } = useQuery(configurationTypeMany, {
-        fetchPolicy: "network-only"
+        fetchPolicy: "cache-and-network"
     });
 
     const [deleteConfigurationType] = useMutation(configurationTypeRemoveByIdMutation, {

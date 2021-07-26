@@ -21,6 +21,7 @@ export default function ChangeManagement() {
     const [loading, setLoading] = useState(true)
 
     const { loadingGraphQL, errorGraphQL, data } = useQuery(configurationVersionManySortModified, {
+        fetchPolicy: "cache-and-network",
         variables: {},
         // TODO: we shouldn't need to do this -> find a way to integrate tenant filte rin graphql query
         onCompleted: (data) => {

@@ -13,7 +13,7 @@ export default function Jobs(props) {
   const [getJobs, { loadingJobs, data: jobdata }] = useLazyQuery(jobMany,
     { 
       onCompleted: (data) => console.log(jobdata),
-      fetchPolicy: "network-only"
+      fetchPolicy: "cache-and-network"
     });
 
   useEffect(() => {

@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useContext, useReducer } from "react";
-import { getTenantNewestConfigurationVersions } from "graphql/queries";
+import React, { useContext, useReducer } from "react";
+import { getTenantNewestConfigurationVersions, getNewestConfigurationVersionsOfTenants } from "graphql/queries";
 import { Table, Switch } from 'antd';
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import TenantContext from "components/TenantContext"
 import { renderDate } from 'util/renderDate';
 import moment from 'moment';
@@ -42,45 +42,63 @@ export default function MEMConfigurations(props) {
   function filterConfigurations(configurations) {
     let configurationCollection = [];
 
-    configurations.map(configuration => {
-      let configurationType = configuration.configurationType;
-      // console.log(props.category);
-      // console.log(configurationType.category);
+    if (configurations?.length > 0) {
+      configurations.map(configuration => {
+        let configurationType = configuration.configurationType;
+        // console.log(props.category);
+        // console.log(configurationType.category);
 
-      // Todo: find a better way to include this check into grapql query
-      if (props.category && (props.category === configurationType.category)) {
-        if (configuration.newestConfigurationVersions && configuration.newestConfigurationVersions[0]) {
-          let newConfigurationObject = {};
-          let configurationVersion = configuration.newestConfigurationVersions[0];
+        // Todo: find a better way to include this check into grapql query
+        if (props.category && (props.category === configurationType.category)) {
+          if (configuration.newestConfigurationVersions && configuration.newestConfigurationVersions[0]) {
+            let newConfigurationObject = {};
+            let configurationVersion = configuration.newestConfigurationVersions[0];
 
-          // build new config object
-          // adds pressure to client, makes iterating much easier
-          newConfigurationObject.id = configuration._id;
-          newConfigurationObject.displayName = configurationVersion.displayName;
-          newConfigurationObject.modifiedAt = configurationVersion.graphModifiedAt;
-          newConfigurationObject.platform = configurationType.platform;
-          newConfigurationObject.type = configurationType.name;
-          newConfigurationObject.state = configurationVersion.state;
+            // build new config object
+            // adds pressure to client, makes iterating much easier
+            newConfigurationObject.id = configuration._id;
+            newConfigurationObject.displayName = configurationVersion.displayName;
+            newConfigurationObject.modifiedAt = configurationVersion.graphModifiedAt;
+            newConfigurationObject.platform = configurationType.platform;
+            newConfigurationObject.type = configurationType.name;
+            newConfigurationObject.state = configurationVersion.state;
 
-          configurationCollection.push(newConfigurationObject);
+            configurationCollection.push(newConfigurationObject);
+          }
         }
-      }
-    })
+      })
+    }
     return configurationCollection;
   }
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const [getTenants, { data }] = useLazyQuery(getTenantNewestConfigurationVersions, {
+  const [getConfigurationsByTenant] = useLazyQuery(getTenantNewestConfigurationVersions, {
     fetchPolicy: 'cache-and-network',
     variables: { id: selectedTenant?._id },
     onCompleted: (data) => {
-      // console.log(data)
+      console.log(data)
       let configurations = data.tenantById.configurations;
-      // console.log(configurations);
       let filteredConfigurations = filterConfigurations(configurations);
-      // console.log(filteredConfigurations);
       dispatch({ type: "SET_CONFIGURATIONS", configurations: filteredConfigurations, loading: false });
+    },
+    onError: (error) => {
+      console.log(error)
+      dispatch({ type: "ERROR" });
+    }
+  })
+
+  const [getConfigurations] = useLazyQuery(getNewestConfigurationVersionsOfTenants, {
+    fetchPolicy: 'cache-and-network',
+    onCompleted: (data) => {
+      console.log(data)
+      let configurations = data.tenantMany.configurations;
+      let filteredConfigurations = filterConfigurations(configurations);
+      dispatch({ type: "SET_CONFIGURATIONS", configurations: filteredConfigurations, loading: false });
+    },
+    onError: (error) => {
+      console.log(error)
+      dispatch({ type: "ERROR" });
     }
   })
 
@@ -90,8 +108,12 @@ export default function MEMConfigurations(props) {
 
   React.useEffect(() => {
     clear();
-    if (!props.category || !selectedTenant) return;
-    getTenants();
+    if (!props.category) return;
+    if (selectedTenant) {
+      getConfigurationsByTenant();
+    } else {
+      getConfigurations();
+    }
   }, [props.category]);
 
   const columns = [
@@ -166,10 +188,10 @@ export default function MEMConfigurations(props) {
     let filterInfo = {
       state: ["modified", "new"]
     }
-    if(checked){
+    if (checked) {
       filterInfo.state.push("deleted");
     }
-    dispatch({ type: "SET_FILTERINFO", filterInfo});
+    dispatch({ type: "SET_FILTERINFO", filterInfo });
   }
 
   return (
