@@ -1,12 +1,11 @@
 import React, { useContext, useReducer } from "react";
-import { getTenantNewestConfigurationVersions, getNewestConfigurationVersionsOfTenants } from "graphql/queries";
+import { getNewestConfigurationVersionsByTenant, getNewestConfigurationVersions } from "graphql/queries";
 import { Table, Switch } from 'antd';
 import { Link } from "react-router-dom";
 import TenantContext from "components/TenantContext"
 import { renderDate } from 'util/renderDate';
 import moment from 'moment';
-
-import { gql, useQuery, useLazyQuery, useMutation } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 
 export default function MEMConfigurations(props) {
 
@@ -15,7 +14,7 @@ export default function MEMConfigurations(props) {
 
   const initialState = {
     configurations: [],
-    configurationsFiltered: [],
+    filteredConfigurations: [],
     category: null,
     loading: true,
     error: false,
@@ -26,10 +25,8 @@ export default function MEMConfigurations(props) {
 
   function reducer(state, action) {
     switch (action.type) {
-      case 'CLEAR':
-        return { ...state, loading: true, configurations: [], error: false }
       case 'SET_CONFIGURATIONS':
-        return { ...state, configurations: action.configurations, loading: action.loading }
+        return { ...state, configurations: action.configurations, filteredConfigurations: action.filteredConfigurations, loading: action.loading }
       case 'ERROR':
         return { ...state, loading: false, error: true }
       case 'SET_FILTERINFO':
@@ -73,48 +70,44 @@ export default function MEMConfigurations(props) {
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const [getConfigurationsByTenant] = useLazyQuery(getTenantNewestConfigurationVersions, {
+  const { loadingByTenant, errorByTenant, dataByTenant } = useQuery(getNewestConfigurationVersionsByTenant, {
     fetchPolicy: 'cache-and-network',
+    skip: (selectedTenant == null),
     variables: { id: selectedTenant?._id },
     onCompleted: (data) => {
-      console.log(data)
       let configurations = data.tenantById.configurations;
       let filteredConfigurations = filterConfigurations(configurations);
-      dispatch({ type: "SET_CONFIGURATIONS", configurations: filteredConfigurations, loading: false });
+      dispatch({ type: "SET_CONFIGURATIONS", configurations: configurations, filteredConfigurations: filteredConfigurations, loading: false });
     },
     onError: (error) => {
-      console.log(error)
       dispatch({ type: "ERROR" });
     }
   })
 
-  const [getConfigurations] = useLazyQuery(getNewestConfigurationVersionsOfTenants, {
+  const { loading, error, data } = useQuery(getNewestConfigurationVersions, {
     fetchPolicy: 'cache-and-network',
+    skip: (selectedTenant != null),
     onCompleted: (data) => {
-      console.log(data)
-      let configurations = data.tenantMany.configurations;
+      let configurations = data.configurationMany;
       let filteredConfigurations = filterConfigurations(configurations);
-      dispatch({ type: "SET_CONFIGURATIONS", configurations: filteredConfigurations, loading: false });
+      dispatch({ type: "SET_CONFIGURATIONS", configurations: configurations, filteredConfigurations: filteredConfigurations, loading: false });
     },
     onError: (error) => {
-      console.log(error)
       dispatch({ type: "ERROR" });
     }
   })
 
-  function clear() {
-    dispatch({ type: "CLEAR" });
+  function refilter() {
+    if (state.configurations && state.configurations.length > 0) {
+      let filteredConfigurations = filterConfigurations(state.configurations);
+      dispatch({ type: "SET_CONFIGURATIONS", configurations: state.configurations, filteredConfigurations: filteredConfigurations, loading: false });
+    }
   }
 
+
   React.useEffect(() => {
-    clear();
-    if (!props.category) return;
-    if (selectedTenant) {
-      getConfigurationsByTenant();
-    } else {
-      getConfigurations();
-    }
-  }, [props.category]);
+    refilter();
+  }, [props.category, selectedTenant]);
 
   const columns = [
     {
@@ -202,7 +195,7 @@ export default function MEMConfigurations(props) {
           loading={state.loading}
           pagination={{ pageSize: 25 }}
           columns={columns}
-          dataSource={state.configurations}
+          dataSource={state.filteredConfigurations}
           onChange={onChange}
           components={{
             header: {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { tenantMany } from "graphql/queries";
 import { tenantRemoveById } from "graphql/mutations";
 import { Link } from "react-router-dom";
@@ -118,7 +118,7 @@ export default function Tenants() {
   return (
     <div className="defaultPage">
       <h1>Tenants</h1>
-      <Table loading={loading} rowKey="id" columns={columns} dataSource={data && data.tenantMany} onChange={onChange}></Table>
+      <Table loading={loading} rowKey="_id" columns={columns} dataSource={data && data.tenantMany} onChange={onChange}></Table>
       <Button>
         <Link to="/tenantAdd">
           <PlusOutlined />

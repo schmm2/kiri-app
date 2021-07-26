@@ -20,9 +20,10 @@ const { Sider, Content, Header } = Layout;
 
 export default function MainLayout(props) {
 
-  const { data, tenantsLoading, tenantsError } = useQuery(tenantMany, {
+  const { data } = useQuery(tenantMany, {
+    fetchPolicy: 'cache-and-network',
     onCompleted: data => {
-      console.log('data', data.tenantMany);
+      // console.log('data', data.tenantMany);
       // if availble set first tenant as selected
       if (data.tenantMany.length > 0) {
         dispatch({ type: 'SET_SELECTEDTENANT', selectedTenant: data.tenantMany[0] })
@@ -63,6 +64,9 @@ export default function MainLayout(props) {
 
   const tenantMenu = (
     <Menu>
+      <Menu.Item key={"alltenants"} onClick={() => dispatch({ type: 'SET_SELECTEDTENANT', selectedTenant: null })}>
+        <span>All Tenants</span>
+      </Menu.Item>
       {data && data.tenantMany && data.tenantMany.map((tenant, index) => {
         return (
           <Menu.Item key={tenant._id} onClick={() => dispatch({ type: 'SET_SELECTEDTENANT', selectedTenant: tenant })}>
@@ -79,7 +83,7 @@ export default function MainLayout(props) {
         <Link to="/profile">Profile</Link>
       </Menu.Item>
       <Menu.Item key="signout">
-        <Link onClick={() => signOut()}>Sign out</Link>
+        <Link to="/signout" onClick={() => signOut()}>Sign out</Link>
       </Menu.Item>
     </Menu>
   );
@@ -101,7 +105,7 @@ export default function MainLayout(props) {
               data && data.tenantMany && data.tenantMany.length > 0 &&
               <Dropdown overlay={tenantMenu} placement="bottomRight">
                 <Button ghost>{
-                  state.selectedTenant ? state.selectedTenant.name : 'No Tenants'
+                  state.selectedTenant ? state.selectedTenant.name : 'All Tenants'
                 }</Button>
               </Dropdown>
             }

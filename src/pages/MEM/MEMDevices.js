@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { deviceMany } from "graphql/queries";
 import { List, Avatar } from 'antd';
 import { Link } from "react-router-dom";
 import { Tabs } from 'antd';
 import { Responsive, WidthProvider } from 'react-grid-layout';
+import TenantContext from "components/TenantContext"
 
 import DoughnutChart from 'components/DoughnutChart'
 import { Card } from 'antd';
-import { useQuery } from '@apollo/client';
+import { useLazyQuery } from '@apollo/client';
 
 import {
     AndroidOutlined,
@@ -24,23 +25,26 @@ const { TabPane } = Tabs;
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 export default function MEMDeviceConfigurations() {
-
+    const selectedTenant = useContext(TenantContext);
     const [devices, setDevices] = useState([]);
     const [manufacturerCount, setManufacturerCount] = useState([]);
 
-    const { loading, error, deviceData } = useQuery(deviceMany, {
-        fetchPolicy: 'cache-and-network',
+    const [getDevices, { loadingDevices, data }] = useLazyQuery(deviceMany, {
         onCompleted: (data) => {
-            let devices = [];
+            let devices = data.deviceMany;
             let manufacturerCount = [];
 
-            for(let i = 0; i < data.deviceMany.length; i++){
-                let device = data.deviceMany[i];
+            if (selectedTenant) {
+                devices = devices.filter(device => device.tenant?._id === selectedTenant._id);
+            }
+
+            for (let i = 0; i < devices.length; i++) {
+                let device = devices[i];
 
                 // create manufacturer data
                 let manufacturer = device.manufacturer;
                 const foundIndex = manufacturerCount.findIndex(item => item.name === manufacturer)
-                console.log(foundIndex);
+
                 if (foundIndex >= 0) {
                     manufacturerCount[foundIndex].count++;
                 } else {
@@ -53,14 +57,17 @@ export default function MEMDeviceConfigurations() {
                 // parse value
                 let adaptedDevice = { ...device };
                 adaptedDevice.value = JSON.parse(device.value);
-                console.log(adaptedDevice);
-
                 devices.push(adaptedDevice);
             }
             setDevices(devices);
             setManufacturerCount(manufacturerCount);
-        }
+        },
+        fetchPolicy: "cache-and-network"
     });
+
+    useEffect(() => {
+        getDevices()
+    }, [selectedTenant, getDevices]);
 
     function renderIcon(operatingSystem) {
         switch (operatingSystem) {
@@ -122,11 +129,11 @@ export default function MEMDeviceConfigurations() {
                     key="2"
                 >
                     {
-                        devices && 
+                        devices &&
                         <List
                             itemLayout="horizontal"
                             dataSource={devices}
-                            loading={loading}
+                            loading={loadingDevices}
                             renderItem={item => (
                                 <List.Item
                                     key={item.id}
