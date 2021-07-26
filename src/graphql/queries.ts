@@ -23,6 +23,7 @@ export const configurationMany = gql`
   }
 `
 
+
 export const configurationVersionManySortModified = gql`
 query configurationVersionManySortModified{
   configurationVersionMany(sort: GRAPHMODIFIEDAT_DESC){
@@ -69,6 +70,29 @@ export const configurationById = gql`
         msGraphResource{
           name,
           resource
+        }
+      }
+    }
+  }
+`
+
+export const getNewestConfigurationVersionsOfTenants = gql`
+  query GetNewestConfigurationVersions {
+    tenantMany {
+      _id 
+      configurations {       
+        _id 
+        newestActiveConfigurationVersions {
+          _id
+          displayName
+          isNewest
+          graphModifiedAt  
+          state
+        }
+        configurationType {
+          platform
+          category
+          name
         }
       }
     }
