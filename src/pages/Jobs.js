@@ -1,6 +1,6 @@
 import React, { useEffect, useContext } from "react";
 import { jobMany } from "graphql/queries";
-import { Table, Button, Tag } from "antd";
+import { Table, Button, Tag, Space } from "antd";
 import { Link } from "react-router-dom";
 import { renderDate } from 'util/renderDate'
 import moment from 'moment';
@@ -23,7 +23,7 @@ export default function Jobs(props) {
         variables: { filter: { tenant: selectedTenant._id } }
       });
     } else {
-      console.log("no tenant defined, load all jobs");
+      // no tenant defined, load all jobs
       getJobs();
     }
   }, [selectedTenant, getJobs]);
@@ -89,9 +89,14 @@ export default function Jobs(props) {
     <DefaultPage>
       <h1>Jobs</h1>
       <Table loading={loadingJobs} rowKey="_id" columns={columns} dataSource={jobdata && jobdata.jobMany} onChange={onChange} />
-      <Button>
-        <Link to={"/tenants"}>Back</Link>
-      </Button>
-    </DefaultPage>
+      <div className="controlBottom">
+        <Space align="end">
+          <Button onClick={getJobs}>Refresh</Button>
+          <Button>
+            <Link to={"/tenants"}>Back</Link>
+          </Button>
+        </Space>
+      </div>
+    </DefaultPage >
   );
 }

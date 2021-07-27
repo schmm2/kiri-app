@@ -37,7 +37,7 @@ export default function Tenants() {
     apipost("orchestrators/ORC1000AzureDataCollect", { tenantMongoDbId: tenantMongoDbId })
       .then(response => response.json())
       .then(data => {
-        console.log(data);
+        //console.log(data);
         openNotificationWithIcon('Pull Data', 'Job started', 'success');
       }).catch((error) => {
         openNotificationWithIcon('Pull Data', 'Job error', 'error');

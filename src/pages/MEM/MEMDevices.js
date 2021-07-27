@@ -6,6 +6,7 @@ import { Tabs } from 'antd';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import TenantContext from "components/TenantContext"
 
+import MyBarChart from "components/BarChart";
 import DoughnutChart from 'components/DoughnutChart'
 import { Card } from 'antd';
 import { useQuery } from '@apollo/client';
@@ -29,6 +30,7 @@ export default function MEMDeviceConfigurations() {
     const [devices, setDevices] = useState([]);
     const [filteredDevices, setFilteredDevices] = useState([]);
     const [manufacturerCount, setManufacturerCount] = useState([]);
+    const [osVersionCount, setOsVersionCount] = useState([]);
 
     function buildManufacturerData(deviceArray) {
         let manufacturerCount = [];
@@ -46,6 +48,30 @@ export default function MEMDeviceConfigurations() {
             }
         }
         setManufacturerCount(manufacturerCount);
+    }
+
+    function buildOSData(deviceArray) {
+        let osVersionCount = [];
+        for (let i = 0; i < deviceArray.length; i++) {
+            console.log(deviceArray[i]);
+
+            if (deviceArray[i].value.osVersion) {
+                let osVersion = deviceArray[i].value.osVersion;
+                console.log(osVersion)
+                const foundIndex = osVersionCount.findIndex(item => item.name === osVersion)
+
+                if (foundIndex >= 0) {
+                    osVersionCount[foundIndex].count++;
+                } else {
+                    osVersionCount.push({
+                        "name": osVersion,
+                        "count": 1
+                    });
+                }
+            }
+        }
+        console.log(osVersionCount);
+        setOsVersionCount(osVersionCount);
     }
 
     const { loadingDevices, errorDevices, data } = useQuery(deviceMany, {
@@ -72,9 +98,11 @@ export default function MEMDeviceConfigurations() {
             let filteredDevices = devices.filter(device => device.tenant && (device.tenant._id === selectedTenant._id));
             setFilteredDevices(filteredDevices);
             buildManufacturerData(filteredDevices);
+            buildOSData(filteredDevices);
         } else {
             setFilteredDevices(devices);
             buildManufacturerData(devices);
+            buildOSData(devices);
         }
     }, [devices, selectedTenant]);
 
@@ -123,6 +151,11 @@ export default function MEMDeviceConfigurations() {
                             <div key="c" data-grid={{ w: 4, h: 6, x: 2, y: 0, minW: 4, minH: 3 }}>
                                 <div className="card">
                                     <DoughnutChart data={manufacturerCount} dataKey={"count"}></DoughnutChart>
+                                </div>
+                            </div>
+                            <div key="d" data-grid={{ w: 4, h: 6, x: 2, y: 0, minW: 4, minH: 3 }}>
+                                <div className="card">
+                                    <MyBarChart data={osVersionCount}></MyBarChart>
                                 </div>
                             </div>
                         </ResponsiveGridLayout>
