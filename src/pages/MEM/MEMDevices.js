@@ -8,7 +8,7 @@ import TenantContext from "components/TenantContext"
 
 import DoughnutChart from 'components/DoughnutChart'
 import { Card } from 'antd';
-import { useLazyQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 
 import {
     AndroidOutlined,
@@ -27,47 +27,56 @@ const ResponsiveGridLayout = WidthProvider(Responsive);
 export default function MEMDeviceConfigurations() {
     const selectedTenant = useContext(TenantContext);
     const [devices, setDevices] = useState([]);
+    const [filteredDevices, setFilteredDevices] = useState([]);
     const [manufacturerCount, setManufacturerCount] = useState([]);
 
-    const [getDevices, { loadingDevices, data }] = useLazyQuery(deviceMany, {
-        onCompleted: (data) => {
-            let devices = data.deviceMany;
-            let manufacturerCount = [];
+    function buildManufacturerData(deviceArray) {
+        let manufacturerCount = [];
+        for (let i = 0; i < deviceArray.length; i++) {
+            let manufacturer = deviceArray[i].manufacturer;
+            const foundIndex = manufacturerCount.findIndex(item => item.name === manufacturer)
 
-            if (selectedTenant) {
-                devices = devices.filter(device => device.tenant?._id === selectedTenant._id);
+            if (foundIndex >= 0) {
+                manufacturerCount[foundIndex].count++;
+            } else {
+                manufacturerCount.push({
+                    "name": manufacturer,
+                    "count": 1
+                });
             }
+        }
+        setManufacturerCount(manufacturerCount);
+    }
 
-            for (let i = 0; i < devices.length; i++) {
-                let device = devices[i];
+    const { loadingDevices, errorDevices, data } = useQuery(deviceMany, {
+        onCompleted: (data) => {
+            let devices = [];
+            console.log(data)
 
-                // create manufacturer data
-                let manufacturer = device.manufacturer;
-                const foundIndex = manufacturerCount.findIndex(item => item.name === manufacturer)
-
-                if (foundIndex >= 0) {
-                    manufacturerCount[foundIndex].count++;
-                } else {
-                    manufacturerCount.push({
-                        "name": manufacturer,
-                        "count": 1
-                    });
-                }
-
+            for (let i = 0; i < data.deviceMany.length; i++) {
+                let device = data.deviceMany[i];
                 // parse value
                 let adaptedDevice = { ...device };
                 adaptedDevice.value = JSON.parse(device.value);
                 devices.push(adaptedDevice);
             }
             setDevices(devices);
-            setManufacturerCount(manufacturerCount);
+            setFilteredDevices(devices);
         },
         fetchPolicy: "cache-and-network"
     });
 
     useEffect(() => {
-        getDevices()
-    }, [selectedTenant, getDevices]);
+        // filter if needed
+        if (selectedTenant) {
+            let filteredDevices = devices.filter(device => device.tenant && (device.tenant._id === selectedTenant._id));
+            setFilteredDevices(filteredDevices);
+            buildManufacturerData(filteredDevices);
+        } else {
+            setFilteredDevices(devices);
+            buildManufacturerData(devices);
+        }
+    }, [devices, selectedTenant]);
 
     function renderIcon(operatingSystem) {
         switch (operatingSystem) {
@@ -97,7 +106,7 @@ export default function MEMDeviceConfigurations() {
                     className="dashboard"
                 >
                     {
-                        devices &&
+                        filteredDevices &&
                         <ResponsiveGridLayout className="layout"
                             breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
                             rowHeight={30}
@@ -107,7 +116,7 @@ export default function MEMDeviceConfigurations() {
                                 <Card>
                                     <div>
                                         <DesktopOutlined />
-                                        <h1>{devices.length}</h1>
+                                        <h1>{filteredDevices.length}</h1>
                                     </div>
                                 </Card>
                             </div>
@@ -132,7 +141,7 @@ export default function MEMDeviceConfigurations() {
                         devices &&
                         <List
                             itemLayout="horizontal"
-                            dataSource={devices}
+                            dataSource={filteredDevices}
                             loading={loadingDevices}
                             renderItem={item => (
                                 <List.Item

@@ -104,7 +104,6 @@ export default function MEMConfigurations(props) {
     }
   }
 
-
   React.useEffect(() => {
     refilter();
   }, [props.category, selectedTenant]);
