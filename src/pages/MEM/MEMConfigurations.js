@@ -36,39 +36,37 @@ export default function MEMConfigurations(props) {
     }
   }
 
+  const [state, dispatch] = useReducer(reducer, initialState);
+  
   function filterConfigurations(configurations) {
     let configurationCollection = [];
 
-    if (configurations?.length > 0) {
-      configurations.map(configuration => {
-        let configurationType = configuration.configurationType;
-        // console.log(props.category);
-        // console.log(configurationType.category);
+    configurations.forEach(configuration => {
+      let configurationType = configuration.configurationType;
+      // console.log(props.category);
+      // console.log(configurationType.category);
 
-        // Todo: find a better way to include this check into grapql query
-        if (props.category && (props.category === configurationType.category)) {
-          if (configuration.newestConfigurationVersions && configuration.newestConfigurationVersions[0]) {
-            let newConfigurationObject = {};
-            let configurationVersion = configuration.newestConfigurationVersions[0];
+      // Todo: find a better way to include this check into grapql query
+      if (props.category && (props.category === configurationType.category)) {
+        if (configuration.newestConfigurationVersions && configuration.newestConfigurationVersions[0]) {
+          let newConfigurationObject = {};
+          let configurationVersion = configuration.newestConfigurationVersions[0];
 
-            // build new config object
-            // adds pressure to client, makes iterating much easier
-            newConfigurationObject.id = configuration._id;
-            newConfigurationObject.displayName = configurationVersion.displayName;
-            newConfigurationObject.modifiedAt = configurationVersion.graphModifiedAt;
-            newConfigurationObject.platform = configurationType.platform;
-            newConfigurationObject.type = configurationType.name;
-            newConfigurationObject.state = configurationVersion.state;
+          // build new config object
+          // adds pressure to client, makes iterating much easier
+          newConfigurationObject.id = configuration._id;
+          newConfigurationObject.displayName = configurationVersion.displayName;
+          newConfigurationObject.modifiedAt = configurationVersion.graphModifiedAt;
+          newConfigurationObject.platform = configurationType.platform;
+          newConfigurationObject.type = configurationType.name;
+          newConfigurationObject.state = configurationVersion.state;
 
-            configurationCollection.push(newConfigurationObject);
-          }
+          configurationCollection.push(newConfigurationObject);
         }
-      })
-    }
+      }
+    });
     return configurationCollection;
   }
-
-  const [state, dispatch] = useReducer(reducer, initialState);
 
   const { loadingByTenant, errorByTenant, dataByTenant } = useQuery(getNewestConfigurationVersionsByTenant, {
     fetchPolicy: 'cache-and-network',
@@ -106,7 +104,7 @@ export default function MEMConfigurations(props) {
 
   React.useEffect(() => {
     refilter();
-  }, [props.category, selectedTenant]);
+  }, [props.category, refilter, selectedTenant]);
 
   const columns = [
     {
