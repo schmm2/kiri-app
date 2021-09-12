@@ -1,3 +1,8 @@
 .defaultPage {
-    padding: 2vh;
+    margin: 6vh 3vw;
+    padding: 45px;
+    background-color: #ffffff;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
 }

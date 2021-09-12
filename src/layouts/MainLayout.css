@@ -2,25 +2,27 @@
     min-height: 100vh !important;
 }
 
-.site-content{
-    background-color: white;
+.site-content {
+    background-color: #f0f2f5;
 }
 
-.ant-layout-header{
+.ant-layout-header {
     background: none !important;
 }
 
-.trigger{
+.trigger {
     padding: 0 24px;
 }
 
-.ant-layout-header{
+.ant-layout-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
+
 /* Header */
+
 #headerMenu {
     background-color: transparent;
     display: flex;
@@ -29,12 +31,12 @@
     padding: 2vh;
 }
 
-#headerMenu .ant-btn-background-ghost{
+#headerMenu .ant-btn-background-ghost {
     border-color: grey;
     color: grey;
 }
 
-#headerMenu .ant-menu-item-selected{
+#headerMenu .ant-menu-item-selected {
     background-color: transparent;
     color: black;
 }
