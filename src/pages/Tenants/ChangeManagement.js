@@ -86,7 +86,7 @@ export default function ChangeManagement() {
     return (
         <DefaultPage>
             <h1>Change Management</h1>
-            <Table loading={loading} rowKey="id" columns={columns} dataSource={configurationVersions}></Table>
+            <Table loading={loading} rowKey="_id" columns={columns} dataSource={configurationVersions}></Table>
         </DefaultPage>
     );
 }

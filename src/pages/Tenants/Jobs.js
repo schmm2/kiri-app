@@ -4,8 +4,8 @@ import { Table, Button, Tag, Space } from "antd";
 import { Link } from "react-router-dom";
 import { renderDate } from 'util/renderDate'
 import moment from 'moment';
-import { useLazyQuery } from '@apollo/client';
-import DefaultPage from '../layouts/DefaultPage';
+import { useLazyQuery, useQuery } from '@apollo/client';
+import DefaultPage from '../../layouts/DefaultPage';
 import TenantContext from "components/TenantContext"
 
 export default function Jobs(props) {
@@ -23,8 +23,7 @@ export default function Jobs(props) {
         variables: { filter: { tenant: selectedTenant._id } }
       });
     } else {
-      // no tenant defined, load all jobs
-      getJobs();
+      getJobs(); // no tenant defined, load all jobs
     }
   }, [selectedTenant, getJobs]);
 

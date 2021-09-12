@@ -12,7 +12,7 @@ import MEMDeviceConfigurations from 'pages/MEM/MEMDeviceConfigurations';
 import MEMDeviceConfiguration from 'pages/MEM/MEMDeviceConfiguration';
 import Tenants from 'pages/Tenants/Tenants';
 import TenantAdd from 'pages/Tenants/TenantAdd';
-import Jobs from 'pages/Jobs';
+import Jobs from 'pages/Tenants/Jobs';
 import MEMDevices from 'pages/MEM/MEMDevices';
 import MEMConfigurations from 'pages/MEM/MEMConfigurations';
 import ConfigurationTypes from 'pages/Admin/ConfigurationTypes';

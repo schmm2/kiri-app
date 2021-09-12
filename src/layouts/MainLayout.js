@@ -13,12 +13,14 @@ import TenantContext from 'components/TenantContext';
 
 import { useQuery } from '@apollo/client';
 import { tenantMany } from "graphql/queries";
+import { useMsal } from "@azure/msal-react";
 
 import './MainLayout.css'
 
 const { Sider, Content, Header } = Layout;
 
 export default function MainLayout(props) {
+  const { instance } = useMsal();
 
   const { data } = useQuery(tenantMany, {
     fetchPolicy: 'cache-and-network',
@@ -54,7 +56,7 @@ export default function MainLayout(props) {
 
   async function signOut() {
     try {
-      //await Auth.signOut();
+      instance.logoutRedirect();
     } catch (error) {
       console.log('error signing out: ', error);
     }

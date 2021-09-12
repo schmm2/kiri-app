@@ -5,6 +5,11 @@ import * as serviceWorker from './serviceWorker';
 import { BrowserRouter as Router } from 'react-router-dom'
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 
+// MSAL imports
+import { PublicClientApplication, EventType } from "@azure/msal-browser";
+import { msalConfig } from "./authConfig";
+
+// Build backend url
 const backendApiUrl = process.env.REACT_APP_BACKENDAPIURL;
 const functionKey = process.env.REACT_APP_FUNCTIONKEY;
 let graphqlUrl = "";
@@ -30,11 +35,27 @@ const client = new ApolloClient({
   },
 });
 
+// MSAL
+export const msalInstance = new PublicClientApplication(msalConfig);
+
+// Account selection logic is app dependent. Adjust as needed for different use cases.
+const accounts = msalInstance.getAllAccounts();
+if (accounts.length > 0) {
+  msalInstance.setActiveAccount(accounts[0]);
+}
+
+msalInstance.addEventCallback((event) => {
+  if (event.eventType === EventType.LOGIN_SUCCESS && event.payload.account) {
+    const account = event.payload.account;
+    msalInstance.setActiveAccount(account);
+  }
+});
+
 ReactDOM.render(
   <React.StrictMode>
     <Router>
       <ApolloProvider client={client}>
-        <App />
+        <App pca={msalInstance} />
       </ApolloProvider>
     </Router>
   </React.StrictMode>,

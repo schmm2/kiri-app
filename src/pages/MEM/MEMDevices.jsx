@@ -70,8 +70,8 @@ export default function MEMDeviceConfigurations() {
                 }
             }
         }
-        console.log(osVersionCount);
-        setOsVersionCount(osVersionCount);
+        //console.log(osVersionCount);
+        //setOsVersionCount(osVersionCount);
     }
 
     const { loadingDevices, errorDevices, data } = useQuery(deviceMany, {
@@ -89,7 +89,10 @@ export default function MEMDeviceConfigurations() {
             setDevices(devices);
             setFilteredDevices(devices);
         },
-        fetchPolicy: "cache-and-network"
+        fetchPolicy: "cache-and-network",
+        onError: (error) => {
+            console.log(error)
+        }
     });
 
     useEffect(() => {
@@ -104,7 +107,7 @@ export default function MEMDeviceConfigurations() {
             buildManufacturerData(devices);
             buildOSData(devices);
         }
-    }, [devices, selectedTenant]);
+    }, [selectedTenant, devices]);
 
     function renderIcon(operatingSystem) {
         switch (operatingSystem) {

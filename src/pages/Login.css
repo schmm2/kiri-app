@@ -1,0 +1,21 @@
+.loginPage {
+    background: rgb(2, 0, 36);
+    /* https://cssgradient.io/ */
+    background: linear-gradient(45deg, rgba(2, 0, 36, 1) 0%, rgba(13, 16, 51, 1) 30%, rgb(7, 141, 165) 100%);
+    min-height: 100vh;
+    min-width: 100vw;
+}
+
+.loginCard {
+    background-color: #ffffff;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    padding: 2vh 4vw;
+    max-width: 400px;
+}
