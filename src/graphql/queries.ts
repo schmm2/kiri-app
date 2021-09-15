@@ -7,7 +7,10 @@ export const deviceMany = gql`
       _id,
       deviceId,
       manufacturer,
-      value
+      value,
+      tenant {
+        _id
+      }
     }
   }
 `
@@ -22,7 +25,6 @@ export const configurationMany = gql`
     }
   }
 `
-
 
 export const configurationVersionManySortModified = gql`
 query configurationVersionManySortModified{
@@ -76,36 +78,34 @@ export const configurationById = gql`
   }
 `
 
-export const getNewestConfigurationVersionsOfTenants = gql`
+export const getNewestConfigurationVersions = gql`
   query GetNewestConfigurationVersions {
-    tenantMany {
+    configurationMany {       
       _id 
-      configurations {       
-        _id 
-        newestActiveConfigurationVersions {
-          _id
-          displayName
-          isNewest
-          graphModifiedAt  
-          state
-        }
-        configurationType {
-          platform
-          category
-          name
-        }
+      newestConfigurationVersions {
+        _id
+        displayName
+        isNewest
+        graphModifiedAt  
+        state
       }
-    }
+      configurationType {
+        platform
+        category
+        name
+      }
+    } 
+   
   }
 `
 
-export const getTenantNewestActiveConfigurationVersions = gql`
-  query GetTenantConfigurationVersions($id: MongoID!) {
+export const getNewestConfigurationVersionsByTenant = gql`
+  query getNewestConfigurationVersionsByTenant($id: MongoID!) {
     tenantById(_id: $id) {
       _id 
       configurations {       
         _id 
-        newestActiveConfigurationVersions {
+        newestConfigurationVersions {
           _id
           displayName
           isNewest

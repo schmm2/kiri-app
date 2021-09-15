@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { deviceMany } from "graphql/queries";
 import { List, Avatar } from 'antd';
 import { Link } from "react-router-dom";
 import { Tabs } from 'antd';
 import { Responsive, WidthProvider } from 'react-grid-layout';
+import TenantContext from "components/TenantContext"
 
+import MyBarChart from "components/BarChart";
 import DoughnutChart from 'components/DoughnutChart'
 import { Card } from 'antd';
 import { useQuery } from '@apollo/client';
@@ -24,43 +26,88 @@ const { TabPane } = Tabs;
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 export default function MEMDeviceConfigurations() {
-
+    const selectedTenant = useContext(TenantContext);
     const [devices, setDevices] = useState([]);
+    const [filteredDevices, setFilteredDevices] = useState([]);
     const [manufacturerCount, setManufacturerCount] = useState([]);
+    const [osVersionCount, setOsVersionCount] = useState([]);
 
-    const { loading, error, deviceData } = useQuery(deviceMany, {
-        fetchPolicy: 'cache-and-network',
-        onCompleted: (data) => {
-            let devices = [];
-            let manufacturerCount = [];
+    function buildManufacturerData(deviceArray) {
+        let manufacturerCount = [];
+        for (let i = 0; i < deviceArray.length; i++) {
+            let manufacturer = deviceArray[i].manufacturer;
+            const foundIndex = manufacturerCount.findIndex(item => item.name === manufacturer)
 
-            for(let i = 0; i < data.deviceMany.length; i++){
-                let device = data.deviceMany[i];
+            if (foundIndex >= 0) {
+                manufacturerCount[foundIndex].count++;
+            } else {
+                manufacturerCount.push({
+                    "name": manufacturer,
+                    "count": 1
+                });
+            }
+        }
+        setManufacturerCount(manufacturerCount);
+    }
 
-                // create manufacturer data
-                let manufacturer = device.manufacturer;
-                const foundIndex = manufacturerCount.findIndex(item => item.name === manufacturer)
-                console.log(foundIndex);
+    function buildOSData(deviceArray) {
+        let osVersionCount = [];
+        for (let i = 0; i < deviceArray.length; i++) {
+            console.log(deviceArray[i]);
+
+            if (deviceArray[i].value.osVersion) {
+                let osVersion = deviceArray[i].value.osVersion;
+                console.log(osVersion)
+                const foundIndex = osVersionCount.findIndex(item => item.name === osVersion)
+
                 if (foundIndex >= 0) {
-                    manufacturerCount[foundIndex].count++;
+                    osVersionCount[foundIndex].count++;
                 } else {
-                    manufacturerCount.push({
-                        "name": manufacturer,
+                    osVersionCount.push({
+                        "name": osVersion,
                         "count": 1
                     });
                 }
+            }
+        }
+        //console.log(osVersionCount);
+        //setOsVersionCount(osVersionCount);
+    }
 
+    const { loadingDevices, errorDevices, data } = useQuery(deviceMany, {
+        onCompleted: (data) => {
+            let devices = [];
+            console.log(data)
+
+            for (let i = 0; i < data.deviceMany.length; i++) {
+                let device = data.deviceMany[i];
                 // parse value
                 let adaptedDevice = { ...device };
                 adaptedDevice.value = JSON.parse(device.value);
-                console.log(adaptedDevice);
-
                 devices.push(adaptedDevice);
             }
             setDevices(devices);
-            setManufacturerCount(manufacturerCount);
+            setFilteredDevices(devices);
+        },
+        fetchPolicy: "cache-and-network",
+        onError: (error) => {
+            console.log(error)
         }
     });
+
+    useEffect(() => {
+        // filter if needed
+        if (selectedTenant) {
+            let filteredDevices = devices.filter(device => device.tenant && (device.tenant._id === selectedTenant._id));
+            setFilteredDevices(filteredDevices);
+            buildManufacturerData(filteredDevices);
+            buildOSData(filteredDevices);
+        } else {
+            setFilteredDevices(devices);
+            buildManufacturerData(devices);
+            buildOSData(devices);
+        }
+    }, [selectedTenant, devices]);
 
     function renderIcon(operatingSystem) {
         switch (operatingSystem) {
@@ -90,7 +137,7 @@ export default function MEMDeviceConfigurations() {
                     className="dashboard"
                 >
                     {
-                        devices &&
+                        filteredDevices &&
                         <ResponsiveGridLayout className="layout"
                             breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
                             rowHeight={30}
@@ -100,13 +147,18 @@ export default function MEMDeviceConfigurations() {
                                 <Card>
                                     <div>
                                         <DesktopOutlined />
-                                        <h1>{devices.length}</h1>
+                                        <h1>{filteredDevices.length}</h1>
                                     </div>
                                 </Card>
                             </div>
                             <div key="c" data-grid={{ w: 4, h: 6, x: 2, y: 0, minW: 4, minH: 3 }}>
                                 <div className="card">
                                     <DoughnutChart data={manufacturerCount} dataKey={"count"}></DoughnutChart>
+                                </div>
+                            </div>
+                            <div key="d" data-grid={{ w: 4, h: 6, x: 2, y: 0, minW: 4, minH: 3 }}>
+                                <div className="card">
+                                    <MyBarChart data={osVersionCount}></MyBarChart>
                                 </div>
                             </div>
                         </ResponsiveGridLayout>
@@ -122,11 +174,11 @@ export default function MEMDeviceConfigurations() {
                     key="2"
                 >
                     {
-                        devices && 
+                        devices &&
                         <List
                             itemLayout="horizontal"
-                            dataSource={devices}
-                            loading={loading}
+                            dataSource={filteredDevices}
+                            loading={loadingDevices}
                             renderItem={item => (
                                 <List.Item
                                     key={item.id}

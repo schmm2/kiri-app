@@ -1,31 +1,31 @@
-import React, { useEffect } from "react";
-import { jobMany, tenantById } from "graphql/queries";
-import { Table, Button, Tag } from "antd";
+import React, { useEffect, useContext } from "react";
+import { jobMany } from "graphql/queries";
+import { Table, Button, Tag, Space } from "antd";
 import { Link } from "react-router-dom";
 import { renderDate } from 'util/renderDate'
 import moment from 'moment';
-import { useLazyQuery, gql } from '@apollo/client';
-import DefaultPage from '../layouts/DefaultPage';
+import { useLazyQuery, useQuery } from '@apollo/client';
+import DefaultPage from '../../layouts/DefaultPage';
+import TenantContext from "components/TenantContext"
 
 export default function Jobs(props) {
-  const { match: { params } } = props;
+  const selectedTenant = useContext(TenantContext);
 
   const [getJobs, { loadingJobs, data: jobdata }] = useLazyQuery(jobMany,
-    { 
+    {
       onCompleted: (data) => console.log(jobdata),
       fetchPolicy: "cache-and-network"
     });
 
   useEffect(() => {
-    if (params.tenantId) {
+    if (selectedTenant) {
       getJobs({
-        variables: { filter: { tenant: params.tenantId } }
+        variables: { filter: { tenant: selectedTenant._id } }
       });
     } else {
-      console.log("no tenant defined, load all jobs");
-      getJobs();
+      getJobs(); // no tenant defined, load all jobs
     }
-  }, [params.tenantId]);
+  }, [selectedTenant, getJobs]);
 
   const columns = [
     {
@@ -86,11 +86,16 @@ export default function Jobs(props) {
 
   return (
     <DefaultPage>
-       <h1>Jobs</h1>
-      <Table loading={loadingJobs} rowKey="id" columns={columns} dataSource={jobdata && jobdata.jobMany} onChange={onChange} />
-      <Button>
-        <Link to={"/tenants"}>Back</Link>
-      </Button>
-    </DefaultPage>
+      <h1>Jobs</h1>
+      <Table loading={loadingJobs} rowKey="_id" columns={columns} dataSource={jobdata && jobdata.jobMany} onChange={onChange} />
+      <div className="controlBottom">
+        <Space align="end">
+          <Button onClick={getJobs}>Refresh</Button>
+          <Button>
+            <Link to={"/tenants"}>Back</Link>
+          </Button>
+        </Space>
+      </div>
+    </DefaultPage >
   );
 }

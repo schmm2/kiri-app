@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { tenantMany } from "graphql/queries";
 import { tenantRemoveById } from "graphql/mutations";
 import { Link } from "react-router-dom";
@@ -37,7 +37,7 @@ export default function Tenants() {
     apipost("orchestrators/ORC1000AzureDataCollect", { tenantMongoDbId: tenantMongoDbId })
       .then(response => response.json())
       .then(data => {
-        console.log(data);
+        //console.log(data);
         openNotificationWithIcon('Pull Data', 'Job started', 'success');
       }).catch((error) => {
         openNotificationWithIcon('Pull Data', 'Job error', 'error');
@@ -74,6 +74,10 @@ export default function Tenants() {
     {
       title: "Name",
       dataIndex: "name",
+    },
+    {
+      title: "Tenant ID",
+      dataIndex: "tenantId",
     },
     {
       title: "Verified",
@@ -118,7 +122,7 @@ export default function Tenants() {
   return (
     <div className="defaultPage">
       <h1>Tenants</h1>
-      <Table loading={loading} rowKey="id" columns={columns} dataSource={data && data.tenantMany} onChange={onChange}></Table>
+      <Table loading={loading} rowKey="_id" columns={columns} dataSource={data && data.tenantMany} onChange={onChange}></Table>
       <Button>
         <Link to="/tenantAdd">
           <PlusOutlined />

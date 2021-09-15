@@ -24,7 +24,7 @@ export default function ConfigurationTypeAdd() {
         }
     });
 
-    const { loading, error, data = [] } = useQuery(msGraphResourceMany, {
+    const { loading } = useQuery(msGraphResourceMany, {
         onCompleted: data => {
             let schema = buildSchema(data.msGraphResourceMany);
             let schemaValidator = createValidator(schema);
