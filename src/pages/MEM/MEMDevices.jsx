@@ -30,7 +30,7 @@ export default function MEMDeviceConfigurations() {
     const [devices, setDevices] = useState([]);
     const [filteredDevices, setFilteredDevices] = useState([]);
     const [manufacturerCount, setManufacturerCount] = useState([]);
-    const [osVersionCount, setOsVersionCount] = useState([]);
+    const [osCount, setOsCount] = useState([]);
 
     function buildManufacturerData(deviceArray) {
         let manufacturerCount = [];
@@ -51,27 +51,30 @@ export default function MEMDeviceConfigurations() {
     }
 
     function buildOSData(deviceArray) {
-        let osVersionCount = [];
+        let osCount = [];
         for (let i = 0; i < deviceArray.length; i++) {
             console.log(deviceArray[i]);
 
-            if (deviceArray[i].value.osVersion) {
-                let osVersion = deviceArray[i].value.osVersion;
-                console.log(osVersion)
-                const foundIndex = osVersionCount.findIndex(item => item.name === osVersion)
+            let deviceData = deviceArray[i].value;
+            if (deviceData.osVersion && deviceData.operatingSystem ) {
+                // build identification string        
+                const osString = deviceData.operatingSystem + " " + deviceData.osVersion
+                const foundIndex = osCount.findIndex(item => item.id === osString)
 
                 if (foundIndex >= 0) {
-                    osVersionCount[foundIndex].count++;
+                    osCount[foundIndex].count++;
                 } else {
-                    osVersionCount.push({
-                        "name": osVersion,
-                        "count": 1
+                    osCount.push({
+                        "name": osString,
+                        "osVersion": deviceData.osVersion,
+                        "count": 1,
+                        "operatingSytem": deviceData.operatingSystem
                     });
                 }
             }
         }
-        //console.log(osVersionCount);
-        //setOsVersionCount(osVersionCount);
+        console.log(osCount);
+        setOsCount(osCount);
     }
 
     const { loadingDevices, errorDevices, data } = useQuery(deviceMany, {
@@ -96,17 +99,16 @@ export default function MEMDeviceConfigurations() {
     });
 
     useEffect(() => {
+        let filteredDevices = devices;
+
         // filter if needed
         if (selectedTenant) {
-            let filteredDevices = devices.filter(device => device.tenant && (device.tenant._id === selectedTenant._id));
-            setFilteredDevices(filteredDevices);
-            buildManufacturerData(filteredDevices);
-            buildOSData(filteredDevices);
-        } else {
-            setFilteredDevices(devices);
-            buildManufacturerData(devices);
-            buildOSData(devices);
-        }
+            filteredDevices = devices.filter(device => device.tenant && (device.tenant._id === selectedTenant._id));          
+        } 
+        setFilteredDevices(filteredDevices);
+        buildManufacturerData(filteredDevices);
+        buildOSData(filteredDevices);
+        
     }, [selectedTenant, devices]);
 
     function renderIcon(operatingSystem) {
@@ -158,7 +160,7 @@ export default function MEMDeviceConfigurations() {
                             </div>
                             <div key="d" data-grid={{ w: 4, h: 6, x: 2, y: 0, minW: 4, minH: 3 }}>
                                 <div className="card">
-                                    <MyBarChart data={osVersionCount}></MyBarChart>
+                                    <MyBarChart data={osCount}></MyBarChart>
                                 </div>
                             </div>
                         </ResponsiveGridLayout>
