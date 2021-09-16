@@ -21,6 +21,7 @@ import {
 } from '@ant-design/icons'
 
 import './MEMDevices.css'
+import DefaultPage from "layouts/DefaultPage";
 
 const { TabPane } = Tabs;
 const ResponsiveGridLayout = WidthProvider(Responsive);
@@ -177,6 +178,7 @@ export default function MEMDeviceConfigurations() {
                 >
                     {
                         devices &&
+                        <DefaultPage>
                         <List
                             itemLayout="horizontal"
                             dataSource={filteredDevices}
@@ -195,6 +197,7 @@ export default function MEMDeviceConfigurations() {
                                 </List.Item>
                             )}
                         />
+                        </DefaultPage>
                     }
                 </TabPane>
             </Tabs>
