@@ -5,7 +5,8 @@ import {
   ApartmentOutlined,
   SettingOutlined,
   HomeOutlined,
-  FormOutlined
+  FormOutlined,
+  RightSquareOutlined
 } from '@ant-design/icons';
 
 import { Link, useLocation } from "react-router-dom";
@@ -70,7 +71,7 @@ export default function SideMenu(props) {
           </Link>
         </Menu.Item>
       </SubMenu>
-      <SubMenu key="/scriptOverview" icon={<SettingOutlined />} title="Scripts">
+      <SubMenu key="/scriptOverview" icon={<RightSquareOutlined />} title="Scripts">
         <Menu.Item key="/deviceManagementScript">
           <Link to="/deviceManagementScript">
             Powershell
