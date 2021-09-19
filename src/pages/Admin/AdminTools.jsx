@@ -4,7 +4,7 @@ import { List } from 'antd';
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
 import { apipost } from "util/api";
 
-export default function AdminOverview() {
+export default function AdminTools() {
 
     function stageDatabase() {
         console.log("stage database initialized");
@@ -38,7 +38,7 @@ export default function AdminOverview() {
 
     return (
         <DefaultPage>
-            <h1>Admin - Overview</h1>
+            <h1>Admin Tools</h1>
             <h2>Data Management</h2>
             <List
                 itemLayout="horizontal"

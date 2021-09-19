@@ -70,6 +70,18 @@ export default function SideMenu(props) {
           </Link>
         </Menu.Item>
       </SubMenu>
+      <SubMenu key="/scriptOverview" icon={<SettingOutlined />} title="Scripts">
+        <Menu.Item key="/deviceManagementScript">
+          <Link to="/deviceManagementScript">
+            Powershell
+          </Link>
+        </Menu.Item>
+        <Menu.Item key="/proactiveremediation">
+          <Link to="/proactiveremediation">
+            Proactive Remediation
+          </Link>
+        </Menu.Item>
+      </SubMenu>
       <SubMenu key="/tenants" icon={<ApartmentOutlined />} title="Tenants">
         <Menu.Item key="/tenantsOverview">
           <Link to="/tenants">
@@ -88,9 +100,9 @@ export default function SideMenu(props) {
         </Menu.Item>
       </SubMenu>
       <SubMenu key="/admin" icon={<SettingOutlined />} title="Admin">
-        <Menu.Item key="/adminoverview">
-          <Link to="/adminoverview">
-            Overview
+        <Menu.Item key="/adminTools">
+          <Link to="/adminTools">
+            Tools
           </Link>
         </Menu.Item>
         <Menu.Item key="/configurationTypes">
@@ -106,6 +118,4 @@ export default function SideMenu(props) {
       </SubMenu>
     </Menu>
   );
-
 }
-

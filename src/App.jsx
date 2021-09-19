@@ -22,7 +22,7 @@ import ConfigurationTypeAdd from 'pages/Admin/ConfigurationTypeAdd';
 import MsGraphResources from 'pages/Admin/MsGraphResources';
 import MsGraphResourceAdd from 'pages/Admin/MsGraphResourceAdd';
 import TenantVerification from 'pages/Tenants/TenantVerification';
-import AdminOverview from 'pages/Admin/AdminOverview';
+import AdminTools from 'pages/Admin/AdminTools';
 
 // CSS
 import './App.less';
@@ -88,6 +88,10 @@ function Pages() {
       <Route path="/autopilot">
         <MEMConfigurations title={"Autopilot"} category={'autopilot'} />
       </Route>
+      <Route path="/deviceManagementScript/:configurationId" component={MEMConfiguration} />
+      <Route path="/deviceManagementScript">
+        <MEMConfigurations title={"Powershell"} category={'deviceManagementScript'} />
+      </Route>
       <Route path="/memDevices/:deviceId" component={MEMDevice} />
       <Route path="/memDevices" component={MEMDevices} />
       <Route path="/tenants" component={Tenants} />
@@ -97,7 +101,7 @@ function Pages() {
       <Route path="/changeManagement" component={ChangeManagement} />
       <Route path="/jobs/:tenantId" component={Jobs} />
       <Route path="/jobs" component={Jobs} />
-      <Route path="/adminOverview" component={AdminOverview} />
+      <Route path="/adminTools" component={AdminTools} />
       <Route path="/tenantverification" component={TenantVerification} />
     </Switch>
   )
