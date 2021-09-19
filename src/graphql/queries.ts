@@ -15,6 +15,16 @@ export const deviceMany = gql`
   }
 `
 
+export const deviceById = gql`
+  query deviceById($id: MongoID!) {
+    deviceById(_id: $id) {
+      _id,
+      manufacturer,
+      value
+    } 
+  }
+`
+
 // Configuration
 export const configurationMany = gql`
   query ConfigurationMany {

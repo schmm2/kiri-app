@@ -15,6 +15,7 @@ import TenantAdd from 'pages/Tenants/TenantAdd';
 import ChangeManagement from 'pages/Tenants/ChangeManagement';
 import Jobs from 'pages/Tenants/Jobs';
 import MEMDevices from 'pages/MEM/MEMDevices';
+import MEMDevice from 'pages/MEM/MEMDevice';
 import MEMConfigurations from 'pages/MEM/MEMConfigurations';
 import ConfigurationTypes from 'pages/Admin/ConfigurationTypes';
 import ConfigurationTypeAdd from 'pages/Admin/ConfigurationTypeAdd';
@@ -87,6 +88,7 @@ function Pages() {
       <Route path="/autopilot">
         <MEMConfigurations title={"Autopilot"} category={'autopilot'} />
       </Route>
+      <Route path="/memDevices/:deviceId" component={MEMDevice} />
       <Route path="/memDevices" component={MEMDevices} />
       <Route path="/tenants" component={Tenants} />
       <Route path="/team" component={Team} />
