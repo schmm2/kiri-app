@@ -11,6 +11,7 @@ import ReactJson from 'react-json-view'
 import DefaultPage from '../../layouts/DefaultPage';
 
 import { Table, Button, Menu, Dropdown, Badge, Space, Tabs, Spin } from 'antd';
+import { CodeViewer } from "components/CodeViewer";
 const { TabPane } = Tabs;
 
 export default function MEMConfiguration(props) {
@@ -321,6 +322,17 @@ export default function MEMConfiguration(props) {
                                 </div>
                             </div>
                         </TabPane>
+                        {
+                            state.configurationType && state.configurationType.name === "deviceManagementScript" &&
+                            <TabPane tab="Script" key="4">
+                                {
+                                    state.newestConfigurationVersion &&
+                                    state.newestConfigurationVersion.value &&
+                                    state.newestConfigurationVersion.value.scriptContent &&
+                                    <CodeViewer code={state.newestConfigurationVersion.value.scriptContent} convertFromBase64={true} language="powershell"></CodeViewer>
+                                }
+                            </TabPane>
+                        }
                     </Tabs>
                 )}
             </div>
