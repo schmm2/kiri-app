@@ -10,10 +10,7 @@ export default function MEMDevice(props) {
 
     const { match: { params } } = props;
     const { data, dataLoading, dataError } = useQuery(deviceById, {
-        variables: { id: params.deviceId },
-        onCompleted: (data) => {
-            console.log(data)
-        }
+        variables: { id: params.deviceId }
     });
 
     function onChange(pagination, filters, sorter, extra) {
