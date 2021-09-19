@@ -1,4 +1,4 @@
-import React, { useReducer } from "react";
+import React, { useReducer, useState } from "react";
 import { configurationById } from "graphql/queries";
 import { Link } from "react-router-dom";
 import { updatedDiff } from 'deep-object-diff';
@@ -12,6 +12,7 @@ import DefaultPage from '../../layouts/DefaultPage';
 
 import { Table, Button, Menu, Dropdown, Badge, Space, Tabs, Spin } from 'antd';
 import { CodeViewer } from "components/CodeViewer";
+import { CopyConfigurationModal } from "components/CopyConfigurationModal";
 const { TabPane } = Tabs;
 
 export default function MEMConfiguration(props) {
@@ -65,6 +66,7 @@ export default function MEMConfiguration(props) {
             dispatch({ type: "SET_CONFIGURATION", newState });
         }
     });
+
 
 
     const initialState = {
@@ -247,9 +249,48 @@ export default function MEMConfiguration(props) {
             });
     }
 
+    const [isModalVisible, setIsModalVisible] = useState(false);
+
+    function openModal() {
+        setIsModalVisible(true);
+    }
+
+    function closeModal() {
+        setIsModalVisible(false);
+    }
+
+    function copyConfiguration(data) {
+
+        apipost("orchestrators/ORC1101MEMConfigurationCreate", {
+            tenantDbId: data.targetTenant._id,
+            configurationName: data.newConfigName,
+            configurationVersionDbId: state.newestConfigurationVersion._id,
+            msGraphResource: state.msGraphResource,
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                openNotificationWithIcon('Copy Configuration', 'Job started', 'info');
+            }).catch((error) => {
+                openNotificationWithIcon('Copy Configuration', 'Job error', 'error');
+                console.log(error);
+            });
+    }
+
     return (
         <DefaultPage>
-            <div>
+            <div className="controlTop">
+                <Space align="end">
+                    <Button onClick={openModal}>Copy</Button>
+                </Space>
+            </div>
+            <CopyConfigurationModal
+                showModal={isModalVisible}
+                onClose={closeModal}
+                configurationDisplayName={state.newestConfigurationVersion.displayName}
+                onCopy={copyConfiguration}>
+            </CopyConfigurationModal>
+            <div className="contentArea">
                 {state.loading ? (
                     <div>
                         <Spin />
