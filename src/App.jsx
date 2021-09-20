@@ -85,6 +85,7 @@ function Pages() {
       <Route path="/update">
         <MEMConfigurations title={"Update Ring"} category={'update'} />
       </Route>
+      <Route path="/autopilot/:configurationId" component={MEMConfiguration} />
       <Route path="/autopilot">
         <MEMConfigurations title={"Autopilot"} category={'autopilot'} />
       </Route>

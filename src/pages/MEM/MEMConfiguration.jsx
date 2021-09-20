@@ -13,6 +13,7 @@ import DefaultPage from '../../layouts/DefaultPage';
 import { Table, Button, Menu, Dropdown, Badge, Space, Tabs, Spin } from 'antd';
 import { CodeViewer } from "components/CodeViewer";
 import { CopyConfigurationModal } from "components/CopyConfigurationModal";
+import { ClipboardButton } from "components/ClipboardButton";
 const { TabPane } = Tabs;
 
 export default function MEMConfiguration(props) {
@@ -337,6 +338,7 @@ export default function MEMConfiguration(props) {
                             </div>
                         </TabPane>
                         <TabPane tab="Settings" key="2">
+                            <ClipboardButton data={state.newestConfigurationVersion.value}></ClipboardButton>
                             {
                                 state.newestConfigurationVersion &&
                                 renderDataFullObject(state.newestConfigurationVersion.value)
