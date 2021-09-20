@@ -77,8 +77,8 @@ export default function SideMenu(props) {
             Powershell
           </Link>
         </Menu.Item>
-        <Menu.Item key="/proactiveremediation">
-          <Link to="/proactiveremediation">
+        <Menu.Item key="/deviceHealthScript">
+          <Link to="/deviceHealthScript">
             Proactive Remediation
           </Link>
         </Menu.Item>

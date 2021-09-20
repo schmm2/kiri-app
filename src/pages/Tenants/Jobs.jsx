@@ -8,6 +8,10 @@ import { useLazyQuery, useQuery } from '@apollo/client';
 import DefaultPage from '../../layouts/DefaultPage';
 import TenantContext from "components/TenantContext"
 
+import {
+  ReloadOutlined
+} from '@ant-design/icons';
+
 export default function Jobs(props) {
   const selectedTenant = useContext(TenantContext);
 
@@ -87,10 +91,14 @@ export default function Jobs(props) {
   return (
     <DefaultPage>
       <h1>Jobs</h1>
+      <div className="controlTop">
+        <Space align="end">
+          <Button onClick={getJobs}>Refresh <ReloadOutlined /></Button>
+        </Space>
+      </div>
       <Table loading={loadingJobs} rowKey="_id" columns={columns} dataSource={jobdata && jobdata.jobMany} onChange={onChange} />
       <div className="controlBottom">
         <Space align="end">
-          <Button onClick={getJobs}>Refresh</Button>
           <Button>
             <Link to={"/tenants"}>Back</Link>
           </Button>

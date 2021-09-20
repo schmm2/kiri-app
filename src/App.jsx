@@ -92,6 +92,10 @@ function Pages() {
       <Route path="/deviceManagementScript">
         <MEMConfigurations title={"Powershell"} category={'deviceManagementScript'} />
       </Route>
+      <Route path="/deviceHealthScript/:configurationId" component={MEMConfiguration} />
+      <Route path="/deviceHealthScript">
+        <MEMConfigurations title={"Proactive Remediation"} category={'deviceHealthScript'} />
+      </Route>
       <Route path="/memDevices/:deviceId" component={MEMDevice} />
       <Route path="/memDevices" component={MEMDevices} />
       <Route path="/tenants" component={Tenants} />

@@ -260,7 +260,6 @@ export default function MEMConfiguration(props) {
     }
 
     function copyConfiguration(data) {
-
         apipost("orchestrators/ORC1101MEMConfigurationCreate", {
             tenantDbId: data.targetTenant._id,
             configurationName: data.newConfigName,
@@ -371,6 +370,25 @@ export default function MEMConfiguration(props) {
                                     state.newestConfigurationVersion.value &&
                                     state.newestConfigurationVersion.value.scriptContent &&
                                     <CodeViewer code={state.newestConfigurationVersion.value.scriptContent} convertFromBase64={true} language="powershell"></CodeViewer>
+                                }
+                            </TabPane>
+                        }
+                        {
+                            state.configurationType && state.configurationType.name === "deviceHealthScript" &&
+                            <TabPane tab="Script" key="5">
+                                <h2>Detection Script</h2>
+                                {
+                                    state.newestConfigurationVersion &&
+                                    state.newestConfigurationVersion.value &&
+                                    state.newestConfigurationVersion.value.detectionScriptContent &&
+                                    <CodeViewer code={state.newestConfigurationVersion.value.detectionScriptContent} convertFromBase64={true} language="powershell"></CodeViewer>
+                                }
+                                <h2>Remediation Script</h2>
+                                {
+                                    state.newestConfigurationVersion &&
+                                    state.newestConfigurationVersion.value &&
+                                    state.newestConfigurationVersion.value.remediationScriptContent &&
+                                    <CodeViewer code={state.newestConfigurationVersion.value.remediationScriptContent} convertFromBase64={true} language="powershell"></CodeViewer>
                                 }
                             </TabPane>
                         }

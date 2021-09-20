@@ -14,7 +14,9 @@ export default function AdminTools() {
             .then(response => response.json())
             .then(data => {
                 console.log(data);
-                openNotificationWithIcon('Stage Database', 'success', 'success');
+                openNotificationWithIcon('Stage Database',
+                    'Success. New added data: MsGraphResources: ' + data.msGraphResources + ', ConfigurationTypes: ' + data.configurationTypes,
+                    'success');
             }).catch((error) => {
                 openNotificationWithIcon('Stage Database', 'error', 'error');
                 console.log(error);
