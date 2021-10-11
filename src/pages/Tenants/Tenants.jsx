@@ -125,8 +125,7 @@ export default function Tenants() {
       <Table loading={loading} rowKey="_id" columns={columns} dataSource={data && data.tenantMany} onChange={onChange}></Table>
       <Button>
         <Link to="/tenantAdd">
-          <PlusOutlined />
-          Add Tenant
+          <PlusOutlined /> Add Tenant
         </Link>
       </Button>
     </div >

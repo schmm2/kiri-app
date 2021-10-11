@@ -1,13 +1,18 @@
-import React, { useContext, useReducer } from "react";
+import React, { useContext, useReducer, useState } from "react";
 import { getNewestConfigurationVersionsByTenant, getNewestConfigurationVersions } from "graphql/queries";
-import { Table, Switch } from 'antd';
+import { Table, Switch, Space, Button } from 'antd';
 import { Link } from "react-router-dom";
 import TenantContext from "components/TenantContext"
 import { renderDate } from 'util/renderDate';
 import moment from 'moment';
-import { useQuery } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
+import { AddToDeploymentModal } from "components/AddToDeploymentModal";
+import DefaultPage from "layouts/DefaultPage";
+import { deploymentUpdateOne as deploymentUpdateOneMutation } from "graphql/mutations"
 
 export default function MEMConfigurations(props) {
+
+    const [isModalVisible, setIsModalVisible] = useState(false);
 
     const selectedTenant = useContext(TenantContext);
     //console.log(selectedTenant);
@@ -15,12 +20,12 @@ export default function MEMConfigurations(props) {
     const initialState = {
         configurations: [],
         filteredConfigurations: [],
+        selectedRows: [],
+        selectedRowKeys: [],
         category: null,
         loading: true,
         error: false,
-        filterInfo: {
-            state: ["modified", "new"]
-        }
+        showDeleted: false
     }
 
     function reducer(state, action) {
@@ -29,8 +34,12 @@ export default function MEMConfigurations(props) {
                 return { ...state, configurations: action.configurations, filteredConfigurations: action.filteredConfigurations, loading: action.loading }
             case 'ERROR':
                 return { ...state, loading: false, error: true }
-            case 'SET_FILTERINFO':
-                return { ...state, filterInfo: action.filterInfo }
+            case 'SET_SHOWDELETED':
+                return { ...state, showDeleted: action.showDeleted }
+            case 'SET_SELECTEDROWS':
+                return { ...state, selectedRows: action.selectedRows }
+            case 'SET_SELECTEDROWKEYS':
+                return { ...state, selectedRowKeys: action.selectedRowKeys }
             default:
                 return state
         }
@@ -39,18 +48,34 @@ export default function MEMConfigurations(props) {
     const [state, dispatch] = useReducer(reducer, initialState);
 
     function filterConfigurations(configurations) {
+        //console.log(configurations);
         let configurationCollection = [];
 
-        configurations.forEach(configuration => {
+        for (let i = 0; i < configurations.length; i++) {
+            let configuration = configurations[i];
             let configurationType = configuration.configurationType;
             // console.log(props.category);
             // console.log(configurationType.category);
 
-            // Todo: find a better way to include this check into grapql query
+            // check for matching category
             if (props.category && (props.category === configurationType.category)) {
+
+                // check if config belongs to selected Tenant matches
+                if (selectedTenant && configuration.tenant) {
+                    if (selectedTenant._id != configuration.tenant._id) {
+                        // skip this config
+                        continue;
+                    }
+                }
+
                 if (configuration.newestConfigurationVersions && configuration.newestConfigurationVersions[0]) {
                     let newConfigurationObject = {};
                     let configurationVersion = configuration.newestConfigurationVersions[0];
+
+                    // skip deleted Configs if option is not selected
+                    if (state.showDeleted == false && (configurationVersion.state).toString() === "deleted") {
+                        continue;
+                    }
 
                     // build new config object
                     // adds pressure to client, makes iterating much easier
@@ -64,27 +89,19 @@ export default function MEMConfigurations(props) {
                     configurationCollection.push(newConfigurationObject);
                 }
             }
-        });
+        };
+        console.log("Configuration Item Count:" + configurationCollection.length);
         return configurationCollection;
     }
 
-    const { loadingByTenant, errorByTenant, dataByTenant } = useQuery(getNewestConfigurationVersionsByTenant, {
-        fetchPolicy: 'cache-and-network',
-        skip: (selectedTenant == null),
-        variables: { id: selectedTenant?._id },
-        onCompleted: (data) => {
-            let configurations = data.tenantById.configurations;
-            let filteredConfigurations = filterConfigurations(configurations);
-            dispatch({ type: "SET_CONFIGURATIONS", configurations: configurations, filteredConfigurations: filteredConfigurations, loading: false });
-        },
-        onError: (error) => {
-            dispatch({ type: "ERROR" });
+    const [updateDeployment] = useMutation(deploymentUpdateOneMutation, {
+        onCompleted(data) {
+            console.log(data);
         }
-    })
+    });
 
     const { loading, error, data } = useQuery(getNewestConfigurationVersions, {
         fetchPolicy: 'cache-and-network',
-        skip: (selectedTenant != null),
         onCompleted: (data) => {
             let configurations = data.configurationMany;
             let filteredConfigurations = filterConfigurations(configurations);
@@ -104,111 +121,108 @@ export default function MEMConfigurations(props) {
 
     React.useEffect(() => {
         refilter();
-    }, [props.category, selectedTenant]);
+    }, [props.category, selectedTenant, state.showDeleted]);
 
-    const columns = [{
-        title: "Name",
-        dataIndex: "displayName",
-        render: (text, record) => <Link to={props.category + '/' + record.id} > {record.displayName} </Link>,
-        visible: true
-    },
-    {
-        title: "Type",
-        dataIndex: ["type"],
-        visible: true
-    },
-    {
-        title: "Platform",
-        dataIndex: ["platform"],
-        visible: true
-    },
-    {
-        title: "Modified at",
-        dataIndex: ["modifiedAt"],
-        render: (text, record) => renderDate(text),
-        sorter: (a, b) => moment(a.modifiedAt).unix() - moment(b.modifiedAt).unix(),
-        defaultSortOrder: 'descend',
-        visible: true
-    },
-    {
-        title: "State",
-        dataIndex: ["state"],
-        visible: false,
-        filters: [
-            { text: 'modified', value: 'modified' },
-            { text: 'deleted', value: 'deleted' },
-            { text: 'new', value: 'new' },
-        ],
-        filteredValue: state.filterInfo.state || null,
-        onFilter: (value, record) => record.state.includes(value),
-    },
+    const columns = [
+        {
+            title: "Name",
+            dataIndex: "displayName",
+            render: (text, record) => <Link to={props.category + '/' + record.id} > {record.displayName} </Link>,
+            visible: true
+        },
+        {
+            title: "Type",
+            dataIndex: ["type"],
+            visible: true
+        },
+        {
+            title: "Platform",
+            dataIndex: ["platform"],
+            visible: true
+        },
+        {
+            title: "Modified at",
+            dataIndex: ["modifiedAt"],
+            render: (text, record) => renderDate(text),
+            sorter: (a, b) => moment(a.modifiedAt).unix() - moment(b.modifiedAt).unix(),
+            defaultSortOrder: 'descend',
+            visible: true
+        }
     ];
-
-    const renderBody = (props, columns) => {
-        return (
-            <tr className={props.className} > {
-                columns.map((item, idx) => {
-                    if (item.visible) {
-                        return props.children[idx]
-                    }
-                })
-            } </tr>
-        )
-    }
-
-    const renderHeader = (props, columns) => {
-        return (
-            <tr > {
-                columns.map((item, idx) => {
-                    if (item.visible)
-                        return props.children[idx];
-                })
-            } </tr>
-        )
-    }
 
     function onChange(pagination, filters, sorter, extra) {
         console.log("params", pagination, filters, sorter, extra);
     }
 
     function switchShowDeleted(checked) {
-        console.log("show delted:" + checked);
-        let filterInfo = {
-            state: ["modified", "new"]
+        console.log(checked);
+        dispatch({ type: "SET_SHOWDELETED", showDeleted: checked });
+    }
+
+    const rowSelection = {
+        onChange: (selectedRowKeys, selectedRows) => {
+            //console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+            dispatch({ type: "SET_SELECTEDROWS", selectedRows: selectedRows });
+            dispatch({ type: "SET_SELECTEDROWKEYS", selectedRowKeys: selectedRowKeys });
         }
-        if (checked) {
-            filterInfo.state.push("deleted");
+    };
+
+    function openModal() {
+        setIsModalVisible(true);
+    }
+
+    function closeModal() {
+        setIsModalVisible(false);
+    }
+
+    function addToDeployment(data) {
+        // get existing configurationVersions on deployment: data.configurationVersions; get configurationVersions to add to deployment: state.selectedRowKeys;
+        // find out which configVersion Ids needs to be added
+        let configurationVersionsToAddToDeployment = state.selectedRowKeys.filter(id => data.configurationVersions.indexOf(id) === -1);
+
+        // add new configs to existing configurationVersions 
+        let finalConfigurationVersions = data.configurationVersions.concat(configurationVersionsToAddToDeployment);
+
+        // update deployment if new configVersions have been found
+        if (configurationVersionsToAddToDeployment.length > 0) {
+            let parameter = {
+                variables: {
+                    record: { configurationVersions: finalConfigurationVersions },
+                    filter: { _id: data._id }
+                }
+            }
+            updateDeployment(parameter);
         }
-        dispatch({ type: "SET_FILTERINFO", filterInfo });
     }
 
     return (
-        <div className="defaultPage">
+        <DefaultPage>
             <h1 > {props.title} </h1>
-            <div>
-                <Table rowKey="id"
-                    loading={state.loading}
-                    pagination={
-                        { pageSize: 25 }
-                    }
-                    columns={columns}
-                    dataSource={state.filteredConfigurations}
-                    onChange={onChange}
-                    components={
-                        {
-                            header: {
-                                row: (props) => renderHeader(props, columns)
-                            },
-                            body: {
-                                row: (props) => renderBody(props, columns)
-                            }
-                        }
-                    }
-                />
-                <div>
-                    <span > Show Deleted < Switch onChange={switchShowDeleted} /></span >
-                </div>
+            <div className="controlTop">
+                <Space align="end">
+                    <Button disabled={state.selectedRows.length == 0} onClick={openModal}>+ Deployment</Button>
+                </Space>
             </div>
-        </div>
+            <AddToDeploymentModal
+                showModal={isModalVisible}
+                onClose={closeModal}
+                onAdd={addToDeployment}
+            />
+            <Table
+                rowKey="id"
+                loading={state.loading}
+                rowSelection={{
+                    type: 'checkbox',
+                    ...rowSelection
+                }}
+                columns={columns}
+                dataSource={state.filteredConfigurations}
+                onChange={onChange}
+                pagination={
+                    { pageSize: 25 }
+                }
+            />
+            <span>Show Deleted <Switch onChange={switchShowDeleted} /></span >
+        </DefaultPage>
     );
 }

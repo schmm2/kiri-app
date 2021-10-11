@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react"
 import { Menu } from 'antd';
 import {
   DesktopOutlined,
-  ApartmentOutlined,
   SettingOutlined,
   HomeOutlined,
   FormOutlined,
-  RightSquareOutlined
+  RightSquareOutlined,
+  ExportOutlined,
+  CloudOutlined
 } from '@ant-design/icons';
 
 import { Link, useLocation } from "react-router-dom";
@@ -29,7 +30,7 @@ export default function SideMenu(props) {
           Home
         </Link>
       </Menu.Item>
-      <Menu.Item key="/memDevices" icon={<DesktopOutlined />}>
+      <Menu.Item key="/memDevicesMenu" icon={<DesktopOutlined />}>
         <Link to="/memDevices">
           Devices
           </Link>
@@ -83,11 +84,18 @@ export default function SideMenu(props) {
           </Link>
         </Menu.Item>
       </SubMenu>
-      <SubMenu key="/tenants" icon={<ApartmentOutlined />} title="Tenants">
-        <Menu.Item key="/tenantsOverview">
+      <SubMenu key="/deplyomentsMenu" icon={<ExportOutlined />} title="Deployments">
+        <Menu.Item key="/deployments">
+          <Link to="/deployments">
+            Overview
+          </Link>
+        </Menu.Item>
+      </SubMenu>
+      <SubMenu key="/tenantsMenu" icon={<CloudOutlined />} title="Tenants">
+        <Menu.Item key="/tenants">
           <Link to="/tenants">
             Overview
-        </Link>
+          </Link>
         </Menu.Item>
         <Menu.Item key="/jobs">
           <Link to="/jobs">
@@ -100,7 +108,7 @@ export default function SideMenu(props) {
         </Link>
         </Menu.Item>
       </SubMenu>
-      <SubMenu key="/admin" icon={<SettingOutlined />} title="Admin">
+      <SubMenu key="/adminMenu" icon={<SettingOutlined />} title="Admin">
         <Menu.Item key="/adminTools">
           <Link to="/adminTools">
             Tools

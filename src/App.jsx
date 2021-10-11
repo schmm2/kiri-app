@@ -30,6 +30,9 @@ import './App.less';
 // MSAL imports
 import { MsalProvider, AuthenticatedTemplate, UnauthenticatedTemplate } from "@azure/msal-react";
 import { CustomNavigationClient } from "./util/NavigationClient";
+import Deployments from 'pages/Deplyoments/Deployments';
+import DeploymentAdd from 'pages/Deplyoments/DeploymentAdd';
+import Deployment from 'pages/Deplyoments/Deployment';
 
 function App({ pca }) {
 
@@ -99,10 +102,13 @@ function Pages() {
       </Route>
       <Route path="/memDevices/:deviceId" component={MEMDevice} />
       <Route path="/memDevices" component={MEMDevices} />
+      <Route path="/deploymentAdd" component={DeploymentAdd} />
+      <Route path="/deployments/:deploymentId" component={Deployment} />
+      <Route path="/deployments" component={Deployments} />
+      <Route path="/tenantAdd" component={TenantAdd} />
       <Route path="/tenants" component={Tenants} />
       <Route path="/team" component={Team} />
-      <Route path="/profile" component={Profile} />
-      <Route path="/tenantAdd" component={TenantAdd} />
+      <Route path="/profile" component={Profile} />   
       <Route path="/changeManagement" component={ChangeManagement} />
       <Route path="/jobs/:tenantId" component={Jobs} />
       <Route path="/jobs" component={Jobs} />

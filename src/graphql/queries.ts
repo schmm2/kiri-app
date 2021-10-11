@@ -99,6 +99,10 @@ export const getNewestConfigurationVersions = gql`
         graphModifiedAt  
         state
       }
+      tenant {
+        name
+        _id
+      }
       configurationType {
         platform
         category
@@ -200,6 +204,29 @@ export const configurationTypeMany = gql`
       createdAt
       updatedAt
     }
+  }
+`
+
+
+// Deployment
+export const deploymentMany = gql`
+  query DeploymentMany {
+    deploymentMany { 
+      _id
+      name
+      createdAt
+      updatedAt
+      configurationVersions
+    }
+  }
+`
+
+export const deploymentById = gql`
+  query TeploymentById($id: MongoID!) {
+    deploymentById(_id: $id) {
+      _id,
+      name
+    } 
   }
 `
 

@@ -1,5 +1,16 @@
 import { gql } from '@apollo/client';
 
+// Deployment
+export const deploymentCreateOne = gql`
+  mutation deploymentCreateOne($record: CreateOneDeploymentInput!){
+    deploymentCreateOne(record: $record){
+      record {
+        _id
+      }
+    }
+  }
+`;
+
 // Tenant
 export const tenantCreateOne = gql`
   mutation TenantCreateOne($record: CreateOneTenantInput!){
@@ -61,6 +72,20 @@ export const configurationTypeCreateOne = gql`
     configurationTypeCreateOne(record: $record){
       record {
         _id
+        configurationVersions
+      }
+    }
+  }
+`;
+
+
+export const deploymentUpdateOne = gql`
+  mutation DeploymentUpdateOneMutation($record: UpdateOneDeploymentInput!, $filter: FilterUpdateOneDeploymentInput!) {
+    deploymentUpdateOne(record: $record, filter: $filter) {
+      record {
+        _id
+        name
+        configurationVersions
       }
     }
   }
