@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import DefaultPage from '../../layouts/DefaultPage';
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
 import { apipost } from "util/api";
-import { List, Avatar, Skeleton, Space, Button } from 'antd';
+import { List, Avatar, Skeleton, Space, Button, Row, Col } from 'antd';
 
 import {
     CheckCircleTwoTone,
@@ -42,16 +42,31 @@ export default function Health() {
 
     function checkBackend() {
         console.log("check Backend Api");
+        openNotificationWithIcon('Health check', 'Check started', 'success', 4.0);
 
         apipost("TRG3005HealthCheck", {})
             .then(response => response.json())
             .then(data => {
                 console.log(data);
-                openNotificationWithIcon('Backend check', 'success', 'success');
+                openNotificationWithIcon('Health check', 'success', 'success');
                 setHealth(data);
             }).catch((error) => {
-                openNotificationWithIcon('Backend check', 'error', 'error');
+                openNotificationWithIcon('Health check', 'error', 'error');
                 console.log(error);
+                setHealth({
+                    backendApi: {
+                        status: false,
+                        message: "unable to communicate with backend Api"
+                    },
+                    keyvault: {
+                        status: false,
+                        message: "unable to check, due to backend api issues"
+                    },
+                    database: {
+                        status: false,
+                        message: "unable to check, due to backend api issues"
+                    }
+                })
             });
     }
 
@@ -77,19 +92,30 @@ export default function Health() {
                             />
                             {
                                 health &&
-                                <div>
-                                    {
-                                        health[item.key] ? (
-                                            <CheckCircleTwoTone twoToneColor="#52c41a" />
-                                        ) : (
-                                            <CloseCircleTwoTone twoToneColor="#ff0000" />
-                                        )
-                                    }
-                                </div>
+                                <Row align="middle">
+                                    <Col span={22}>
+                                        {
+                                            health[item.key] && health[item.key].message &&
+
+                                            <p>{health[item.key].message}</p>
+
+                                        }
+                                    </Col>
+                                    <Col span={2}>
+                                        {
+                                            health[item.key] && health[item.key].status ? (
+                                                <CheckCircleTwoTone twoToneColor="#52c41a" />
+                                            ) : (
+                                                <CloseCircleTwoTone twoToneColor="#ff0000" />
+                                            )
+                                        }
+                                    </Col>
+                                </Row>
                             }
                             {
                                 !health && <QuestionCircleOutlined />
                             }
+
                         </Skeleton>
                     </List.Item>
                 )}
