@@ -33,6 +33,7 @@ import { CustomNavigationClient } from "./util/NavigationClient";
 import Deployments from 'pages/Deplyoments/Deployments';
 import DeploymentAdd from 'pages/Deplyoments/DeploymentAdd';
 import Deployment from 'pages/Deplyoments/Deployment';
+import Health from 'pages/Admin/Health';
 
 function App({ pca }) {
 
@@ -59,6 +60,7 @@ function Pages() {
   return (
     <Switch>
       <Route path="/" component={Home} exact />
+      <Route path="/health" component={Health} />
       <Route path="/home" component={Home} />
       <Route path="/msGraphResources" component={MsGraphResources} />
       <Route path="/msGraphResourceAdd" component={MsGraphResourceAdd} />

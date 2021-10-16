@@ -124,6 +124,11 @@ export default function SideMenu(props) {
             Ms Graph Resources
           </Link>
         </Menu.Item>
+        <Menu.Item key="/health">
+          <Link to="/health">
+            Health
+          </Link>
+        </Menu.Item>
       </SubMenu>
     </Menu>
   );
