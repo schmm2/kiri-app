@@ -10,6 +10,7 @@ import MyBarChart from "components/BarChart";
 import DoughnutChart from 'components/DoughnutChart'
 import { Card } from 'antd';
 import { useQuery } from '@apollo/client';
+import { osBuildToVersion } from "util/osBuildToVersion";
 
 import {
     AndroidOutlined,
@@ -31,20 +32,24 @@ export default function MEMDeviceConfigurations() {
     const [devices, setDevices] = useState([]);
     const [filteredDevices, setfilteredDevices] = useState([]);
     const [manufacturerCount, setManufacturerCount] = useState([]);
+    const [osBuildVersionCount, setOsBuildVersionCount] = useState([]);
     const [osVersionCount, setOsVersionCount] = useState([]);
     const [osCount, setOsCount] = useState(null);
     const [encryptionCount, setEncryptionCount] = useState([]);
     const [complianceCount, setComplianceCount] = useState([]);
 
     function buildGraphData(deviceArray) {
+        let osBuildVersionCount = [];
         let osVersionCount = [];
+        let manufacturerCount = [];
+
         let osCount = {
             Windows: 0,
             MacOs: 0,
             iOS: 0,
             Android: 0
         };
-        let manufacturerCount = [];
+
         let encryptionCount = [
             {
                 name: "encrypted",
@@ -86,13 +91,13 @@ export default function MEMDeviceConfigurations() {
                 if (deviceData.osVersion && deviceData.operatingSystem) {
                     // build identification string        
                     const osString = deviceData.operatingSystem + " " + deviceData.osVersion
-                    const foundIndex = osVersionCount.findIndex(item => item.id === osString)
+                    const foundIndex = osBuildVersionCount.findIndex(item => item.id === osString)
 
-                    // count os version
+                    // count os build version like 10.0.19043.1288
                     if (foundIndex >= 0) {
-                        osVersionCount[foundIndex].count++;
+                        osBuildVersionCount[foundIndex].count++;
                     } else {
-                        osVersionCount.push({
+                        osBuildVersionCount.push({
                             "name": osString,
                             "osVersion": deviceData.osVersion,
                             "count": 1,
@@ -100,12 +105,29 @@ export default function MEMDeviceConfigurations() {
                         });
                     }
 
-                    // count os itself
+                    // count os version like 20H2
                     // add os if not added already
-                    if (!osCount[deviceData.operatingSystem]) {
-                        osCount[deviceData.operatingSystem] = 0;
+                    if (deviceData.osVersionName) {
+                        const foundIndex = osVersionCount.findIndex(item => item.name === deviceData.osVersionName)
+                        // count os build version
+                        if (foundIndex >= 0) {
+                            osVersionCount[foundIndex].count++;
+                        } else {
+                            osVersionCount.push({
+                                "name": deviceData.osVersionName,
+                                "count": 1,
+                            });
+                        }
                     }
-                    osCount[deviceData.operatingSystem]++;
+
+
+                    // count os / platform like Windows, Android
+                    // add os if not added already
+                    if (osCount[deviceData.operatingSystem]) {
+                        osCount[deviceData.operatingSystem]++;
+                    } else {
+                        osCount[deviceData.operatingSystem] = 1;
+                    }
                 }
 
                 // MANUFACTURER
@@ -130,22 +152,22 @@ export default function MEMDeviceConfigurations() {
 
                 // COMPLIANCE
                 if (deviceDataValue.complianceState) {
-                    switch(deviceDataValue.complianceState) {
+                    switch (deviceDataValue.complianceState) {
                         case "compliant": complianceCount[0].count++; break;
                         case "noncompliant": complianceCount[1].count++; break;
                         case "graceperiod": complianceCount[2].count++; break;
                         default: break;
                     }
-                } 
+                }
             }
         }
-        setOsVersionCount(osVersionCount)
+        setOsBuildVersionCount(osBuildVersionCount)
         setManufacturerCount(manufacturerCount)
         setOsCount(osCount)
         setEncryptionCount(encryptionCount)
         setComplianceCount(complianceCount)
+        setOsVersionCount(osVersionCount);
     }
-
 
 
     const { loadingDevices, errorDevices, data } = useQuery(getNewestDeviceVersions, {
@@ -168,7 +190,7 @@ export default function MEMDeviceConfigurations() {
         if (selectedTenant) {
             filteredDevices = devices.filter(device => device.tenant && (device.tenant._id === selectedTenant._id));
         }
-        console.log(filteredDevices);
+        // console.log(filteredDevices);
         setfilteredDevices(filteredDevices);
         buildGraphData(filteredDevices);
     }
@@ -211,7 +233,7 @@ export default function MEMDeviceConfigurations() {
                             rowHeight={100}
                             isDraggable={false}
                             cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}>
-                            <div key="b" data-grid={{ w: 3, h: 2, x: 0, y: 0, minW: 2, minH: 2, static: true }}>
+                            <div key="desktops" data-grid={{ w: 3, h: 2, x: 0, y: 0, minW: 2, minH: 2, static: true }}>
                                 <div className="card">
                                     <div className="card-body">
                                         <DesktopOutlined />
@@ -219,7 +241,7 @@ export default function MEMDeviceConfigurations() {
                                     </div>
                                 </div>
                             </div>
-                            <div key="bb" data-grid={{ w: 3, h: 2, x: 3, y: 0, minW: 2, minH: 2, static: true }}>
+                            <div key="devices-windows" data-grid={{ w: 3, h: 2, x: 3, y: 0, minW: 2, minH: 2, static: true }}>
                                 <div className="card">
                                     <div className="card-body">
                                         <WindowsOutlined />
@@ -227,7 +249,7 @@ export default function MEMDeviceConfigurations() {
                                     </div>
                                 </div>
                             </div>
-                            <div key="bbb" data-grid={{ w: 3, h: 2, x: 6, y: 0, minW: 2, minH: 2, static: true }}>
+                            <div key="devices-ios" data-grid={{ w: 3, h: 2, x: 6, y: 0, minW: 2, minH: 2, static: true }}>
                                 <div className="card">
                                     <div className="card-body">
                                         <AppleOutlined />
@@ -235,7 +257,7 @@ export default function MEMDeviceConfigurations() {
                                     </div>
                                 </div>
                             </div>
-                            <div key="bbbb" data-grid={{ w: 3, h: 2, x: 9, y: 0, minW: 2, minH: 2, static: true }}>
+                            <div key="devices-android" data-grid={{ w: 3, h: 2, x: 9, y: 0, minW: 2, minH: 2, static: true }}>
                                 <div className="card">
                                     <div className="card-body">
                                         <AndroidOutlined />
@@ -243,22 +265,27 @@ export default function MEMDeviceConfigurations() {
                                     </div>
                                 </div>
                             </div>
-                            <div key="d" data-grid={{ w: 3, h: 3, x: 0, y: 3 }}>
+                            <div key="osbuildversion" data-grid={{ w: 3, h: 3, x: 0, y: 3 }}>
                                 <div className="card">
-                                    <MyBarChart data={osVersionCount}></MyBarChart>
+                                    <MyBarChart data={osBuildVersionCount}></MyBarChart>
                                 </div>
                             </div>
-                            <div key="e" data-grid={{ w: 3, h: 3, x: 3, y: 3 }}>
+                            <div key="encryption" data-grid={{ w: 3, h: 3, x: 3, y: 3 }}>
                                 <div className="card">
                                     <DoughnutChart data={encryptionCount}></DoughnutChart>
                                 </div>
                             </div>
-                            <div key="compliance" data-grid={{ w: 3, h: 3, x: 6, y: 3 }}>
+                            <div key="osversion" data-grid={{ w: 3, h: 3, x: 6, y: 3 }}>
+                                <div className="card">
+                                    <DoughnutChart data={osVersionCount}></DoughnutChart>
+                                </div>
+                            </div>
+                            <div key="compliance" data-grid={{ w: 3, h: 3, x: 9, y: 3 }}>
                                 <div className="card">
                                     <DoughnutChart data={complianceCount}></DoughnutChart>
                                 </div>
                             </div>
-                            <div key="c" data-grid={{ w: 3, h: 3, x: 9, y: 3 }}>
+                            <div key="manufacturer" data-grid={{ w: 3, h: 3, x: 0, y: 6 }}>
                                 <div className="card">
                                     <DoughnutChart data={manufacturerCount}></DoughnutChart>
                                 </div>

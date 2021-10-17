@@ -6,6 +6,8 @@ import { DeviceData } from "components/DeviceData";
 import { Button, Space } from 'antd';
 import { Link } from "react-router-dom";
 
+import './MEMDevice.css'
+
 export default function MEMDevice(props) {
 
     const { match: { params } } = props;
@@ -22,7 +24,7 @@ export default function MEMDevice(props) {
             <h1>Device</h1>
             {
                 data && data.deviceById && data.deviceById.newestDeviceVersions &&
-                <DeviceData graphData={JSON.parse(data.deviceById.newestDeviceVersions[0].value)}></DeviceData>
+                <DeviceData deviceData={data.deviceById.newestDeviceVersions[0]}></DeviceData>
             }
             <div className="controlBottom">
                 <Space align="end">

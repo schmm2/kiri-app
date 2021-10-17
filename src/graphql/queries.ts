@@ -6,8 +6,6 @@ export const deviceMany = gql`
     deviceMany{
       _id,
       deviceId,
-      manufacturer,
-      value,
       tenant {
         _id
       }
@@ -26,6 +24,7 @@ export const getNewestDeviceVersions = gql`
         manufacturer
         operatingSystem
         osVersion
+        osVersionName
         upn
         value
         _id
@@ -44,6 +43,7 @@ export const deviceById = gql`
         manufacturer
         operatingSystem
         osVersion
+        osVersionName
         upn
         value
         _id

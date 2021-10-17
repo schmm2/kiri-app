@@ -4,7 +4,8 @@ import {
 } from 'recharts';
 
 export default function DoughnutChart(props) {
-
+    console.log(props);
+    
     const RADIAN = Math.PI / 180;
     const renderCustomizedLabel = ({
         cx, cy, midAngle, innerRadius, outerRadius, value
@@ -37,7 +38,7 @@ export default function DoughnutChart(props) {
                     label={renderCustomizedLabel}
                 >
                     {
-                        props.data.map((entry, index) => {
+                        props.data && (props.data.length > 0) && props.data.map((entry, index) => {
                             if (entry.color) { // defined color
                                 return <Cell key={`cell-${index}`} fill={entry.color} />
                             }
