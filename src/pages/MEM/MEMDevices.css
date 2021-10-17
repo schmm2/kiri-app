@@ -21,6 +21,14 @@
     border-bottom-left-radius: 2px;
     height: 100%;
     background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.card-body{
+    text-align: center;
+    font-size: 1.8rem;
 }
 
 .ant-card-body {

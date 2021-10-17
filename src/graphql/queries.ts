@@ -27,6 +27,7 @@ export const getNewestDeviceVersions = gql`
         operatingSystem
         osVersion
         upn
+        value
         _id
       }
       _id

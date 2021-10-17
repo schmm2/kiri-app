@@ -31,53 +31,92 @@ export default function MEMDeviceConfigurations() {
     const [devices, setDevices] = useState([]);
     const [filteredDevices, setfilteredDevices] = useState([]);
     const [manufacturerCount, setManufacturerCount] = useState([]);
-    const [osCount, setOsCount] = useState([]);
+    const [osVersionCount, setOsVersionCount] = useState([]);
+    const [osCount, setOsCount] = useState(null);
+    const [encryptionCount, setEncryptionCount] = useState([]);
 
-    function buildManufacturerData(deviceArray) {
+    function buildGraphData(deviceArray) {
+        let osVersionCount = [];
+        let osCount = {
+            Windows: 0,
+            MacOs: 0,
+            iOS: 0,
+            Android: 0
+        };
         let manufacturerCount = [];
-        for (let i = 0; i < deviceArray.length; i++) {
-            let deviceData = deviceArray[i].newestDeviceVersions[0];
-
-            let manufacturer = deviceData.manufacturer;
-            const foundIndex = manufacturerCount.findIndex(item => item.name === manufacturer)
-
-            if (foundIndex >= 0) {
-                manufacturerCount[foundIndex].count++;
-            } else {
-                manufacturerCount.push({
-                    "name": manufacturer,
-                    "count": 1
-                });
+        let encryptionCount = [
+            {
+                name: "encrypted",
+                count: 0,
+                color: "#08979c"
+            },
+            {
+                name: "not-encrypted",
+                count: 0,
+                color: "#fa541c"
             }
-        }
-        setManufacturerCount(manufacturerCount);
-    }
+        ]
 
-    function buildOSData(deviceArray) {
-        let osCount = [];
         for (let i = 0; i < deviceArray.length; i++) {
-            let deviceData = deviceArray[i].newestDeviceVersions[0];
-            //console.log(deviceData);
+            if (deviceArray[i].newestDeviceVersions[0]) {
+                let deviceData = deviceArray[i].newestDeviceVersions[0];
+                let deviceDataValue = JSON.parse(deviceData.value);
+                //console.log(deviceData);
 
-            if (deviceData.osVersion && deviceData.operatingSystem) {
-                // build identification string        
-                const osString = deviceData.operatingSystem + " " + deviceData.osVersion
-                const foundIndex = osCount.findIndex(item => item.id === osString)
+                // OS DATA
+                if (deviceData.osVersion && deviceData.operatingSystem) {
+                    // build identification string        
+                    const osString = deviceData.operatingSystem + " " + deviceData.osVersion
+                    const foundIndex = osVersionCount.findIndex(item => item.id === osString)
+
+                    // count os version
+                    if (foundIndex >= 0) {
+                        osVersionCount[foundIndex].count++;
+                    } else {
+                        osVersionCount.push({
+                            "name": osString,
+                            "osVersion": deviceData.osVersion,
+                            "count": 1,
+                            "operatingSytem": deviceData.operatingSystem
+                        });
+                    }
+
+                    // count os itself
+                    // add os if not added already
+                    if (!osCount[deviceData.operatingSystem]) {
+                        osCount[deviceData.operatingSystem] = 0;
+                    }
+                    osCount[deviceData.operatingSystem]++;
+                }
+
+                // MANUFACTURER
+                let manufacturer = deviceData.manufacturer;
+                const foundIndex = manufacturerCount.findIndex(item => item.name === manufacturer)
 
                 if (foundIndex >= 0) {
-                    osCount[foundIndex].count++;
+                    manufacturerCount[foundIndex].count++;
                 } else {
-                    osCount.push({
-                        "name": osString,
-                        "osVersion": deviceData.osVersion,
-                        "count": 1,
-                        "operatingSytem": deviceData.operatingSystem
+                    manufacturerCount.push({
+                        "name": manufacturer,
+                        "count": 1
                     });
+                }
+
+                // ENCRYPTION
+                if (deviceDataValue.isEncrypted) {
+                    encryptionCount[0].count++;
+                } else {
+                    encryptionCount[1].count++;
                 }
             }
         }
-        setOsCount(osCount);
+        setOsVersionCount(osVersionCount)
+        setManufacturerCount(manufacturerCount)
+        setOsCount(osCount)
+        setEncryptionCount(encryptionCount)
     }
+
+
 
     const { loadingDevices, errorDevices, data } = useQuery(getNewestDeviceVersions, {
         variables: { filter: { successorVersion: null } },
@@ -101,8 +140,7 @@ export default function MEMDeviceConfigurations() {
         }
         console.log(filteredDevices);
         setfilteredDevices(filteredDevices);
-        buildManufacturerData(filteredDevices);
-        buildOSData(filteredDevices);
+        buildGraphData(filteredDevices);
     }
 
     useEffect(() => {
@@ -139,26 +177,55 @@ export default function MEMDeviceConfigurations() {
                     {
                         filteredDevices &&
                         <ResponsiveGridLayout className="layout"
-                            breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
-                            rowHeight={30}
+                            //breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+                            rowHeight={100}
                             isDraggable={false}
                             cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}>
-                            <div key="b" data-grid={{ w: 2, h: 3, x: 0, y: 0, minW: 2, minH: 3 }}>
-                                <Card>
-                                    <div>
+                            <div key="b" data-grid={{ w: 2, h: 2, x: 0, y: 0, minW: 2, minH: 2, static: true }}>
+                                <div className="card">
+                                    <div className="card-body">
                                         <DesktopOutlined />
                                         <h1>{filteredDevices.length}</h1>
                                     </div>
-                                </Card>
-                            </div>
-                            <div key="c" data-grid={{ w: 4, h: 6, x: 2, y: 0, minW: 4, minH: 3 }}>
-                                <div className="card">
-                                    <DoughnutChart data={manufacturerCount} dataKey={"count"}></DoughnutChart>
                                 </div>
                             </div>
-                            <div key="d" data-grid={{ w: 4, h: 6, x: 2, y: 0, minW: 4, minH: 3 }}>
+                            <div key="bb" data-grid={{ w: 2, h: 2, x: 2, y: 0, minW: 2, minH: 2, static: true }}>
                                 <div className="card">
-                                    <MyBarChart data={osCount}></MyBarChart>
+                                    <div className="card-body">
+                                        <WindowsOutlined />
+                                        <h1>{osCount && osCount.Windows}</h1>
+                                    </div>
+                                </div>
+                            </div>
+                            <div key="bbb" data-grid={{ w: 2, h: 2, x: 4, y: 0, minW: 2, minH: 2, static: true }}>
+                                <div className="card">
+                                    <div className="card-body">
+                                        <AppleOutlined />
+                                        <h1>{osCount && osCount.iOS}</h1>
+                                    </div>
+                                </div>
+                            </div>
+                            <div key="bbbb" data-grid={{ w: 2, h: 2, x: 6, y: 0, minW: 2, minH: 2, static: true }}>
+                                <div className="card">
+                                    <div className="card-body">
+                                        <AndroidOutlined />
+                                        <h1>{osCount && osCount.Android}</h1>
+                                    </div>
+                                </div>
+                            </div>
+                            <div key="c" data-grid={{ w: 3, h: 3, x: 0, y: 3 }}>
+                                <div className="card">
+                                    <DoughnutChart data={manufacturerCount}></DoughnutChart>
+                                </div>
+                            </div>
+                            <div key="d" data-grid={{ w: 3, h: 3, x: 3, y: 3 }}>
+                                <div className="card">
+                                    <MyBarChart data={osVersionCount}></MyBarChart>
+                                </div>
+                            </div>
+                            <div key="e" data-grid={{ w: 3, h: 3, x: 0, y: 6 }}>
+                                <div className="card">
+                                    <DoughnutChart data={encryptionCount}></DoughnutChart>
                                 </div>
                             </div>
                         </ResponsiveGridLayout>
