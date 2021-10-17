@@ -15,6 +15,45 @@ export const deviceMany = gql`
   }
 `
 
+export const getNewestDeviceVersions = gql`
+  query GetNewestDeviceVersions {
+    deviceMany { 
+      tenant {
+        _id
+      }    
+      newestDeviceVersions {
+        deviceName
+        manufacturer
+        operatingSystem
+        osVersion
+        upn
+        _id
+      }
+      _id
+    }
+  }
+`
+
+// Device Versions
+export const deviceVersionMany = gql`
+  query DeviceVersionMany($filter: FilterFindManyDeviceVersionInput) {
+    deviceVersionMany(filter: $filter) {
+      manufacturer
+      device {
+        tenant {
+          _id
+        }
+      }
+      operatingSystem
+      osVersion
+      upn
+      value
+      deviceName
+      _id
+    }
+  }
+`
+
 export const deviceById = gql`
   query deviceById($id: MongoID!) {
     deviceById(_id: $id) {

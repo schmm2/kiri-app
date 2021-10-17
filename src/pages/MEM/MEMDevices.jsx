@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { deviceMany } from "graphql/queries";
+import { getNewestDeviceVersions } from "graphql/queries";
 import { List, Avatar } from 'antd';
 import { Link } from "react-router-dom";
 import { Tabs } from 'antd';
@@ -29,14 +29,16 @@ const ResponsiveGridLayout = WidthProvider(Responsive);
 export default function MEMDeviceConfigurations() {
     const selectedTenant = useContext(TenantContext);
     const [devices, setDevices] = useState([]);
-    const [filteredDevices, setFilteredDevices] = useState([]);
+    const [filteredDevices, setfilteredDevices] = useState([]);
     const [manufacturerCount, setManufacturerCount] = useState([]);
     const [osCount, setOsCount] = useState([]);
 
     function buildManufacturerData(deviceArray) {
         let manufacturerCount = [];
         for (let i = 0; i < deviceArray.length; i++) {
-            let manufacturer = deviceArray[i].manufacturer;
+            let deviceData = deviceArray[i].newestDeviceVersions[0];
+
+            let manufacturer = deviceData.manufacturer;
             const foundIndex = manufacturerCount.findIndex(item => item.name === manufacturer)
 
             if (foundIndex >= 0) {
@@ -54,10 +56,10 @@ export default function MEMDeviceConfigurations() {
     function buildOSData(deviceArray) {
         let osCount = [];
         for (let i = 0; i < deviceArray.length; i++) {
-            console.log(deviceArray[i]);
+            let deviceData = deviceArray[i].newestDeviceVersions[0];
+            //console.log(deviceData);
 
-            let deviceData = deviceArray[i].value;
-            if (deviceData.osVersion && deviceData.operatingSystem ) {
+            if (deviceData.osVersion && deviceData.operatingSystem) {
                 // build identification string        
                 const osString = deviceData.operatingSystem + " " + deviceData.osVersion
                 const foundIndex = osCount.findIndex(item => item.id === osString)
@@ -74,24 +76,15 @@ export default function MEMDeviceConfigurations() {
                 }
             }
         }
-        console.log(osCount);
         setOsCount(osCount);
     }
 
-    const { loadingDevices, errorDevices, data } = useQuery(deviceMany, {
+    const { loadingDevices, errorDevices, data } = useQuery(getNewestDeviceVersions, {
+        variables: { filter: { successorVersion: null } },
         onCompleted: (data) => {
-            let devices = [];
-            console.log(data)
-
-            for (let i = 0; i < data.deviceMany.length; i++) {
-                let device = data.deviceMany[i];
-                // parse value
-                let adaptedDevice = { ...device };
-                adaptedDevice.value = JSON.parse(device.value);
-                devices.push(adaptedDevice);
-            }
-            setDevices(devices);
-            setFilteredDevices(devices);
+            // console.log(data);
+            setDevices(data.deviceMany);
+            setfilteredDevices(data.deviceMany);
         },
         fetchPolicy: "cache-and-network",
         onError: (error) => {
@@ -99,17 +92,21 @@ export default function MEMDeviceConfigurations() {
         }
     });
 
-    useEffect(() => {
+    function refilter() {
         let filteredDevices = devices;
 
         // filter if needed
         if (selectedTenant) {
-            filteredDevices = devices.filter(device => device.tenant && (device.tenant._id === selectedTenant._id));          
-        } 
-        setFilteredDevices(filteredDevices);
+            filteredDevices = devices.filter(device => device.tenant && (device.tenant._id === selectedTenant._id));
+        }
+        console.log(filteredDevices);
+        setfilteredDevices(filteredDevices);
         buildManufacturerData(filteredDevices);
         buildOSData(filteredDevices);
-        
+    }
+
+    useEffect(() => {
+        refilter();
     }, [selectedTenant, devices]);
 
     function renderIcon(operatingSystem) {
@@ -179,24 +176,24 @@ export default function MEMDeviceConfigurations() {
                     {
                         devices &&
                         <DefaultPage>
-                        <List
-                            itemLayout="horizontal"
-                            dataSource={filteredDevices}
-                            loading={loadingDevices}
-                            renderItem={item => (
-                                <List.Item
-                                    key={item.id}
-                                >
-                                    <List.Item.Meta
-                                        avatar={
-                                            <Avatar icon={renderIcon(item.value.operatingSystem)} />
-                                        }
-                                        title={<Link to={"/memDevices/" + item._id}>{item.value.deviceName}</Link>}
-                                        description={item.value.userPrincipalName}
-                                    />
-                                </List.Item>
-                            )}
-                        />
+                            <List
+                                itemLayout="horizontal"
+                                dataSource={filteredDevices}
+                                loading={loadingDevices}
+                                renderItem={item => (
+                                    <List.Item
+                                        key={item.newestDeviceVersions[0].id}
+                                    >
+                                        <List.Item.Meta
+                                            avatar={
+                                                <Avatar icon={renderIcon(item.newestDeviceVersions[0].operatingSystem)} />
+                                            }
+                                            title={<Link to={"/memDevices/" + item._id}>{item.newestDeviceVersions[0].deviceName}</Link>}
+                                            description={item.newestDeviceVersions[0].upn}
+                                        />
+                                    </List.Item>
+                                )}
+                            />
                         </DefaultPage>
                     }
                 </TabPane>
