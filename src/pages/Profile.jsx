@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react"
 import DefaultPage from '../layouts/DefaultPage';
-
 import { callMsGraph } from "../util/MsGraphApiCall";
 
 // Msal imports
 import { useMsal } from "@azure/msal-react";
-import { InteractionStatus, InteractionType, InteractionRequiredAuthError, AccountInfo } from "@azure/msal-browser";
+import { InteractionStatus, InteractionRequiredAuthError } from "@azure/msal-browser";
 import { loginRequest } from "../authConfig";
 import { ProfileData } from "components/ProfileData";
 

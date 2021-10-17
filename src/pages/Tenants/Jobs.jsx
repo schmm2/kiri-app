@@ -4,7 +4,7 @@ import { Table, Button, Tag, Space } from "antd";
 import { Link } from "react-router-dom";
 import { renderDate } from 'util/renderDate'
 import moment from 'moment';
-import { useLazyQuery, useQuery } from '@apollo/client';
+import { useLazyQuery } from '@apollo/client';
 import DefaultPage from '../../layouts/DefaultPage';
 import TenantContext from "components/TenantContext"
 
@@ -15,17 +15,14 @@ import {
 export default function Jobs(props) {
   const selectedTenant = useContext(TenantContext);
 
-  const [getJobs, { loadingJobs, data: jobdata }] = useLazyQuery(jobMany,
-    {
-      onCompleted: (data) => console.log(jobdata),
-      fetchPolicy: "cache-and-network"
-    });
+  const [getJobs, { loadingJobs, data: jobdata }] = useLazyQuery(jobMany, {
+    onCompleted: (data) => console.log(jobdata),
+    fetchPolicy: "cache-and-network"
+  });
 
   useEffect(() => {
     if (selectedTenant) {
-      getJobs({
-        variables: { filter: { tenant: selectedTenant._id } }
-      });
+      getJobs({ variables: { filter: { tenant: selectedTenant._id } } });
     } else {
       getJobs(); // no tenant defined, load all jobs
     }

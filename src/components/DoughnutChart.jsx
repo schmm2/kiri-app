@@ -35,8 +35,7 @@ export default function DoughnutChart(props) {
                     fill="#8884d8"
                     dataKey={props.dataKey ? props.dataKey : 'count'}
                     nameKey="name"
-                    label={renderCustomizedLabel}
-                >
+                    label={renderCustomizedLabel}>
                     {
                         props.data && (props.data.length > 0) && props.data.map((entry, index) => {
                             if (entry.color) { // defined color

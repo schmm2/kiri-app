@@ -10,8 +10,8 @@ import { useHistory } from "react-router-dom";
 
 export default function TenantAdd() {
   const history = useHistory();
-  
-  const [createTenant, tenant] = useMutation(tenantCreateOne, {
+
+  const [createTenant] = useMutation(tenantCreateOne, {
     onCompleted(data) {
       console.log(data);
       history.push("/tenants");
@@ -21,8 +21,8 @@ export default function TenantAdd() {
   return (
     <DefaultPage>
       <AutoForm schema={addTenantSchema} onSubmit={
-        data => { 
-          createTenant({ variables: { record: data } }); 
+        data => {
+          createTenant({ variables: { record: data } });
         }
       } />
       <Button>

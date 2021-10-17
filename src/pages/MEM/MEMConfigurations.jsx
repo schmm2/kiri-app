@@ -1,5 +1,5 @@
 import React, { useContext, useReducer, useState } from "react";
-import { getNewestConfigurationVersionsByTenant, getNewestConfigurationVersions } from "graphql/queries";
+import { getNewestConfigurationVersions } from "graphql/queries";
 import { Table, Switch, Space, Button } from 'antd';
 import { Link } from "react-router-dom";
 import TenantContext from "components/TenantContext"
@@ -62,7 +62,7 @@ export default function MEMConfigurations(props) {
 
                 // check if config belongs to selected Tenant matches
                 if (selectedTenant && configuration.tenant) {
-                    if (selectedTenant._id != configuration.tenant._id) {
+                    if (selectedTenant._id !== configuration.tenant._id) {
                         // skip this config
                         continue;
                     }
@@ -73,7 +73,7 @@ export default function MEMConfigurations(props) {
                     let configurationVersion = configuration.newestConfigurationVersions[0];
 
                     // skip deleted Configs if option is not selected
-                    if (state.showDeleted == false && (configurationVersion.state).toString() === "deleted") {
+                    if (state.showDeleted === false && (configurationVersion.state).toString() === "deleted") {
                         continue;
                     }
 
@@ -100,7 +100,7 @@ export default function MEMConfigurations(props) {
         }
     });
 
-    const { loading, error, data } = useQuery(getNewestConfigurationVersions, {
+    useQuery(getNewestConfigurationVersions, {
         fetchPolicy: 'cache-and-network',
         onCompleted: (data) => {
             let configurations = data.configurationMany;
@@ -200,7 +200,7 @@ export default function MEMConfigurations(props) {
             <h1 > {props.title} </h1>
             <div className="controlTop">
                 <Space align="end">
-                    <Button disabled={state.selectedRows.length == 0} onClick={openModal}>+ Deployment</Button>
+                    <Button disabled={state.selectedRows.length === 0} onClick={openModal}>+ Deployment</Button>
                 </Space>
             </div>
             <AddToDeploymentModal

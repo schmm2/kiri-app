@@ -31,7 +31,7 @@ export default function Tenants() {
   });
 
   async function triggerTenantUpdate(tenantMongoDbId) {
-    console.log("update tenant data for tenantId: " + tenantMongoDbId);
+    //console.log("update tenant data for tenantId: " + tenantMongoDbId);
     openNotificationWithIcon('Pull Data', 'start Job', 'success');
 
     apipost("orchestrators/ORC1000AzureDataCollect", { tenantMongoDbId: tenantMongoDbId })
@@ -47,7 +47,7 @@ export default function Tenants() {
 
   async function triggerBackup(tenantMongoDbId) {
     let fileName = "export.zip";
-    console.log("backup config for tenant " + tenantMongoDbId);
+    // console.log("backup config for tenant " + tenantMongoDbId);
     openNotificationWithIcon('Backup', 'Backup Job started', 'success', 8.0);
 
     apipost("TRG2000ConfigurationBackupCreate", { tenantMongoDbId: tenantMongoDbId })
@@ -99,10 +99,10 @@ export default function Tenants() {
       key: 'action',
       render: (text, record) => (
         <Space size="middle">
-          <a href="#" onClick={() => triggerBackup(record._id)}>Backup</a>
-          <a rel={'external'} target="_blank" href={"https://login.microsoftonline.com/" + record.tenantId + "/adminconsent?client_id=" + record.appId}>Grant Permission</a>
-          <a href="#" onClick={() => triggerTenantUpdate(record._id)}>Pull Data</a>
-          <a href="#" onClick={() => {
+          <a href="#" rel="noreferrer" onClick={() => triggerBackup(record._id)}>Backup</a>
+          <a rel={'external'} rel="noreferrer" target="_blank" href={"https://login.microsoftonline.com/" + record.tenantId + "/adminconsent?client_id=" + record.appId}>Grant Permission</a>
+          <a href="#" rel="noreferrer" onClick={() => triggerTenantUpdate(record._id)}>Pull Data</a>
+          <a href="#" rel="noreferrer" onClick={() => {
             deleteTenant({
               variables: { id: record._id },
               refetchQueries: [
@@ -122,12 +122,12 @@ export default function Tenants() {
   return (
     <div className="defaultPage">
       <h1>Tenants</h1>
-      <Table loading={loading} rowKey="_id" columns={columns} dataSource={data && data.tenantMany} onChange={onChange}></Table>
+      <Table loading={loading} rowKey="_id" columns={columns} dataSource={data && data.tenantMany} onChange={onChange} />
       <Button>
         <Link to="/tenantAdd">
           <PlusOutlined /> Add Tenant
         </Link>
       </Button>
-    </div >
+    </div>
   )
 }

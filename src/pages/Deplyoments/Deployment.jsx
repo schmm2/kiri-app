@@ -20,7 +20,11 @@ export default function Deployment(props) {
         <div className="defaultPage">
             <h1>Deployment</h1>
             {
-                data && data.deploymentById &&
+                error &&
+                <span>{error}</span>
+            }
+            {
+                !loading && data && data.deploymentById &&
                 <div>
                     <p>Name: {data.deploymentById.name}</p>
                 </div>

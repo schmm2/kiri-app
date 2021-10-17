@@ -15,7 +15,7 @@ export default function TenantVerification() {
 
     const [error, setError] = useState()
 
-    const [verifiyTenant, { data }] = useMutation(tenantVerifyMutation, {
+    const [verifiyTenant] = useMutation(tenantVerifyMutation, {
         onError: (err) => {
             setError({
                 title: "GraphQL Error",
@@ -23,10 +23,10 @@ export default function TenantVerification() {
             });
         },
         onCompleted(data) {
-            console.log(data);
+            // console.log(data);
             if (data.tenantUpdateOne && data.tenantUpdateOne.record) {
                 let record = data.tenantUpdateOne.record;
-                console.log(record);
+                // console.log(record);
                 if (record.verified) {
                     // tenant verified status was updated in backend
                     openNotificationWithIcon('Tenant Verification', 'verified', 'success');

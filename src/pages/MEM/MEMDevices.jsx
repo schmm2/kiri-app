@@ -1,16 +1,13 @@
 import React, { useEffect, useState, useContext } from "react";
 import { getNewestDeviceVersions } from "graphql/queries";
-import { List, Avatar } from 'antd';
+import { List, Avatar, Tabs } from 'antd';
 import { Link } from "react-router-dom";
-import { Tabs } from 'antd';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import TenantContext from "components/TenantContext"
-
 import MyBarChart from "components/BarChart";
 import DoughnutChart from 'components/DoughnutChart'
-import { Card } from 'antd';
 import { useQuery } from '@apollo/client';
-import { osBuildToVersion } from "util/osBuildToVersion";
+import DefaultPage from "layouts/DefaultPage";
 
 import {
     AndroidOutlined,
@@ -22,7 +19,6 @@ import {
 } from '@ant-design/icons'
 
 import './MEMDevices.css'
-import DefaultPage from "layouts/DefaultPage";
 
 const { TabPane } = Tabs;
 const ResponsiveGridLayout = WidthProvider(Responsive);
@@ -45,7 +41,7 @@ export default function MEMDeviceConfigurations() {
 
         let osCount = {
             Windows: 0,
-            MacOs: 0,
+            macOs: 0,
             iOS: 0,
             Android: 0
         };
@@ -120,7 +116,6 @@ export default function MEMDeviceConfigurations() {
                         }
                     }
 
-
                     // count os / platform like Windows, Android
                     // add os if not added already
                     if (osCount[deviceData.operatingSystem]) {
@@ -170,7 +165,7 @@ export default function MEMDeviceConfigurations() {
     }
 
 
-    const { loadingDevices, errorDevices, data } = useQuery(getNewestDeviceVersions, {
+    const { loadingDevices } = useQuery(getNewestDeviceVersions, {
         variables: { filter: { successorVersion: null } },
         onCompleted: (data) => {
             // console.log(data);
@@ -214,17 +209,17 @@ export default function MEMDeviceConfigurations() {
 
     const layout = {
         lg: [
-            {i: "devices-desktops", w: 3, h: 2, x: 0, y: 0, minW: 2, minH: 2, static: true },
-            {i: "devices-windows", w: 3, h: 2, x: 3, y: 0, minW: 2, minH: 2, static: true },
-            {i: "devices-ios", w: 3, h: 2, x: 6, y: 0, minW: 2, minH: 2, static: true },
-            {i: "devices-android", w: 3, h: 2, x: 9, y: 0, minW: 2, minH: 2, static: true },
-            {i: "osbuildversion", w: 3, h: 3, x: 0, y: 3 },
-            {i: "encryption", w: 3, h: 3, x: 3, y: 3 },
-            {i: "osversion", w: 3, h: 3, x: 6, y: 3 },
-            {i: "compliance", w: 3, h: 3, x: 9, y: 3 },
-            {i: "manufacturer", w: 3, h: 3, x: 0, y: 6 }
+            { i: "devices-desktops", w: 3, h: 2, x: 0, y: 0, minW: 2, minH: 2, static: true },
+            { i: "devices-windows", w: 3, h: 2, x: 3, y: 0, minW: 2, minH: 2, static: true },
+            { i: "devices-ios", w: 3, h: 2, x: 6, y: 0, minW: 2, minH: 2, static: true },
+            { i: "devices-android", w: 3, h: 2, x: 9, y: 0, minW: 2, minH: 2, static: true },
+            { i: "osbuildversion", w: 3, h: 3, x: 0, y: 3 },
+            { i: "encryption", w: 3, h: 3, x: 3, y: 3 },
+            { i: "osversion", w: 3, h: 3, x: 6, y: 3 },
+            { i: "compliance", w: 3, h: 3, x: 9, y: 3 },
+            { i: "manufacturer", w: 3, h: 3, x: 0, y: 6 }
         ]
-   }
+    }
 
     return (
         <div className="memDevices">
@@ -238,12 +233,11 @@ export default function MEMDeviceConfigurations() {
                         </span>
                     }
                     key="1"
-                    className="dashboard"
-                >
+                    className="dashboard">
                     {
                         filteredDevices &&
                         <ResponsiveGridLayout className="layout"
-                            breakpoints={{ lg: 1000, sm: 400}}
+                            breakpoints={{ lg: 1000, sm: 400 }}
                             rowHeight={100}
                             autoSize={true}
                             layouts={layout}

@@ -2,9 +2,8 @@ import React, { useState } from "react";
 import { Modal, Dropdown, Button, Menu, Input } from 'antd';
 import { useQuery } from '@apollo/client';
 import { tenantMany } from "graphql/queries";
-import { apipost } from 'util/api';
 
-export const CopyConfigurationModal = ({ configurationDisplayName, selectedTenant, showModal, onCopy, onClose }) => {
+export const CopyConfigurationModal = ({ configurationDisplayName, showModal, onCopy, onClose }) => {
 
     const [selectedTenantInModal, setSelectedTenantInModal] = useState(null);
     let input = React.createRef();
@@ -56,7 +55,7 @@ export const CopyConfigurationModal = ({ configurationDisplayName, selectedTenan
                 </Button>
             </Dropdown>
             <p>Chose a displayName</p>
-            <Input defaultValue={configurationDisplayName} ref={input}/>
+            <Input defaultValue={configurationDisplayName} ref={input} />
         </Modal>
     );
 };

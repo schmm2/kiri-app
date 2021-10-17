@@ -8,7 +8,6 @@ import MainLayout from 'layouts/MainLayout';
 import Login from 'pages/Login'
 import Home from 'pages/Home';
 import Profile from 'pages/Profile';
-import Team from 'pages/Team';
 import MEMConfiguration from 'pages/MEM/MEMConfiguration';
 import Tenants from 'pages/Tenants/Tenants';
 import TenantAdd from 'pages/Tenants/TenantAdd';
@@ -109,7 +108,6 @@ function Pages() {
       <Route path="/deployments" component={Deployments} />
       <Route path="/tenantAdd" component={TenantAdd} />
       <Route path="/tenants" component={Tenants} />
-      <Route path="/team" component={Team} />
       <Route path="/profile" component={Profile} />   
       <Route path="/changeManagement" component={ChangeManagement} />
       <Route path="/jobs/:tenantId" component={Jobs} />
