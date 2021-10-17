@@ -34,6 +34,7 @@ export default function MEMDeviceConfigurations() {
     const [osVersionCount, setOsVersionCount] = useState([]);
     const [osCount, setOsCount] = useState(null);
     const [encryptionCount, setEncryptionCount] = useState([]);
+    const [complianceCount, setComplianceCount] = useState([]);
 
     function buildGraphData(deviceArray) {
         let osVersionCount = [];
@@ -54,6 +55,24 @@ export default function MEMDeviceConfigurations() {
                 name: "not-encrypted",
                 count: 0,
                 color: "#fa541c"
+            }
+        ]
+
+        let complianceCount = [
+            {
+                name: "compliant",
+                count: 0,
+                color: "#08979c"
+            },
+            {
+                name: "non-compliant",
+                count: 0,
+                color: "#fa541c"
+            },
+            {
+                name: "grace-period",
+                count: 0,
+                color: "#ffa940"
             }
         ]
 
@@ -108,12 +127,23 @@ export default function MEMDeviceConfigurations() {
                 } else {
                     encryptionCount[1].count++;
                 }
+
+                // COMPLIANCE
+                if (deviceDataValue.complianceState) {
+                    switch(deviceDataValue.complianceState) {
+                        case "compliant": complianceCount[0].count++; break;
+                        case "noncompliant": complianceCount[1].count++; break;
+                        case "graceperiod": complianceCount[2].count++; break;
+                        default: break;
+                    }
+                } 
             }
         }
         setOsVersionCount(osVersionCount)
         setManufacturerCount(manufacturerCount)
         setOsCount(osCount)
         setEncryptionCount(encryptionCount)
+        setComplianceCount(complianceCount)
     }
 
 
@@ -181,7 +211,7 @@ export default function MEMDeviceConfigurations() {
                             rowHeight={100}
                             isDraggable={false}
                             cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}>
-                            <div key="b" data-grid={{ w: 2, h: 2, x: 0, y: 0, minW: 2, minH: 2, static: true }}>
+                            <div key="b" data-grid={{ w: 3, h: 2, x: 0, y: 0, minW: 2, minH: 2, static: true }}>
                                 <div className="card">
                                     <div className="card-body">
                                         <DesktopOutlined />
@@ -189,7 +219,7 @@ export default function MEMDeviceConfigurations() {
                                     </div>
                                 </div>
                             </div>
-                            <div key="bb" data-grid={{ w: 2, h: 2, x: 2, y: 0, minW: 2, minH: 2, static: true }}>
+                            <div key="bb" data-grid={{ w: 3, h: 2, x: 3, y: 0, minW: 2, minH: 2, static: true }}>
                                 <div className="card">
                                     <div className="card-body">
                                         <WindowsOutlined />
@@ -197,7 +227,7 @@ export default function MEMDeviceConfigurations() {
                                     </div>
                                 </div>
                             </div>
-                            <div key="bbb" data-grid={{ w: 2, h: 2, x: 4, y: 0, minW: 2, minH: 2, static: true }}>
+                            <div key="bbb" data-grid={{ w: 3, h: 2, x: 6, y: 0, minW: 2, minH: 2, static: true }}>
                                 <div className="card">
                                     <div className="card-body">
                                         <AppleOutlined />
@@ -205,7 +235,7 @@ export default function MEMDeviceConfigurations() {
                                     </div>
                                 </div>
                             </div>
-                            <div key="bbbb" data-grid={{ w: 2, h: 2, x: 6, y: 0, minW: 2, minH: 2, static: true }}>
+                            <div key="bbbb" data-grid={{ w: 3, h: 2, x: 9, y: 0, minW: 2, minH: 2, static: true }}>
                                 <div className="card">
                                     <div className="card-body">
                                         <AndroidOutlined />
@@ -213,19 +243,24 @@ export default function MEMDeviceConfigurations() {
                                     </div>
                                 </div>
                             </div>
-                            <div key="c" data-grid={{ w: 3, h: 3, x: 0, y: 3 }}>
-                                <div className="card">
-                                    <DoughnutChart data={manufacturerCount}></DoughnutChart>
-                                </div>
-                            </div>
-                            <div key="d" data-grid={{ w: 3, h: 3, x: 3, y: 3 }}>
+                            <div key="d" data-grid={{ w: 3, h: 3, x: 0, y: 3 }}>
                                 <div className="card">
                                     <MyBarChart data={osVersionCount}></MyBarChart>
                                 </div>
                             </div>
-                            <div key="e" data-grid={{ w: 3, h: 3, x: 0, y: 6 }}>
+                            <div key="e" data-grid={{ w: 3, h: 3, x: 3, y: 3 }}>
                                 <div className="card">
                                     <DoughnutChart data={encryptionCount}></DoughnutChart>
+                                </div>
+                            </div>
+                            <div key="compliance" data-grid={{ w: 3, h: 3, x: 6, y: 3 }}>
+                                <div className="card">
+                                    <DoughnutChart data={complianceCount}></DoughnutChart>
+                                </div>
+                            </div>
+                            <div key="c" data-grid={{ w: 3, h: 3, x: 9, y: 3 }}>
+                                <div className="card">
+                                    <DoughnutChart data={manufacturerCount}></DoughnutChart>
                                 </div>
                             </div>
                         </ResponsiveGridLayout>

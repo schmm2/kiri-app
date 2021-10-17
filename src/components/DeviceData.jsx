@@ -5,7 +5,8 @@ import {
     IdcardOutlined,
     DesktopOutlined,
     SettingOutlined,
-    DeploymentUnitOutlined
+    DeploymentUnitOutlined,
+    SecurityScanOutlined
 } from '@ant-design/icons';
 
 export const DeviceData = ({ graphData }) => {
@@ -17,6 +18,16 @@ export const DeviceData = ({ graphData }) => {
                     avatar={<IdcardOutlined />}
                     description={<span>{graphData.deviceName}</span>}
                     title="Device Name"
+                />
+            </List.Item>
+            <List.Item>
+                <List.Item.Meta
+                    avatar={<SecurityScanOutlined />}
+                    title="Security"
+                    description={<span>
+                        Compliance: {graphData.complianceState}<br />
+                        Encrypted: {(graphData.isEncrypted).toString()} <br />
+                    </span>}
                 />
             </List.Item>
             <List.Item>
