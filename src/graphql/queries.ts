@@ -34,6 +34,24 @@ export const getNewestDeviceVersions = gql`
   }
 `
 
+export const deviceById = gql`
+  query deviceById($id: MongoID!) {
+    deviceById(_id: $id) {
+      _id,
+      newestDeviceVersions {
+        deviceName
+        manufacturer
+        operatingSystem
+        osVersion
+        upn
+        value
+        _id
+      }
+    } 
+  }
+`
+
+
 // Device Versions
 export const deviceVersionMany = gql`
   query DeviceVersionMany($filter: FilterFindManyDeviceVersionInput) {
@@ -51,16 +69,6 @@ export const deviceVersionMany = gql`
       deviceName
       _id
     }
-  }
-`
-
-export const deviceById = gql`
-  query deviceById($id: MongoID!) {
-    deviceById(_id: $id) {
-      _id,
-      manufacturer,
-      value
-    } 
   }
 `
 

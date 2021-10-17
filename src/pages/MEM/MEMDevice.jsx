@@ -21,8 +21,8 @@ export default function MEMDevice(props) {
         <div className="defaultPage">
             <h1>Device</h1>
             {
-                data && data.deviceById && data.deviceById.value &&
-                <DeviceData graphData={JSON.parse(data.deviceById.value)}></DeviceData>
+                data && data.deviceById && data.deviceById.newestDeviceVersions &&
+                <DeviceData graphData={JSON.parse(data.deviceById.newestDeviceVersions[0].value)}></DeviceData>
             }
             <div className="controlBottom">
                 <Space align="end">
