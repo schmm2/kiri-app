@@ -264,7 +264,9 @@ export const deploymentMany = gql`
       name
       createdAt
       updatedAt
-      configurationVersions
+      configurationVersions {
+        _id
+      }
     }
   }
 `
