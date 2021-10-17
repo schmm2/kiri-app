@@ -4,8 +4,8 @@ import {
 } from 'recharts';
 
 export default function DoughnutChart(props) {
-    console.log(props);
-    
+    //console.log(props);
+
     const RADIAN = Math.PI / 180;
     const renderCustomizedLabel = ({
         cx, cy, midAngle, innerRadius, outerRadius, value

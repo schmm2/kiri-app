@@ -212,6 +212,20 @@ export default function MEMDeviceConfigurations() {
         }
     }
 
+    const layout = {
+        lg: [
+            {i: "devices-desktops", w: 3, h: 2, x: 0, y: 0, minW: 2, minH: 2, static: true },
+            {i: "devices-windows", w: 3, h: 2, x: 3, y: 0, minW: 2, minH: 2, static: true },
+            {i: "devices-ios", w: 3, h: 2, x: 6, y: 0, minW: 2, minH: 2, static: true },
+            {i: "devices-android", w: 3, h: 2, x: 9, y: 0, minW: 2, minH: 2, static: true },
+            {i: "osbuildversion", w: 3, h: 3, x: 0, y: 3 },
+            {i: "encryption", w: 3, h: 3, x: 3, y: 3 },
+            {i: "osversion", w: 3, h: 3, x: 6, y: 3 },
+            {i: "compliance", w: 3, h: 3, x: 9, y: 3 },
+            {i: "manufacturer", w: 3, h: 3, x: 0, y: 6 }
+        ]
+   }
+
     return (
         <div className="memDevices">
             <h1>Devices</h1>
@@ -229,11 +243,13 @@ export default function MEMDeviceConfigurations() {
                     {
                         filteredDevices &&
                         <ResponsiveGridLayout className="layout"
-                            //breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+                            breakpoints={{ lg: 1000, sm: 400}}
                             rowHeight={100}
+                            autoSize={true}
+                            layouts={layout}
                             isDraggable={false}
                             cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}>
-                            <div key="desktops" data-grid={{ w: 3, h: 2, x: 0, y: 0, minW: 2, minH: 2, static: true }}>
+                            <div key="devices-desktops">
                                 <div className="card">
                                     <div className="card-body">
                                         <DesktopOutlined />
@@ -241,7 +257,7 @@ export default function MEMDeviceConfigurations() {
                                     </div>
                                 </div>
                             </div>
-                            <div key="devices-windows" data-grid={{ w: 3, h: 2, x: 3, y: 0, minW: 2, minH: 2, static: true }}>
+                            <div key="devices-windows">
                                 <div className="card">
                                     <div className="card-body">
                                         <WindowsOutlined />
@@ -249,7 +265,7 @@ export default function MEMDeviceConfigurations() {
                                     </div>
                                 </div>
                             </div>
-                            <div key="devices-ios" data-grid={{ w: 3, h: 2, x: 6, y: 0, minW: 2, minH: 2, static: true }}>
+                            <div key="devices-ios">
                                 <div className="card">
                                     <div className="card-body">
                                         <AppleOutlined />
@@ -257,7 +273,7 @@ export default function MEMDeviceConfigurations() {
                                     </div>
                                 </div>
                             </div>
-                            <div key="devices-android" data-grid={{ w: 3, h: 2, x: 9, y: 0, minW: 2, minH: 2, static: true }}>
+                            <div key="devices-android">
                                 <div className="card">
                                     <div className="card-body">
                                         <AndroidOutlined />
@@ -265,27 +281,27 @@ export default function MEMDeviceConfigurations() {
                                     </div>
                                 </div>
                             </div>
-                            <div key="osbuildversion" data-grid={{ w: 3, h: 3, x: 0, y: 3 }}>
+                            <div key="osbuildversion">
                                 <div className="card">
                                     <MyBarChart data={osBuildVersionCount}></MyBarChart>
                                 </div>
                             </div>
-                            <div key="encryption" data-grid={{ w: 3, h: 3, x: 3, y: 3 }}>
+                            <div key="encryption">
                                 <div className="card">
                                     <DoughnutChart data={encryptionCount}></DoughnutChart>
                                 </div>
                             </div>
-                            <div key="osversion" data-grid={{ w: 3, h: 3, x: 6, y: 3 }}>
+                            <div key="osversion" >
                                 <div className="card">
                                     <DoughnutChart data={osVersionCount}></DoughnutChart>
                                 </div>
                             </div>
-                            <div key="compliance" data-grid={{ w: 3, h: 3, x: 9, y: 3 }}>
+                            <div key="compliance">
                                 <div className="card">
                                     <DoughnutChart data={complianceCount}></DoughnutChart>
                                 </div>
                             </div>
-                            <div key="manufacturer" data-grid={{ w: 3, h: 3, x: 0, y: 6 }}>
+                            <div key="manufacturer">
                                 <div className="card">
                                     <DoughnutChart data={manufacturerCount}></DoughnutChart>
                                 </div>
