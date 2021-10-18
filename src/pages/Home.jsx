@@ -9,7 +9,7 @@ export default function Home() {
       <h2>Get started</h2>
       <p>Add some tenants, grant permissions and pull the data</p>
       <h2>Help</h2>
-      <a target="_blank" rel="noreferrer" href="https://www.kiri.codes">get in touch</a>
+      <a target="_blank" rel="noreferrer" href="https://docs.kiri.codes">Docs Page</a>
     </DefaultPage>
   );
 }

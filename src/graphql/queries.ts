@@ -85,8 +85,8 @@ export const configurationMany = gql`
 `
 
 export const configurationVersionManySortModified = gql`
-query configurationVersionManySortModified{
-  configurationVersionMany(sort: GRAPHMODIFIEDAT_DESC){
+query configurationVersionManySortModified($limit: Int){
+  configurationVersionMany(sort: GRAPHMODIFIEDAT_DESC, limit: $limit){
       displayName,
       graphModifiedAt,
       _id,
