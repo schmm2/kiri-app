@@ -19,7 +19,7 @@ const { TabPane } = Tabs;
 export default function MEMConfiguration(props) {
 
     const [isModalVisible, setIsModalVisible] = useState(false);
-    
+
     const { match: { params } } = props;
     const { data, dataLoading, dataError } = useQuery(configurationById, {
         variables: { id: params.configurationId },
