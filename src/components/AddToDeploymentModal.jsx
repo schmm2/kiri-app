@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Modal, Dropdown, Button, Menu, Select } from 'antd';
+import { Modal, Select } from 'antd';
 import { useQuery } from '@apollo/client';
-import { deploymentById, deploymentMany } from "graphql/queries";
+import { deploymentMany } from "graphql/queries";
 const { Option } = Select;
 
 export const AddToDeploymentModal = ({ showModal, onAdd, onClose }) => {
@@ -20,7 +20,7 @@ export const AddToDeploymentModal = ({ showModal, onAdd, onClose }) => {
         onClose(e);
     };
 
-    const { data } = useQuery(deploymentMany, {
+    const { data, loading, error } = useQuery(deploymentMany, {
         fetchPolicy: 'cache-and-network',
     });
 
@@ -39,7 +39,13 @@ export const AddToDeploymentModal = ({ showModal, onAdd, onClose }) => {
 
             <p>Select the Deployment</p>
             {
-                data && data.deploymentMany &&
+                loading && <span>loading...</span>
+            }
+            {
+                error && <span>{error}</span>
+            }
+            {
+                !loading && data && data.deploymentMany &&
                 <Select onChange={handleChange}>
                     {
                         data.deploymentMany.map((deployment) =>

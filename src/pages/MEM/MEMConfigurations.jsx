@@ -1,4 +1,4 @@
-import React, { useContext, useReducer, useState } from "react";
+import React, { useContext, useState } from "react";
 import { getNewestConfigurationVersions } from "graphql/queries";
 import { Table, Switch, Space, Button } from 'antd';
 import { Link } from "react-router-dom";
@@ -12,40 +12,14 @@ import { deploymentUpdateOne as deploymentUpdateOneMutation } from "graphql/muta
 
 export default function MEMConfigurations(props) {
 
+    // states
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [filteredConfigurations, setFilteredConfigurations] = useState([]);
+    const [showDeleted, setShowDeleted] = useState(false);
+    const [selectedRows, setSelectedRows] = useState([]);
+    const [selectedRowKeys, setSelectedRowsKeys] = useState([]);
 
     const selectedTenant = useContext(TenantContext);
-    //console.log(selectedTenant);
-
-    const initialState = {
-        configurations: [],
-        filteredConfigurations: [],
-        selectedRows: [],
-        selectedRowKeys: [],
-        category: null,
-        loading: true,
-        error: false,
-        showDeleted: false
-    }
-
-    function reducer(state, action) {
-        switch (action.type) {
-            case 'SET_CONFIGURATIONS':
-                return { ...state, configurations: action.configurations, filteredConfigurations: action.filteredConfigurations, loading: action.loading }
-            case 'ERROR':
-                return { ...state, loading: false, error: true }
-            case 'SET_SHOWDELETED':
-                return { ...state, showDeleted: action.showDeleted }
-            case 'SET_SELECTEDROWS':
-                return { ...state, selectedRows: action.selectedRows }
-            case 'SET_SELECTEDROWKEYS':
-                return { ...state, selectedRowKeys: action.selectedRowKeys }
-            default:
-                return state
-        }
-    }
-
-    const [state, dispatch] = useReducer(reducer, initialState);
 
     function filterConfigurations(configurations) {
         //console.log(configurations);
@@ -57,23 +31,23 @@ export default function MEMConfigurations(props) {
             // console.log(props.category);
             // console.log(configurationType.category);
 
+            // check if config belongs to selected Tenant matches
+            if (selectedTenant && configuration.tenant) {
+                if (selectedTenant._id !== configuration.tenant._id) {
+                    // skip this config
+                    continue;
+                }
+            }
+
             // check for matching category
             if (props.category && (props.category === configurationType.category)) {
-
-                // check if config belongs to selected Tenant matches
-                if (selectedTenant && configuration.tenant) {
-                    if (selectedTenant._id !== configuration.tenant._id) {
-                        // skip this config
-                        continue;
-                    }
-                }
 
                 if (configuration.newestConfigurationVersions && configuration.newestConfigurationVersions[0]) {
                     let newConfigurationObject = {};
                     let configurationVersion = configuration.newestConfigurationVersions[0];
 
                     // skip deleted Configs if option is not selected
-                    if (state.showDeleted === false && (configurationVersion.state).toString() === "deleted") {
+                    if (showDeleted === false && (configurationVersion.state).toString() === "deleted") {
                         continue;
                     }
 
@@ -100,28 +74,22 @@ export default function MEMConfigurations(props) {
         }
     });
 
-    useQuery(getNewestConfigurationVersions, {
-        fetchPolicy: 'cache-and-network',
-        onCompleted: (data) => {
-            let configurations = data.configurationMany;
-            let filteredConfigurations = filterConfigurations(configurations);
-            dispatch({ type: "SET_CONFIGURATIONS", configurations: configurations, filteredConfigurations: filteredConfigurations, loading: false });
-        },
-        onError: (error) => {
-            dispatch({ type: "ERROR" });
-        }
+    const { loading, error, data } = useQuery(getNewestConfigurationVersions, {
+        fetchPolicy: 'cache-and-network'
     })
 
     function refilter() {
-        if (state.configurations && state.configurations.length > 0) {
-            let filteredConfigurations = filterConfigurations(state.configurations);
-            dispatch({ type: "SET_CONFIGURATIONS", configurations: state.configurations, filteredConfigurations: filteredConfigurations, loading: false });
+        // console.log("refilter");
+        // console.log(data);
+        if (data && data.configurationMany) {
+            let filteredConfigurations = filterConfigurations(data.configurationMany);
+            setFilteredConfigurations(filteredConfigurations);
         }
     }
 
     React.useEffect(() => {
         refilter();
-    }, [props.category, selectedTenant, state.showDeleted]);
+    }, [props.category, selectedTenant, showDeleted, data]);
 
     const columns = [
         {
@@ -155,15 +123,14 @@ export default function MEMConfigurations(props) {
     }
 
     function switchShowDeleted(checked) {
-        console.log(checked);
-        dispatch({ type: "SET_SHOWDELETED", showDeleted: checked });
+        // console.log(checked);
+        setShowDeleted(checked)
     }
 
     const rowSelection = {
         onChange: (selectedRowKeys, selectedRows) => {
-            //console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-            dispatch({ type: "SET_SELECTEDROWS", selectedRows: selectedRows });
-            dispatch({ type: "SET_SELECTEDROWKEYS", selectedRowKeys: selectedRowKeys });
+            setSelectedRows(selectedRows);
+            setSelectedRowsKeys(selectedRowKeys);
         }
     };
 
@@ -178,7 +145,7 @@ export default function MEMConfigurations(props) {
     function addToDeployment(data) {
         // get existing configurationVersions on deployment: data.configurationVersions; get configurationVersions to add to deployment: state.selectedRowKeys;
         // find out which configVersion Ids needs to be added
-        let configurationVersionsToAddToDeployment = state.selectedRowKeys.filter(id => data.configurationVersions.indexOf(id) === -1);
+        let configurationVersionsToAddToDeployment = selectedRowKeys.filter(id => data.configurationVersions.indexOf(id) === -1);
 
         // add new configs to existing configurationVersions 
         let finalConfigurationVersions = data.configurationVersions.concat(configurationVersionsToAddToDeployment);
@@ -200,7 +167,7 @@ export default function MEMConfigurations(props) {
             <h1 > {props.title} </h1>
             <div className="controlTop">
                 <Space align="end">
-                    <Button disabled={state.selectedRows.length === 0} onClick={openModal}>+ Deployment</Button>
+                    <Button disabled={selectedRows.length === 0} onClick={openModal}>+ Deployment</Button>
                 </Space>
             </div>
             <AddToDeploymentModal
@@ -210,13 +177,13 @@ export default function MEMConfigurations(props) {
             />
             <Table
                 rowKey="id"
-                loading={state.loading}
+                loading={loading}
                 rowSelection={{
                     type: 'checkbox',
                     ...rowSelection
                 }}
                 columns={columns}
-                dataSource={state.filteredConfigurations}
+                dataSource={filteredConfigurations}
                 onChange={onChange}
                 pagination={
                     { pageSize: 25 }
