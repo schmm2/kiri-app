@@ -10,7 +10,7 @@ export const AddToDeploymentModal = ({ showModal, onAdd, onClose }) => {
 
     const handleOk = (e) => {
         // find deployment object
-        let deployment = (data.deploymentMany.filter(deployment => deployment._id == selectedDeployment))[0]
+        let deployment = (data.deploymentMany.filter(deployment => deployment._id === selectedDeployment))[0]
         // return to caller
         onAdd(deployment);
         onClose(e);

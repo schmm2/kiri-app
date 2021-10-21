@@ -9,6 +9,7 @@ import { useQuery, useMutation } from '@apollo/client';
 import { AddToDeploymentModal } from "components/AddToDeploymentModal";
 import DefaultPage from "layouts/DefaultPage";
 import { deploymentUpdateOne as deploymentUpdateOneMutation } from "graphql/mutations"
+import { openNotificationWithIcon } from "util/openNotificationWithIcon";
 
 export default function MEMConfigurations(props) {
 
@@ -17,7 +18,7 @@ export default function MEMConfigurations(props) {
     const [filteredConfigurations, setFilteredConfigurations] = useState([]);
     const [showDeleted, setShowDeleted] = useState(false);
     const [selectedRows, setSelectedRows] = useState([]);
-    const [selectedRowKeys, setSelectedRowsKeys] = useState([]);
+    const [selectedConfigurationVersions, setSelectedConfigurationVersions] = useState([]);
 
     const selectedTenant = useContext(TenantContext);
 
@@ -54,6 +55,7 @@ export default function MEMConfigurations(props) {
                     // build new config object
                     // adds pressure to client, makes iterating much easier
                     newConfigurationObject.id = configuration._id;
+                    newConfigurationObject.configurationVersionId = configurationVersion._id;
                     newConfigurationObject.displayName = configurationVersion.displayName;
                     newConfigurationObject.modifiedAt = configurationVersion.graphModifiedAt;
                     newConfigurationObject.platform = configurationType.platform;
@@ -71,19 +73,25 @@ export default function MEMConfigurations(props) {
     const [updateDeployment] = useMutation(deploymentUpdateOneMutation, {
         onCompleted(data) {
             console.log(data);
+            openNotificationWithIcon('Add to Deployment', 'success', 'success');
+        }, onError(error) {
+            openNotificationWithIcon('Add to Deployment', 'error', 'error');
+            console.log(error)
         }
     });
 
     const { loading, error, data } = useQuery(getNewestConfigurationVersions, {
+        onCompleted: () => { console.log("done loading") },
         fetchPolicy: 'cache-and-network'
     })
 
     function refilter() {
-        // console.log("refilter");
+        console.log("refilter")
         // console.log(data);
         if (data && data.configurationMany) {
             let filteredConfigurations = filterConfigurations(data.configurationMany);
             setFilteredConfigurations(filteredConfigurations);
+            console.log("refilter done")
         }
     }
 
@@ -130,7 +138,10 @@ export default function MEMConfigurations(props) {
     const rowSelection = {
         onChange: (selectedRowKeys, selectedRows) => {
             setSelectedRows(selectedRows);
-            setSelectedRowsKeys(selectedRowKeys);
+            // gather confogurationVersionIds
+            let selectedConfigurationVersionIds =  selectedRows.map(row => row.configurationVersionId);
+            setSelectedConfigurationVersions(selectedConfigurationVersionIds);
+            //console.log(selectedConfigurationVersionIds)
         }
     };
 
@@ -143,12 +154,21 @@ export default function MEMConfigurations(props) {
     }
 
     function addToDeployment(data) {
-        // get existing configurationVersions on deployment: data.configurationVersions; get configurationVersions to add to deployment: state.selectedRowKeys;
+        // get Ids of all configVersions assigned to this deployment
+        let deploymentConfigurationVersionIds = data.configurationVersions.map(configurationVersion => configurationVersion._id)
+        console.log("assigned config version ids");
+        console.log(deploymentConfigurationVersionIds);
+
+        // get existing configurationVersions on deployment
         // find out which configVersion Ids needs to be added
-        let configurationVersionsToAddToDeployment = selectedRowKeys.filter(id => data.configurationVersions.indexOf(id) === -1);
+        let configurationVersionsToAddToDeployment = selectedConfigurationVersions.filter(id => deploymentConfigurationVersionIds.indexOf(id) === -1);
+        console.log("ids to add");
+        console.log(configurationVersionsToAddToDeployment);
 
         // add new configs to existing configurationVersions 
-        let finalConfigurationVersions = data.configurationVersions.concat(configurationVersionsToAddToDeployment);
+        let finalConfigurationVersions = deploymentConfigurationVersionIds.concat(configurationVersionsToAddToDeployment);
+        console.log("final ids");
+        console.log(finalConfigurationVersions);
 
         // update deployment if new configVersions have been found
         if (configurationVersionsToAddToDeployment.length > 0) {
@@ -175,6 +195,9 @@ export default function MEMConfigurations(props) {
                 onClose={closeModal}
                 onAdd={addToDeployment}
             />
+            {
+                error && <span>{error}</span>
+            }
             <Table
                 rowKey="id"
                 loading={loading}

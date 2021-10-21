@@ -85,7 +85,9 @@ export const deploymentUpdateOne = gql`
       record {
         _id
         name
-        configurationVersions
+        configurationVersions {
+          _id
+        }
       }
     }
   }

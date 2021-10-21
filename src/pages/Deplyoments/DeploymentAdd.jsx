@@ -11,7 +11,7 @@ import { useHistory } from "react-router-dom";
 export default function DeploymentAdd() {
     const history = useHistory();
 
-    const [createDeployment, deployment] = useMutation(deploymentCreateOne, {
+    const [createDeployment] = useMutation(deploymentCreateOne, {
         onCompleted(data) {
             console.log(data);
             history.push("/deployments");
@@ -20,11 +20,12 @@ export default function DeploymentAdd() {
 
     return (
         <DefaultPage>
-            <AutoForm schema={addDeploymentSchema} onSubmit={
-                data => {
-                    createDeployment({ variables: { record: data } });
-                }
-            } />
+            <h1>Add Deployment</h1>
+            {
+                addDeploymentSchema &&
+                <AutoForm schema={addDeploymentSchema}
+                    onSubmit={data => { createDeployment({ variables: { record: data } }); }} />
+            }
             <Button>
                 <Link to={"/deployments"}>Back</Link>
             </Button>

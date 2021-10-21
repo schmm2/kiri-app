@@ -400,7 +400,7 @@ export default function MEMConfiguration(props) {
             <div className="controlBottom">
                 <Space align="end">
                     <Button>
-                        <Link onClick={props.history.goBack}>Back</Link>
+                        <Link to="#" onClick={props.history.goBack}>Back</Link>
                     </Button>
                 </Space>
             </div>
