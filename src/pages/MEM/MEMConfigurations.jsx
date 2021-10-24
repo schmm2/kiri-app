@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import TenantContext from "components/TenantContext"
 import { renderDate } from 'util/renderDate';
 import moment from 'moment';
-import { useQuery, useMutation } from '@apollo/client';
+import { useQuery, useLazyQuery, useMutation } from '@apollo/client';
 import { AddToDeploymentModal } from "components/AddToDeploymentModal";
 import DefaultPage from "layouts/DefaultPage";
 import { deploymentUpdateOne as deploymentUpdateOneMutation } from "graphql/mutations"
@@ -15,12 +15,15 @@ export default function MEMConfigurations(props) {
 
     // states
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [configurations, setConfigurations] = useState([]);
     const [filteredConfigurations, setFilteredConfigurations] = useState([]);
     const [showDeleted, setShowDeleted] = useState(false);
     const [selectedRows, setSelectedRows] = useState([]);
-    const [selectedConfigurationVersions, setSelectedConfigurationVersions] = useState([]);
+    const [selectedConfigurations, setSelectedConfigurations] = useState([]);
+    const [queryFilter, setQueryFilter] = useState("");
 
     const selectedTenant = useContext(TenantContext);
+
 
     function filterConfigurations(configurations) {
         //console.log(configurations);
@@ -80,10 +83,14 @@ export default function MEMConfigurations(props) {
         }
     });
 
-    const { loading, error, data } = useQuery(getNewestConfigurationVersions, {
-        onCompleted: () => { console.log("done loading") },
+    const [getConfigurations, { loading, error, data }] = useLazyQuery(getNewestConfigurationVersions, {
+        onCompleted: () => {
+            console.log("done loading");
+            refilter();
+        },
         fetchPolicy: 'cache-and-network'
     })
+
 
     function refilter() {
         console.log("refilter")
@@ -96,8 +103,19 @@ export default function MEMConfigurations(props) {
     }
 
     React.useEffect(() => {
-        refilter();
-    }, [props.category, selectedTenant, showDeleted, data]);
+        console.log(selectedTenant);
+        if (selectedTenant) {
+            getConfigurations({
+                variables: {
+                    filter: {
+                        tenant: selectedTenant
+                    }
+                }
+            });
+        } else {
+            getConfigurations();
+        }
+    }, [props.category, selectedTenant, showDeleted]);
 
     const columns = [
         {
@@ -138,12 +156,41 @@ export default function MEMConfigurations(props) {
     const rowSelection = {
         onChange: (selectedRowKeys, selectedRows) => {
             setSelectedRows(selectedRows);
-            // gather confogurationVersionIds
-            let selectedConfigurationVersionIds =  selectedRows.map(row => row.configurationVersionId);
-            setSelectedConfigurationVersions(selectedConfigurationVersionIds);
-            //console.log(selectedConfigurationVersionIds)
+            setSelectedConfigurations(selectedRowKeys);
         }
     };
+
+
+    function addToDeployment(data) {
+        // get Ids of all configVersions assigned to this deployment
+        let deploymentConfigurationIds = data.configurations.map(configuration => configuration._id)
+        console.log("assigned config ids");
+        console.log(deploymentConfigurationIds);
+
+        // get existing configurations on deployment
+        // find out which configVersion Ids needs to be added
+        let configurationsToAddToDeployment = selectedConfigurations.filter(id => deploymentConfigurationIds.indexOf(id) === -1);
+        console.log("ids to add");
+        console.log(configurationsToAddToDeployment);
+
+        // add new configs to existing configurations 
+        let finalConfigurations = deploymentConfigurationIds.concat(configurationsToAddToDeployment);
+        console.log("final ids");
+        console.log(finalConfigurations);
+
+        // update deployment if new configVersions have been found
+        if (configurationsToAddToDeployment.length > 0) {
+            let parameter = {
+                variables: {
+                    record: { configurations: finalConfigurations },
+                    filter: { _id: data._id }
+                }
+            }
+            updateDeployment(parameter);
+        } else {
+            openNotificationWithIcon('Add to Deployment', 'no action taken, they are already assigned', 'success');
+        }
+    }
 
     function openModal() {
         setIsModalVisible(true);
@@ -151,35 +198,6 @@ export default function MEMConfigurations(props) {
 
     function closeModal() {
         setIsModalVisible(false);
-    }
-
-    function addToDeployment(data) {
-        // get Ids of all configVersions assigned to this deployment
-        let deploymentConfigurationVersionIds = data.configurationVersions.map(configurationVersion => configurationVersion._id)
-        console.log("assigned config version ids");
-        console.log(deploymentConfigurationVersionIds);
-
-        // get existing configurationVersions on deployment
-        // find out which configVersion Ids needs to be added
-        let configurationVersionsToAddToDeployment = selectedConfigurationVersions.filter(id => deploymentConfigurationVersionIds.indexOf(id) === -1);
-        console.log("ids to add");
-        console.log(configurationVersionsToAddToDeployment);
-
-        // add new configs to existing configurationVersions 
-        let finalConfigurationVersions = deploymentConfigurationVersionIds.concat(configurationVersionsToAddToDeployment);
-        console.log("final ids");
-        console.log(finalConfigurationVersions);
-
-        // update deployment if new configVersions have been found
-        if (configurationVersionsToAddToDeployment.length > 0) {
-            let parameter = {
-                variables: {
-                    record: { configurationVersions: finalConfigurationVersions },
-                    filter: { _id: data._id }
-                }
-            }
-            updateDeployment(parameter);
-        }
     }
 
     return (

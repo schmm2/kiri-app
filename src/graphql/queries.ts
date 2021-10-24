@@ -157,7 +157,6 @@ export const getNewestConfigurationVersions = gql`
         name
       }
     } 
-   
   }
 `
 
@@ -264,7 +263,10 @@ export const deploymentMany = gql`
       name
       createdAt
       updatedAt
-      configurationVersions {
+      tenants {
+        _id
+      }
+      configurations {
         _id
       }
     }
@@ -272,10 +274,28 @@ export const deploymentMany = gql`
 `
 
 export const deploymentById = gql`
-  query TeploymentById($id: MongoID!) {
+  query DeploymentById($id: MongoID!) {
     deploymentById(_id: $id) {
       _id,
       name
+      tenants {
+        _id
+        name
+      }
+      configurations{
+        _id
+        newestConfigurationVersion {
+          _id
+          displayName
+          isNewest
+          graphModifiedAt  
+          state
+        }
+        configurationType {
+          _id
+          name
+        }
+      }
     } 
   }
 `

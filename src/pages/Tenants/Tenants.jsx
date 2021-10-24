@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { tenantMany } from "graphql/queries";
 import { tenantRemoveById } from "graphql/mutations";
 import { Link } from "react-router-dom";
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
 import { useQuery, useMutation } from '@apollo/client';
 import { apipost } from 'util/api';
+import { AddToDeploymentModal } from "components/AddToDeploymentModal";
+import { deploymentUpdateOne as deploymentUpdateOneMutation } from "graphql/mutations"
 
 // antd components
 import { Table, Button, Space } from "antd";
@@ -20,6 +22,19 @@ export default function Tenants() {
   const { loading, error, data } = useQuery(tenantMany, {
     fetchPolicy: "cache-and-network"
   });
+
+  // states
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [selectedTenants, setSelectedTenants] = useState([]);
+
+  function openModal() {
+    setIsModalVisible(true);
+  }
+
+  function closeModal() {
+    setIsModalVisible(false);
+  }
 
   const [deleteTenant] = useMutation(tenantRemoveById, {
     onCompleted(data) {
@@ -119,10 +134,71 @@ export default function Tenants() {
     console.log("params", pagination, filters, sorter, extra);
   }
 
+  const [updateDeployment] = useMutation(deploymentUpdateOneMutation, {
+    onCompleted(data) {
+      console.log(data);
+      openNotificationWithIcon('Add to Deployment', 'success', 'success');
+    }, onError(error) {
+      openNotificationWithIcon('Add to Deployment', 'error', 'error');
+      console.log(error)
+    }
+  });
+
+  function addToDeployment(data) {
+    console.log(data);
+
+    let deploymentTenantIds = data.tenants.map(tenant => tenant._id);
+    console.log(deploymentTenantIds);
+    let tenantIdsToAddToDeployment = selectedTenants.filter(id =>deploymentTenantIds.indexOf(id) === -1);
+    console.log(tenantIdsToAddToDeployment);
+    let finalTenantIds = deploymentTenantIds.concat(tenantIdsToAddToDeployment);
+    console.group(finalTenantIds);
+
+    // update deployment if new configVersions have been found
+    if (tenantIdsToAddToDeployment.length > 0) {
+      let parameter = {
+        variables: {
+          record: { tenants: finalTenantIds },
+          filter: { _id: data._id }
+        }
+      }
+      console.log(parameter);
+      updateDeployment(parameter);
+    } else {
+      openNotificationWithIcon('Add to Deployment', 'no action taken, already assigned', 'success');
+    }
+  }
+
+  const rowSelection = {
+    onChange: (selectedRowKeys, selectedRows) => {
+      setSelectedRows(selectedRows);
+      setSelectedTenants(selectedRowKeys);
+    }
+  };
+
   return (
     <div className="defaultPage">
+      <AddToDeploymentModal
+        showModal={isModalVisible}
+        onClose={closeModal}
+        onAdd={addToDeployment}
+      />
       <h1>Tenants</h1>
-      <Table loading={loading} rowKey="_id" columns={columns} dataSource={data && data.tenantMany} onChange={onChange} />
+      <div className="controlTop">
+        <Space align="end">
+          <Button disabled={selectedRows.length === 0} onClick={openModal}>+ Deployment</Button>
+        </Space>
+      </div>
+      <Table
+        rowSelection={{
+          type: 'checkbox',
+          ...rowSelection
+        }}
+        loading={loading}
+        rowKey="_id"
+        columns={columns}
+        dataSource={data && data.tenantMany}
+        onChange={onChange} />
       <Button>
         <Link to="/tenantAdd">
           <PlusOutlined /> Add Tenant
