@@ -240,7 +240,7 @@ export default function MEMConfiguration(props) {
         apipost("orchestrators/ORC1100MEMConfigurationUpdate", {
             tenantDbId: tenantDbId,
             configurationVersionDbId: configurationVersionDbId,
-            msGraphResource: msGraphResource
+            msGraphResourceUrl: msGraphResource.resource
         })
             .then(response => response.json())
             .then(data => {
@@ -265,7 +265,7 @@ export default function MEMConfiguration(props) {
             tenantDbId: data.targetTenant._id,
             configurationName: data.newConfigName,
             configurationVersionDbId: state.newestConfigurationVersion._id,
-            msGraphResource: state.msGraphResource,
+            msGraphResourceUrl: state.msGraphResource.resource,
         })
             .then(response => response.json())
             .then(data => {

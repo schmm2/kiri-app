@@ -84,7 +84,7 @@ export default function MEMConfigurations(props) {
     });
 
     const [getConfigurations, { loading, error, data }] = useLazyQuery(getNewestConfigurationVersions, {
-        onCompleted: () => {
+        onCompleted: (data) => {
             console.log("done loading");
             refilter();
         },
@@ -98,6 +98,7 @@ export default function MEMConfigurations(props) {
         if (data && data.configurationMany) {
             let filteredConfigurations = filterConfigurations(data.configurationMany);
             setFilteredConfigurations(filteredConfigurations);
+            console.log(filteredConfigurations);
             console.log("refilter done")
         }
     }
@@ -108,12 +109,17 @@ export default function MEMConfigurations(props) {
             getConfigurations({
                 variables: {
                     filter: {
-                        tenant: selectedTenant
-                    }
+                        tenant: selectedTenant._id
+                    },
+                    limit: 200
                 }
             });
         } else {
-            getConfigurations();
+            getConfigurations({
+                variables: {
+                    limit: 500
+                }
+            });
         }
     }, [props.category, selectedTenant, showDeleted]);
 

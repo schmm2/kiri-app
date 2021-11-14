@@ -73,6 +73,10 @@ export default function Jobs(props) {
       dataIndex: "message",
     },
     {
+      title: "Log",
+      dataIndex: "log",
+    },
+    {
       title: "Last Update",
       dataIndex: "updatedAt",
       render: (text, record) => renderDate(text),

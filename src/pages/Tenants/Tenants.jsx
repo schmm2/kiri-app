@@ -45,11 +45,11 @@ export default function Tenants() {
     }
   });
 
-  async function triggerTenantUpdate(tenantMongoDbId) {
-    //console.log("update tenant data for tenantId: " + tenantMongoDbId);
+  async function triggerTenantUpdate(tenantDbId) {
+    //console.log("update tenant data for tenantId: " + tenantDbId);
     openNotificationWithIcon('Pull Data', 'start Job', 'success');
 
-    apipost("orchestrators/ORC1000AzureDataCollect", { tenantMongoDbId: tenantMongoDbId })
+    apipost("orchestrators/ORC1000AzureDataCollect", { tenantDbId: tenantDbId })
       .then(response => response.json())
       .then(data => {
         //console.log(data);
@@ -60,12 +60,12 @@ export default function Tenants() {
       });
   }
 
-  async function triggerBackup(tenantMongoDbId) {
+  async function triggerBackup(tenantDbId) {
     let fileName = "export.zip";
-    // console.log("backup config for tenant " + tenantMongoDbId);
+    // console.log("backup config for tenant " + tenantDbId);
     openNotificationWithIcon('Backup', 'Backup Job started', 'success', 8.0);
 
-    apipost("TRG2000ConfigurationBackupCreate", { tenantMongoDbId: tenantMongoDbId })
+    apipost("TRG2000ConfigurationBackupCreate", { tenantDbId: tenantDbId })
       .then(response => {
         let contentDisposition = response.headers.get('Content-Disposition')
         // console.log(contentDisposition);

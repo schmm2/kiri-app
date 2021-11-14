@@ -38,6 +38,21 @@ export default function AdminTools() {
             });
     }
 
+    function stopTasks() {
+        console.log("stop tasks initialized");
+
+        openNotificationWithIcon('Stop Tasks', 'start', 'success');
+        apipost("TRG1002OrchestratorTerminateRunningInstance", {})
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                openNotificationWithIcon('Stop Tasks', 'success', 'success');
+            }).catch((error) => {
+                openNotificationWithIcon('Stop Tasks', 'error', 'error');
+                console.log(error);
+            });
+    }
+
     return (
         <DefaultPage>
             <h1>Admin Tools</h1>
@@ -52,6 +67,9 @@ export default function AdminTools() {
                 </List.Item>
                 <List.Item actions={[<a href="#" onClick={() => clearDatabase()}>Clear Database</a>]}>
                     <List.Item.Meta title="Clear Data" description="This function will delete all data currently stored in the database." />
+                </List.Item>
+                <List.Item actions={[<a href="#" onClick={() => stopTasks()}>Stop Tasks</a>]}>
+                    <List.Item.Meta title="Stop Tasks" description="This function will stop all tasks in the backend." />
                 </List.Item>
             </List>
         </DefaultPage>

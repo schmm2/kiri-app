@@ -137,8 +137,8 @@ export const configurationById = gql`
 `
 
 export const getNewestConfigurationVersions = gql`
-  query GetNewestConfigurationVersions {
-    configurationMany {       
+  query GetNewestConfigurationVersions($limit: Int, $filter: FilterFindManyConfigurationInput) {
+    configurationMany(limit: $limit, filter: $filter) {       
       _id 
       newestConfigurationVersions {
         _id
@@ -213,6 +213,7 @@ export const jobMany = gql`
       _id,
       type,
       state,
+      log,
       message,
       updatedAt,
       tenant {
