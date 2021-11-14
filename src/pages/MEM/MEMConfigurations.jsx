@@ -25,7 +25,6 @@ export default function MEMConfigurations(props) {
     const [queryFilter, setQueryFilter] = useState("");
     const [searchText, setSearchText] = useState("");
     const [searchedColumn, setSearchedColumn] = useState("");
-    //const [searchInput, setSearchInput] = useState(null)
 
     const selectedTenant = useContext(TenantContext);
     let searchInput = React.createRef();
@@ -229,7 +228,10 @@ export default function MEMConfigurations(props) {
     }
 
     const rowSelection = {
+        
         onChange: (selectedRowKeys, selectedRows) => {
+            console.log(selectedRows)
+            console.log(selectedRowKeys)
             setSelectedRows(selectedRows);
             setSelectedConfigurations(selectedRowKeys);
         }
@@ -241,6 +243,8 @@ export default function MEMConfigurations(props) {
         let deploymentConfigurationIds = data.configurations.map(configuration => configuration._id)
         console.log("assigned config ids");
         console.log(deploymentConfigurationIds);
+
+        console.log(selectedConfigurations);
 
         // get existing configurations on deployment
         // find out which configVersion Ids needs to be added
@@ -293,6 +297,7 @@ export default function MEMConfigurations(props) {
             }
             <Table
                 loading={loading}
+                rowKey="id"
                 rowSelection={{
                     type: 'checkbox',
                     ...rowSelection
@@ -300,9 +305,6 @@ export default function MEMConfigurations(props) {
                 columns={columns}
                 dataSource={filteredConfigurations}
                 onChange={onChange}
-                pagination={
-                    { pageSize: 25 }
-                }
             />
             <span>Show Deleted <Switch onChange={switchShowDeleted} /></span >
         </DefaultPage>
