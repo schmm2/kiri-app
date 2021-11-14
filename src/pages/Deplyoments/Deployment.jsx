@@ -28,6 +28,10 @@ export default function Deployment(props) {
         {
             title: "Type",
             dataIndex: ["configurationType", "name"]
+        },
+        {
+            title: "Source Tenant",
+            dataIndex: ["tenant", "name"]
         }
     ]
 
@@ -76,7 +80,7 @@ export default function Deployment(props) {
                             <Table rowKey="_id" columns={columns} dataSource={data.deploymentById.configurations} />
                         </Col>
                         <Col xs={24} xl={12}>
-                            <h3>Tenants</h3>
+                            <h3>Target Tenants</h3>
                             <Table rowKey="_id" columns={tenantColumns} dataSource={data.deploymentById.tenants} />
                         </Col>
                     </Row>

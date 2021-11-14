@@ -19,6 +19,32 @@ const { TabPane } = Tabs;
 export default function MEMConfiguration(props) {
 
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [settingsData, setSettingsData] = useState(null);
+
+    const settingsNamesToExclude = [
+        "@odata.context",
+        "@odata.type",
+        "id",
+        "lastModifiedDateTime",
+        "roleScopeTagIds",
+        "supportsScopeTags",
+        "createdDateTime",
+        "description",
+        "displayName",
+        "version",
+        "cellularData" // always allowed
+    ]
+
+    let settingsColumns = [
+        {
+            title: "Name",
+            dataIndex: "name",
+        },
+        {
+            title: "Value",
+            dataIndex: "value",
+        },
+    ]
 
     const { match: { params } } = props;
     const { data, dataLoading, dataError } = useQuery(configurationById, {
@@ -65,11 +91,53 @@ export default function MEMConfiguration(props) {
                 "newestConfigurationVersion": newestConfigurationVersionItem,
                 "msGraphResource": msGraphResource
             }
-            console.log(newState);
+
+            // build settings data
+            let index = 1;
+            let dataSourceTmp = [];
+
+            for (let key in newestConfigurationVersionItem.value) {
+                // key
+                // generic keys are skipped like displayName
+                if(settingsNamesToExclude.includes(key)){
+                    continue;
+                }
+
+                // value
+                let value = newestConfigurationVersionItem.value[key]
+                let type = findType(value)
+
+                // skip null/empty data
+                if (value === null ||
+                    value === "notConfigured" || 
+                    value === "userDefined" ||
+                    value === "deviceDefault" ||
+                    value === false
+                ) { continue }
+
+                if(type === "array"){
+                    if(value.length == 0){
+                        continue;
+                    }
+                }
+
+                if(type === "object"){
+                    value = JSON.stringify(value)
+                }
+
+                let newDataEntry = {
+                    key: index,
+                    name: key,
+                    value: value.toString(),
+                }
+                dataSourceTmp.push(newDataEntry);
+                index++;
+            }
+            setSettingsData(dataSourceTmp);
+
             dispatch({ type: "SET_CONFIGURATION", newState });
         }
     });
-
 
 
     const initialState = {
@@ -81,6 +149,10 @@ export default function MEMConfiguration(props) {
         versionHistoryDataSource: [],
         loading: true,
         error: false
+    }
+
+    function onChange(pagination, filters, sorter, extra) {
+        console.log("params", pagination, filters, sorter, extra);
     }
 
     function reducer(state, action) {
@@ -157,7 +229,7 @@ export default function MEMConfiguration(props) {
                     <h3>Configuration</h3>
                     <ReactJson name={false} enableClipboard={false} displayDataTypes={false} src={baseObject} />
                     <h3>Settings</h3>
-                    <ReactJson name={false} enableClipboard={true} displayDataTypes={false} src={record.gpoSettings} />
+                    <ReactJson name={false} enableClipboard={false} displayDataTypes={false} src={record.gpoSettings} />
                 </span>
             )
         }
@@ -338,13 +410,23 @@ export default function MEMConfiguration(props) {
                             </div>
                         </TabPane>
                         <TabPane tab="Settings" key="2">
+                            {
+                                settingsColumns && settingsData &&
+                                <Table
+                                    rowKey="_id"
+                                    columns={settingsColumns}
+                                    dataSource={settingsData}
+                                />
+                            }
+                        </TabPane>
+                        <TabPane tab="Object" key="3">
                             <ClipboardButton data={state.newestConfigurationVersion.value}></ClipboardButton>
                             {
                                 state.newestConfigurationVersion &&
                                 renderDataFullObject(state.newestConfigurationVersion.value)
                             }
                         </TabPane>
-                        <TabPane tab={versionTab} key="3" disabled={state.configurationVersions.length <= 1}>
+                        <TabPane tab={versionTab} key="4" disabled={state.configurationVersions.length <= 1}>
                             <Dropdown overlay={configurationVersionsMenu} placement="bottomRight" arrow>
                                 <Button>
                                     {

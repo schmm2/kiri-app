@@ -292,6 +292,10 @@ export const deploymentById = gql`
           graphModifiedAt  
           state
         }
+        tenant {
+          _id
+          name
+        }
         configurationType {
           _id
           name
