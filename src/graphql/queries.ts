@@ -140,7 +140,7 @@ export const getNewestConfigurationVersions = gql`
   query GetNewestConfigurationVersions($limit: Int, $filter: FilterFindManyConfigurationInput) {
     configurationMany(limit: $limit, filter: $filter) {       
       _id 
-      newestConfigurationVersions {
+      newestConfigurationVersion {
         _id
         displayName
         isNewest
@@ -159,6 +159,22 @@ export const getNewestConfigurationVersions = gql`
     } 
   }
 `
+export const getNewestConfigurationVersionsByIds = gql`
+  query GetNewestConfigurationVersionByIds($ids: [MongoID!]!) {
+    configurationByIds(_ids: $ids) {       
+      _id 
+      newestConfigurationVersion {
+        _id
+        displayName
+        isNewest
+        graphModifiedAt  
+        state
+        value
+      }
+    } 
+  }
+`
+
 
 export const getNewestConfigurationVersionsByTenant = gql`
   query getNewestConfigurationVersionsByTenant($id: MongoID!) {

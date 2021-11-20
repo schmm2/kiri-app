@@ -1,4 +1,4 @@
-import React, { useContext, useState, useRef } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { getNewestConfigurationVersions } from "graphql/queries";
 import { Table, Switch, Space, Button, Input } from 'antd';
 import { Link } from "react-router-dom";
@@ -12,6 +12,7 @@ import { deploymentUpdateOne as deploymentUpdateOneMutation } from "graphql/muta
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
 import { SearchOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
+import { useHistory } from "react-router-dom";
 
 export default function MEMConfigurations(props) {
 
@@ -113,9 +114,9 @@ export default function MEMConfigurations(props) {
             // check for matching category
             if (props.category && (props.category === configurationType.category)) {
 
-                if (configuration.newestConfigurationVersions && configuration.newestConfigurationVersions[0]) {
+                if (configuration.newestConfigurationVersion) {
                     let newConfigurationObject = {};
-                    let configurationVersion = configuration.newestConfigurationVersions[0];
+                    let configurationVersion = configuration.newestConfigurationVersion;
 
                     // skip deleted Configs if option is not selected
                     if (showDeleted === false && (configurationVersion.state).toString() === "deleted") {
@@ -131,6 +132,7 @@ export default function MEMConfigurations(props) {
                     newConfigurationObject.platform = configurationType.platform;
                     newConfigurationObject.type = configurationType.name;
                     newConfigurationObject.state = configurationVersion.state;
+                    newConfigurationObject.tenantName = configuration.tenant.name;
 
                     configurationCollection.push(newConfigurationObject);
                 }
@@ -170,8 +172,10 @@ export default function MEMConfigurations(props) {
         }
     }
 
-    React.useEffect(() => {
+    useEffect(() => {
         console.log(selectedTenant);
+        console.log("get configurations...")
+
         if (selectedTenant) {
             getConfigurations({
                 variables: {
@@ -188,7 +192,7 @@ export default function MEMConfigurations(props) {
                 }
             });
         }
-    }, [props.category, selectedTenant, showDeleted]);
+    }, [props.category, selectedTenant]);
 
     const columns = [
         {
@@ -197,6 +201,11 @@ export default function MEMConfigurations(props) {
             dataIndex: "displayName",
             render: (text, record) => <Link to={props.category + '/' + record.id} > {record.displayName} </Link>,
             ...getColumnSearchProps('displayName'),
+        },
+        {
+            title: "Tenant",
+            index: "tenant",
+            dataIndex: "tenantName",
         },
         {
             title: "Type",
@@ -225,13 +234,11 @@ export default function MEMConfigurations(props) {
     function switchShowDeleted(checked) {
         // console.log(checked);
         setShowDeleted(checked)
+        refilter();
     }
 
     const rowSelection = {
-        
         onChange: (selectedRowKeys, selectedRows) => {
-            console.log(selectedRows)
-            console.log(selectedRowKeys)
             setSelectedRows(selectedRows);
             setSelectedConfigurations(selectedRowKeys);
         }
@@ -279,12 +286,21 @@ export default function MEMConfigurations(props) {
         setIsModalVisible(false);
     }
 
+    const history = useHistory();
+
+    function openCompareView() {
+        console.log(selectedConfigurations);
+        let path = 'configurationCompare/' + selectedConfigurations[0] + "/" + selectedConfigurations[1];
+        history.push(path);
+    }
+
     return (
         <DefaultPage>
             <h1 > {props.title} </h1>
             <div className="controlTop">
                 <Space align="end">
                     <Button disabled={selectedRows.length === 0} onClick={openModal}>+ Deployment</Button>
+                    <Button disabled={selectedRows.length !== 2} onClick={openCompareView}>Compare</Button>
                 </Space>
             </div>
             <AddToDeploymentModal

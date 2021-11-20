@@ -33,6 +33,7 @@ import Deployments from 'pages/Deplyoments/Deployments';
 import DeploymentAdd from 'pages/Deplyoments/DeploymentAdd';
 import Deployment from 'pages/Deplyoments/Deployment';
 import Health from 'pages/Admin/Health';
+import MEMConfigurationCompare from 'pages/MEM/MEMConfigurationCompare';
 
 function App({ pca }) {
 
@@ -64,6 +65,7 @@ function Pages() {
       <Route path="/msGraphResources" component={MsGraphResources} />
       <Route path="/msGraphResourceAdd" component={MsGraphResourceAdd} />
       <Route path="/configurationTypes" component={ConfigurationTypes} />
+      <Route path="/configurationCompare/:configOne/:configTwo" component={MEMConfigurationCompare} />
       <Route path="/configurationTypeAdd" component={ConfigurationTypeAdd} />
       <Route path="/configurationprofile/:configurationId" component={MEMConfiguration} />
       <Route path="/configurationprofile">
