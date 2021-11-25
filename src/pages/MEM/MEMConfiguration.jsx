@@ -14,6 +14,7 @@ import { Table, Button, Menu, Dropdown, Badge, Space, Tabs, Spin } from 'antd';
 import { CodeViewer } from "components/CodeViewer";
 import { CopyConfigurationModal } from "components/CopyConfigurationModal";
 import { ClipboardButton } from "components/ClipboardButton";
+import { RenderData } from "components/RenderData";
 const { TabPane } = Tabs;
 
 export default function MEMConfiguration(props) {
@@ -99,7 +100,7 @@ export default function MEMConfiguration(props) {
             for (let key in newestConfigurationVersionItem.value) {
                 // key
                 // generic keys are skipped like displayName
-                if(settingsNamesToExclude.includes(key)){
+                if (settingsNamesToExclude.includes(key)) {
                     continue;
                 }
 
@@ -109,19 +110,19 @@ export default function MEMConfiguration(props) {
 
                 // skip null/empty data
                 if (value === null ||
-                    value === "notConfigured" || 
+                    value === "notConfigured" ||
                     value === "userDefined" ||
                     value === "deviceDefault" ||
                     value === false
                 ) { continue }
 
-                if(type === "array"){
-                    if(value.length == 0){
+                if (type === "array") {
+                    if (value.length == 0) {
                         continue;
                     }
                 }
 
-                if(type === "object"){
+                if (type === "object") {
                     value = JSON.stringify(value)
                 }
 
@@ -237,28 +238,6 @@ export default function MEMConfiguration(props) {
         return (<ReactJson name={false} enableClipboard={false} displayDataTypes={false} src={record} />)
     }
 
-    function renderData(record) {
-        let type = findType(record);
-        // console.log("found type " + type + " for data " + record);
-
-        switch (type) {
-            case "array":
-                return (<ReactJson name={false} enableClipboard={true} displayDataTypes={false} src={record} />)
-            case "object":
-                return (<ReactJson name={false} enableClipboard={true} displayDataTypes={false} src={record} />)
-            case "date":
-                return renderDate(record);
-                break;
-            case "boolean":
-                return record.toString()
-            case "null":
-                return "not set"
-            default:
-                console.log(record);
-                return (<span className="lineBreakAnywhere">{record}</span>)
-        }
-    }
-
     const versionHistoryColumns = [
         {
             title: 'Value',
@@ -269,13 +248,13 @@ export default function MEMConfiguration(props) {
             title: 'Active Version',
             dataIndex: 'activeVersion',
             key: 'activeVersion',
-            render: (text, record) => renderData(record.activeVersion)
+            render: (text, record) => <RenderData record={record.activeVersion} />
         },
         {
             title: 'Previous Version',
             dataIndex: 'previousVersion',
             key: 'previousVersion',
-            render: (text, record) => renderData(record.previousVersion)
+            render: (text, record) => <RenderData record={record.previousVersion} />
         },
     ];
 

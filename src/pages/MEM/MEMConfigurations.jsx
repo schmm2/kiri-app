@@ -79,18 +79,7 @@ export default function MEMConfigurations(props) {
             if (visible) {
                 setTimeout(() => searchInput.select(), 100);
             }
-        },
-        render: text =>
-            searchedColumn === dataIndex ? (
-                <Highlighter
-                    highlightStyle={{ backgroundColor: '#019BBD', padding: 0 }}
-                    searchWords={[searchText]}
-                    autoEscape
-                    textToHighlight={text ? text.toString() : ''}
-                />
-            ) : (
-                text
-            ),
+        }
     });
 
     function filterConfigurations(configurations) {
@@ -309,7 +298,7 @@ export default function MEMConfigurations(props) {
                 onAdd={addToDeployment}
             />
             {
-                error && <span>{error}</span>
+                error && <span>{JSON.parse(error)}</span>
             }
             <Table
                 loading={loading}
