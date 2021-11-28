@@ -16,7 +16,6 @@ import {
 export default function Health() {
 
     const [health, setHealth] = useState(null);
-    const [error, setError] = useState(null);
 
     let data = [
         {
@@ -53,11 +52,11 @@ export default function Health() {
                 setHealth(data);
             }).catch((error) => {
                 openNotificationWithIcon('Health check', 'error', 'error');
-                setError(error);
+
                 setHealth({
                     backendApi: {
                         status: false,
-                        message: "unable to communicate with backend Api"
+                        message: "unable to communicate with backend Api. Error" + error
                     },
                     keyvault: {
                         status: false,
@@ -79,10 +78,6 @@ export default function Health() {
                     <Button onClick={checkBackend}>Check</Button>
                 </Space>
             </div>
-            {
-                error &&
-                <p>{error}</p>
-            }
             <List
                 itemLayout="horizontal"
                 dataSource={data}
