@@ -50,14 +50,14 @@ function buildUrl(functionName) {
 async function apipost(functionName, payload) {
     console.log(backendApiRequest);
 
-    const header = await buildHeader()
-    console.log(JSON.stringify(header))
+    const headers = await buildHeader()
+    console.log(JSON.stringify(headers))
     const url = buildUrl(functionName)
     const body = JSON.stringify(payload)
 
     const requestOptions = {
         method: 'POST',
-        headers: header,
+        headers: headers,
         body: body
     };
 
