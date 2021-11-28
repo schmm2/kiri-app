@@ -3,11 +3,14 @@ import ReactDOM from 'react-dom';
 import App from './App.jsx';
 import * as serviceWorker from './serviceWorker';
 import { BrowserRouter as Router } from 'react-router-dom'
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+import { ApolloClient, InMemoryCache, ApolloProvider, createHttpLink } from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
 
 // MSAL imports
 import { PublicClientApplication, EventType } from "@azure/msal-browser";
 import { msalConfig } from "./authConfig";
+
+import { buildHeader, bearerToken } from 'util/backendApi'
 
 // Build backend url
 const backendApiUrl = process.env.REACT_APP_BACKENDAPIURL;
@@ -27,8 +30,24 @@ if (functionKey) {
     graphqlUrl = graphqlUrl + "?code=" + functionKey;
 }
 
+const httpLink = createHttpLink({
+    uri: '/graphql',
+});
+
+const authLink = setContext(async (_, { headers }) => {
+    // get the authentication token from local storage if it exists
+    const token = await bearerToken()
+    // return the headers to the context so httpLink can read them
+    return {
+        headers: {
+            ...headers,
+            authorization: token ? `Bearer ${token}` : "",
+        }
+    }
+});
+
 const client = new ApolloClient({
-    uri: graphqlUrl,
+    link: authLink.concat(httpLink),
     cache: new InMemoryCache(),
     fetchOptions: {
         mode: 'no-cors',

@@ -17,7 +17,7 @@ export async function bearerToken() {
     return response.accessToken
 }
 
-async function buildHeader() {
+export async function buildHeader() {
     const headers = new Headers()
     headers.append('Content-Type', 'application/json')
 
@@ -44,7 +44,7 @@ function buildUrl(functionName) {
     return backendApiUrl
 }
 
-async function apipost(functionName, payload) {
+export async function apipost(functionName, payload) {
     const headers = await buildHeader()
     const url = buildUrl(functionName)
     const body = JSON.stringify(payload)
@@ -58,5 +58,3 @@ async function apipost(functionName, payload) {
     // return promise
     return fetch(url, requestOptions);
 }
-
-export { apipost }

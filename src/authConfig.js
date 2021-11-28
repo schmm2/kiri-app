@@ -56,7 +56,8 @@ export const msalConfig = {
 export const msGraphScopes = {
     scopes: [
         "User.Read",
-        "User.ReadBasic.All"
+        "User.ReadBasic.All",
+        'api://' + backendApiAppId + "/user_impersonation"
     ]
 };
 
