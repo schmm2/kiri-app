@@ -16,6 +16,7 @@ import {
 export default function Health() {
 
     const [health, setHealth] = useState(null);
+    const [error, setError] = useState(null);
 
     let data = [
         {
@@ -52,7 +53,7 @@ export default function Health() {
                 setHealth(data);
             }).catch((error) => {
                 openNotificationWithIcon('Health check', 'error', 'error');
-                console.log(error);
+                setError(error);
                 setHealth({
                     backendApi: {
                         status: false,
@@ -78,7 +79,10 @@ export default function Health() {
                     <Button onClick={checkBackend}>Check</Button>
                 </Space>
             </div>
-
+            {
+                error &&
+                <p>{error}</p>
+            }
             <List
                 itemLayout="horizontal"
                 dataSource={data}
