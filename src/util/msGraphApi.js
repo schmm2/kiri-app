@@ -13,7 +13,6 @@ export async function bearerToken() {
         ...msGraphScopes,
         account: account
     })
-    console.log(response);
 
     return response.accessToken
 }
@@ -27,8 +26,6 @@ async function buildHeader() {
     if (token) {
         const bearer = `Bearer ${token}`
         headers.append('Authorization', bearer)
-    } else {
-        console.log(token)
     }
 
     return headers

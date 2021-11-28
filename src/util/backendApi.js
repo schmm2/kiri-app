@@ -13,7 +13,6 @@ export async function bearerToken() {
         ...backendApiRequest,
         account: account,
     })
-    console.log(response);
 
     return response.accessToken
 }
@@ -26,8 +25,6 @@ async function buildHeader() {
     if (token) {
         const bearer = `Bearer ${token}`
         headers.append('Authorization', bearer)
-    } else {
-        console.log(token)
     }
 
     return headers
@@ -48,10 +45,7 @@ function buildUrl(functionName) {
 }
 
 async function apipost(functionName, payload) {
-    console.log(backendApiRequest);
-
     const headers = await buildHeader()
-    console.log(JSON.stringify(headers))
     const url = buildUrl(functionName)
     const body = JSON.stringify(payload)
 
@@ -60,13 +54,6 @@ async function apipost(functionName, payload) {
         headers: headers,
         body: body
     };
-
-    for (var pair of header.entries()) {
-        console.log(pair[0] + ': ' + pair[1]);
-    }
-
-    console.log(JSON.stringify(requestOptions))
-    console.log(requestOptions);
 
     // return promise
     return fetch(url, requestOptions);
