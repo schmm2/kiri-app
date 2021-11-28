@@ -49,6 +49,7 @@ function buildUrl(functionName) {
 
 async function apipost(functionName, payload) {
     const header = await buildHeader()
+    console.log(JSON.stringify(header))
     const url = buildUrl(functionName)
     const body = JSON.stringify(payload)
 
