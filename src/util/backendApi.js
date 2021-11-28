@@ -63,9 +63,7 @@ async function apipost(functionName, payload) {
     console.log(requestOptions);
 
     // return promise
-    return fetch(url, requestOptions)
-        .then(response => response.json())
-        .catch(error => console.log(error));
+    return fetch(url, requestOptions);
 }
 
 export { apipost }
