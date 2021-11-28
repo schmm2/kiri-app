@@ -57,7 +57,7 @@ async function apipost(functionName, payload) {
 
     const requestOptions = {
         method: 'POST',
-        header: header,
+        headers: header,
         body: body
     };
 
