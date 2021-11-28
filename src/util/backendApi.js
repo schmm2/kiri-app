@@ -48,6 +48,8 @@ function buildUrl(functionName) {
 }
 
 async function apipost(functionName, payload) {
+    console.log(backendApiRequest);
+
     const header = await buildHeader()
     console.log(JSON.stringify(header))
     const url = buildUrl(functionName)
