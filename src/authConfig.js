@@ -13,7 +13,7 @@ const isFirefox = firefox > 0; // Only needed if you need to support the redirec
 
 const appClientId = process.env.REACT_APP_AUTHAPPID;
 const backendApiUrl = process.env.REACT_APP_BACKENDAPIURL;
-const backendApiAppId = process.env.REACT_APP_APIAPPIP;
+const backendApiAppId = process.env.REACT_APP_APIAPPID;
 
 // Config object to be passed to Msal on creation
 export const msalConfig = {
