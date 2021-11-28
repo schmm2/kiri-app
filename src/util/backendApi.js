@@ -59,6 +59,10 @@ async function apipost(functionName, payload) {
         body: body
     };
 
+    for (var pair of header.entries()) {
+        console.log(pair[0] + ': ' + pair[1]);
+    }
+
     console.log(JSON.stringify(requestOptions))
     console.log(requestOptions);
 
