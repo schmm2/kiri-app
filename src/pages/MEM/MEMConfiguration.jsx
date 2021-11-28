@@ -6,7 +6,7 @@ import { renderDate } from 'util/renderDate';
 import { findType } from 'util/findType';
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
 import { useQuery } from '@apollo/client';
-import { apipost } from 'util/api';
+import { apipost } from 'util/backendApi';
 import ReactJson from 'react-json-view'
 import DefaultPage from '../../layouts/DefaultPage';
 

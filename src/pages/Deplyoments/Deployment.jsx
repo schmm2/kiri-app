@@ -5,7 +5,7 @@ import { Button, Space, Table } from 'antd';
 import { Link } from "react-router-dom";
 import { Row, Col } from 'antd';
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
-import { apipost } from 'util/api';
+import { apipost } from 'util/backendApi';
 
 export default function Deployment(props) {
 

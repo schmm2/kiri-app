@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 import DefaultPage from '../layouts/DefaultPage';
-import { callMsGraph } from "../util/MsGraphApiCall";
+import { callMsGraphProfile } from "../util/MsGraphProfileApiCall";
 
 // Msal imports
 import { useMsal } from "@azure/msal-react";
@@ -14,7 +14,7 @@ export default function Profile() {
 
   useEffect(() => {
     if (!graphData && inProgress === InteractionStatus.None) {
-      callMsGraph().then(response => { console.log(response); setGraphData(response) }).catch((e) => {
+      callMsGraphProfile().then(response => { console.log(response); setGraphData(response) }).catch((e) => {
         if (e instanceof InteractionRequiredAuthError) {
           instance.acquireTokenRedirect({
             ...loginRequest,

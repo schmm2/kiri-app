@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import DefaultPage from '../../layouts/DefaultPage';
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
-import { apipost } from "util/api";
+import { apipost } from "util/backendApi";
 import { List, Avatar, Skeleton, Space, Button, Row, Col } from 'antd';
 
 import {

@@ -4,7 +4,7 @@ import { tenantRemoveById } from "graphql/mutations";
 import { Link } from "react-router-dom";
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
 import { useQuery, useMutation } from '@apollo/client';
-import { apipost } from 'util/api';
+import { apipost } from 'util/backendApi';
 import { AddToDeploymentModal } from "components/AddToDeploymentModal";
 import { deploymentUpdateOne as deploymentUpdateOneMutation } from "graphql/mutations"
 
