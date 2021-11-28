@@ -20,6 +20,7 @@ export async function bearerToken() {
 
 async function buildHeader() {
     const headers = new Headers()
+    headers.append('Content-Type', 'application/json')
 
     const token = await bearerToken()
     if (token) {
@@ -28,8 +29,6 @@ async function buildHeader() {
     } else {
         console.log(token)
     }
-
-    headers.append('Content-Type', 'application/json')
 
     return headers
 }
@@ -45,12 +44,11 @@ function buildUrl(functionName) {
             backendApiUrl = backendApiUrl + "?code=" + process.env.REACT_APP_FUNCTIONKEY
         }
     }
-
     return backendApiUrl
 }
 
-const apipost = (functionName, payload) => {
-    const header = buildHeader()
+async function apipost(functionName, payload) {
+    const header = await buildHeader()
     const url = buildUrl(functionName)
     const body = JSON.stringify(payload)
 

@@ -1,13 +1,13 @@
 import React from "react"
 import { useMsal } from "@azure/msal-react";
 import { Button } from "antd";
-import { loginRequest } from "../authConfig";
+import { msGraphScopes } from "../authConfig";
 
 export const SignInButton = () => {
     const { instance } = useMsal();
 
     const handleMicrosoftLogin = () => {
-        instance.loginRedirect(loginRequest);
+        instance.loginRedirect(msGraphScopes);
     }
 
     return (

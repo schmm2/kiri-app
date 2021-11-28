@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react"
 import DefaultPage from '../layouts/DefaultPage';
-import { callMsGraphProfile } from "../util/MsGraphProfileApiCall";
+import { getProfile } from "../util/msGraphApi";
 
 // Msal imports
 import { useMsal } from "@azure/msal-react";
 import { InteractionStatus, InteractionRequiredAuthError } from "@azure/msal-browser";
-import { loginRequest } from "../authConfig";
+import { msGraphScopes } from "../authConfig";
 import { ProfileData } from "components/ProfileData";
 
 export default function Profile() {
@@ -14,10 +14,10 @@ export default function Profile() {
 
   useEffect(() => {
     if (!graphData && inProgress === InteractionStatus.None) {
-      callMsGraphProfile().then(response => { console.log(response); setGraphData(response) }).catch((e) => {
+      getProfile().then(response => { console.log(response); setGraphData(response) }).catch((e) => {
         if (e instanceof InteractionRequiredAuthError) {
           instance.acquireTokenRedirect({
-            ...loginRequest,
+            ...msGraphScopes,
             account: instance.getActiveAccount()
           });
         }
