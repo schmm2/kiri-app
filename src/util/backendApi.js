@@ -58,6 +58,7 @@ async function apipost(functionName, payload) {
         body: body
     };
 
+    console.log(JSON.stringify(requestOptions))
     console.log(requestOptions);
 
     // return promise
