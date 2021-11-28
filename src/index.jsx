@@ -31,7 +31,7 @@ if (functionKey) {
 }
 
 const httpLink = createHttpLink({
-    uri: '/graphql',
+    uri: backendApiUrl + '/graphql',
 });
 
 const authLink = setContext(async (_, { headers }) => {
