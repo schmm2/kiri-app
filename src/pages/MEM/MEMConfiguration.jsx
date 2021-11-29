@@ -6,7 +6,7 @@ import { renderDate } from 'util/renderDate';
 import { findType } from 'util/findType';
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
 import { useQuery } from '@apollo/client';
-import { apipost } from 'util/backendApi';
+import { postBackendApi } from 'util/api';
 import ReactJson from 'react-json-view'
 import DefaultPage from '../../layouts/DefaultPage';
 
@@ -288,7 +288,7 @@ export default function MEMConfiguration(props) {
         let configurationVersionDbId = state.selectedConfigurationVersion._id;
         let msGraphResource = state.msGraphResource;
 
-        apipost("orchestrators/ORC1100MEMConfigurationUpdate", {
+        postBackendApi("orchestrators/ORC1100MEMConfigurationUpdate", {
             tenantDbId: tenantDbId,
             configurationVersionDbId: configurationVersionDbId,
             msGraphResourceUrl: msGraphResource.resource
@@ -312,7 +312,7 @@ export default function MEMConfiguration(props) {
     }
 
     function copyConfiguration(data) {
-        apipost("orchestrators/ORC1101MEMConfigurationCreate", {
+        postBackendApi("orchestrators/ORC1101MEMConfigurationCreate", {
             tenantDbId: data.targetTenant._id,
             configurationName: data.newConfigName,
             configurationVersionDbId: state.newestConfigurationVersion._id,

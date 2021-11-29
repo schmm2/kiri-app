@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import DefaultPage from '../../layouts/DefaultPage';
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
-import { apipost } from "util/backendApi";
+import { postBackendApi } from "util/api";
 import { List, Avatar, Skeleton, Space, Button, Row, Col } from 'antd';
 
 import {
@@ -44,7 +44,7 @@ export default function Health() {
         console.log("check Backend Api");
         openNotificationWithIcon('Health check', 'Check started', 'success', 4.0);
 
-        apipost("TRG3005HealthCheck", {})
+        postBackendApi("TRG3005HealthCheck", {})
             .then(response => response.json())
             .then(data => {
                 console.log(data);
@@ -78,6 +78,10 @@ export default function Health() {
                     <Button onClick={checkBackend}>Check</Button>
                 </Space>
             </div>
+
+            <p>
+                {}
+            </p>
             <List
                 itemLayout="horizontal"
                 dataSource={data}

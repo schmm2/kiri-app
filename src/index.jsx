@@ -8,41 +8,29 @@ import { setContext } from '@apollo/client/link/context';
 
 // MSAL imports
 import { PublicClientApplication, EventType } from "@azure/msal-browser";
-import { msalConfig } from "./authConfig";
+import { msalConfig, backendApiRequest } from "./authConfig";
+import { getBearerToken } from 'util/api'
 
-import { buildHeader, bearerToken } from 'util/backendApi'
-
-// Build backend url
+// backend api url
 const backendApiUrl = process.env.REACT_APP_BACKENDAPIURL;
-const functionKey = process.env.REACT_APP_FUNCTIONKEY;
-let graphqlUrl = "";
-
-if (backendApiUrl) {
-    graphqlUrl = backendApiUrl + "/graphql"
-    console.log("GRAPHQL BACKEND API URL", graphqlUrl)
-} else {
-    console.log("GRAPHQL BACKEND API URL not defined");
-}
-
-// add key to authenticate
-if (functionKey) {
-    console.log("found function key");
-    graphqlUrl = graphqlUrl + "?code=" + functionKey;
-}
-
 const httpLink = createHttpLink({
     uri: backendApiUrl + '/graphql',
 });
 
 const authLink = setContext(async (_, { headers }) => {
-    // get the authentication token from local storage if it exists
-    const token = await bearerToken()
-    // return the headers to the context so httpLink can read them
-    return {
-        headers: {
-            ...headers,
-            authorization: token ? `Bearer ${token}` : "",
+    try {
+        const token = await getBearerToken(backendApiRequest)
+
+        // return the headers to the context so httpLink can read them
+        return {
+            headers: {
+                ...headers,
+                authorization: token ? `Bearer ${token}` : "",
+            }
         }
+    } catch {
+        console.log("unable to aquire tokenn, no bearer token was added to header");
+        return { headers };
     }
 });
 
@@ -72,7 +60,7 @@ msalInstance.addEventCallback((event) => {
 
 ReactDOM.render(
     <React.StrictMode >
-        <Router >
+        <Router>
             <ApolloProvider client={client} >
                 <App pca={msalInstance} />
             </ApolloProvider>

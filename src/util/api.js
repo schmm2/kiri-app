@@ -1,7 +1,7 @@
-import { backendApiRequest } from "../authConfig"
-import { msalInstance } from '../index'
+import { backendApiRequest, msGraphConfig, loginRequest } from "../authConfig";
+import { msalInstance } from "../index";
 
-export async function bearerToken() {
+export async function getBearerToken(scopes) {
     const account = msalInstance.getActiveAccount()
     if (!account) {
         throw Error(
@@ -10,27 +10,26 @@ export async function bearerToken() {
     }
 
     const response = await msalInstance.acquireTokenSilent({
-        ...backendApiRequest,
-        account: account,
+        ...scopes,
+        account: account
     })
 
     return response.accessToken
 }
 
-export async function buildHeader() {
+
+async function buildHeader(token) {
     const headers = new Headers()
     headers.append('Content-Type', 'application/json')
 
-    const token = await bearerToken()
     if (token) {
         const bearer = `Bearer ${token}`
         headers.append('Authorization', bearer)
     }
-
     return headers
 }
 
-function buildUrl(functionName) {
+function buildFunctionUrl(functionName) {
     const backendApiUrlBase = process.env.REACT_APP_BACKENDAPIURL
     let backendApiUrl = backendApiUrlBase + "/" + functionName;
 
@@ -44,9 +43,24 @@ function buildUrl(functionName) {
     return backendApiUrl
 }
 
-export async function apipost(functionName, payload) {
-    const headers = await buildHeader()
-    const url = buildUrl(functionName)
+export async function getMsGraphProfile() {
+    const token = await getBearerToken(loginRequest)
+    const headers = await buildHeader(token);
+
+    const options = {
+        method: "GET",
+        headers: headers
+    };
+
+    return fetch(msGraphConfig.graphMeEndpoint, options)
+        .then(response => response.json())
+        .catch(error => console.log(error));
+}
+
+export async function postBackendApi(functionName, payload) {
+    const token = await getBearerToken(backendApiRequest);
+    const headers = await buildHeader(token)
+    const url = buildFunctionUrl(functionName)
     const body = JSON.stringify(payload)
 
     const requestOptions = {

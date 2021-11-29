@@ -4,7 +4,7 @@ import { tenantRemoveById } from "graphql/mutations";
 import { Link } from "react-router-dom";
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
 import { useQuery, useMutation } from '@apollo/client';
-import { apipost } from 'util/backendApi';
+import { postBackendApi } from 'util/api';
 import { AddToDeploymentModal } from "components/AddToDeploymentModal";
 import { deploymentUpdateOne as deploymentUpdateOneMutation } from "graphql/mutations"
 
@@ -49,7 +49,7 @@ export default function Tenants() {
     //console.log("update tenant data for tenantId: " + tenantDbId);
     openNotificationWithIcon('Pull Data', 'start Job', 'success');
 
-    apipost("orchestrators/ORC1000AzureDataCollect", { tenantDbId: tenantDbId })
+    postBackendApi("orchestrators/ORC1000AzureDataCollect", { tenantDbId: tenantDbId })
       .then(response => response.json())
       .then(data => {
         //console.log(data);
@@ -65,7 +65,7 @@ export default function Tenants() {
     // console.log("backup config for tenant " + tenantDbId);
     openNotificationWithIcon('Backup', 'Backup Job started', 'success', 8.0);
 
-    apipost("TRG2000ConfigurationBackupCreate", { tenantDbId: tenantDbId })
+    postBackendApi("TRG2000ConfigurationBackupCreate", { tenantDbId: tenantDbId })
       .then(response => {
         let contentDisposition = response.headers.get('Content-Disposition')
         // console.log(contentDisposition);
@@ -145,14 +145,12 @@ export default function Tenants() {
   });
 
   function addToDeployment(data) {
-    console.log(data);
-
     let deploymentTenantIds = data.tenants.map(tenant => tenant._id);
-    console.log(deploymentTenantIds);
-    let tenantIdsToAddToDeployment = selectedTenants.filter(id =>deploymentTenantIds.indexOf(id) === -1);
-    console.log(tenantIdsToAddToDeployment);
+    // console.log(deploymentTenantIds);
+    let tenantIdsToAddToDeployment = selectedTenants.filter(id => deploymentTenantIds.indexOf(id) === -1);
+    // console.log(tenantIdsToAddToDeployment);
     let finalTenantIds = deploymentTenantIds.concat(tenantIdsToAddToDeployment);
-    console.group(finalTenantIds);
+    // console.group(finalTenantIds);
 
     // update deployment if new configVersions have been found
     if (tenantIdsToAddToDeployment.length > 0) {
@@ -162,7 +160,7 @@ export default function Tenants() {
           filter: { _id: data._id }
         }
       }
-      console.log(parameter);
+      // console.log(parameter);
       updateDeployment(parameter);
     } else {
       openNotificationWithIcon('Add to Deployment', 'no action taken, already assigned', 'success');
