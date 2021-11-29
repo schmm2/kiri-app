@@ -1,12 +1,12 @@
 import React, { useEffect, useContext } from "react";
 import { jobMany } from "graphql/queries";
-import { Table, Button, Tag, Space } from "antd";
+import { Table, Button, Tag, Space, Badge } from "antd";
 import { Link } from "react-router-dom";
 import { renderDate } from 'util/renderDate'
-import moment from 'moment';
 import { useLazyQuery } from '@apollo/client';
 import DefaultPage from '../../layouts/DefaultPage';
 import TenantContext from "components/TenantContext"
+import moment from 'moment';
 
 import {
   ReloadOutlined
@@ -29,21 +29,27 @@ export default function Jobs(props) {
   }, [selectedTenant, getJobs]);
 
   const expandedRowRender = (dataRow) => {
-    const columns = [
-      { title: 'Log Entry', dataIndex: 'message', key: 'message' },
-      { title: 'Status', dataIndex: 'status', key: 'status' }
-    ]
-
-    console.log(dataRow);
-
     const logs = dataRow.log
     const data = [];
+    const columns = [
+      { title: 'Message', dataIndex: 'message', key: 'message' },
+      { title: 'Action', dataIndex: 'action', key: 'action' },
+      {
+        title: 'State',
+        key: 'state',
+        render: (record) => (
+          <span>
+            <Badge status={record.state.toLowerCase()} text={record.state} /> 
+          </span>
+        ),
+      }
+    ]
 
     for (let i = 0; i < logs.length; ++i) {
       data.push({
         key: i,
         message: logs[i].message,
-        status: logs[i].status
+        state: logs[i].state
       });
     }
     return <Table columns={columns} dataSource={data} pagination={false} />;
@@ -68,11 +74,11 @@ export default function Jobs(props) {
           case "RUNNING":
             color = "blue";
             break;
-          case "ERROR":
-            color = "red";
-            break;
           case "WARNING":
             color = "orange";
+            break;
+          case "ERROR":
+            color = "red";
             break;
           default:
             break;
