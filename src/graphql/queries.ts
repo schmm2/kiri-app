@@ -229,7 +229,10 @@ export const jobMany = gql`
       _id,
       type,
       state,
-      log,
+      log {
+        message
+        status
+      },
       message,
       updatedAt,
       tenant {

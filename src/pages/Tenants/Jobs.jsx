@@ -28,6 +28,27 @@ export default function Jobs(props) {
     }
   }, [selectedTenant, getJobs]);
 
+  const expandedRowRender = (dataRow) => {
+    const columns = [
+      { title: 'Log Entry', dataIndex: 'message', key: 'message' },
+      { title: 'Status', dataIndex: 'status', key: 'status' }
+    ]
+
+    console.log(dataRow);
+
+    const logs = dataRow.log
+    const data = [];
+
+    for (let i = 0; i < logs.length; ++i) {
+      data.push({
+        key: i,
+        message: logs[i].message,
+        status: logs[i].status
+      });
+    }
+    return <Table columns={columns} dataSource={data} pagination={false} />;
+  }
+
   const columns = [
     {
       title: "Tenant",
@@ -73,10 +94,6 @@ export default function Jobs(props) {
       dataIndex: "message",
     },
     {
-      title: "Log",
-      dataIndex: "log",
-    },
-    {
       title: "Last Update",
       dataIndex: "updatedAt",
       render: (text, record) => renderDate(text),
@@ -97,7 +114,13 @@ export default function Jobs(props) {
           <Button onClick={getJobs}>Refresh <ReloadOutlined /></Button>
         </Space>
       </div>
-      <Table loading={loadingJobs} rowKey="_id" columns={columns} dataSource={jobdata && jobdata.jobMany} onChange={onChange} />
+      <Table
+        loading={loadingJobs}
+        rowKey="_id"
+        columns={columns}
+        expandable={{ expandedRowRender }}
+        dataSource={jobdata && jobdata.jobMany}
+        onChange={onChange} />
       <div className="controlBottom">
         <Space align="end">
           <Button>

@@ -14,7 +14,10 @@ export async function getBearerToken(scopes) {
         account: account
     })
 
-    return response.accessToken
+    if (response.accessToken) {
+        return response.accessToken
+    }
+    return null
 }
 
 
@@ -58,7 +61,14 @@ export async function getMsGraphProfile() {
 }
 
 export async function postBackendApi(functionName, payload) {
-    const token = await getBearerToken(backendApiRequest);
+    const environment = process.env.NODE_ENV || 'development'
+    let token = null
+
+    // prod env, auth needed
+    if (environment !== "development") {
+        token = await getBearerToken(backendApiRequest);
+    }
+
     const headers = await buildHeader(token)
     const url = buildFunctionUrl(functionName)
     const body = JSON.stringify(payload)
