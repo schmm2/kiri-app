@@ -283,6 +283,7 @@ export const deploymentMany = gql`
       name
       createdAt
       updatedAt
+      executionDate
       tenants {
         _id
       }
@@ -298,6 +299,7 @@ export const deploymentById = gql`
     deploymentById(_id: $id) {
       _id,
       name
+      executionDate
       tenants {
         _id
         name
