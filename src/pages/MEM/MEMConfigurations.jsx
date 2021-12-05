@@ -11,13 +11,15 @@ import DefaultPage from "layouts/DefaultPage";
 import { deploymentUpdateOne as deploymentUpdateOneMutation } from "graphql/mutations"
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
 import { SearchOutlined } from '@ant-design/icons';
-import Highlighter from 'react-highlight-words';
 import { useHistory } from "react-router-dom";
+import { DeleteModal } from "components/DeleteModal";
+import { postBackendApi } from 'util/api';
 
 export default function MEMConfigurations(props) {
 
     // states
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
     const [configurations, setConfigurations] = useState([]);
     const [filteredConfigurations, setFilteredConfigurations] = useState([]);
     const [showDeleted, setShowDeleted] = useState(false);
@@ -122,6 +124,7 @@ export default function MEMConfigurations(props) {
                     newConfigurationObject.type = configurationType.name;
                     newConfigurationObject.state = configurationVersion.state;
                     newConfigurationObject.tenantName = configuration.tenant.name;
+                    newConfigurationObject.tenantDbId = configuration.tenant._id;
 
                     configurationCollection.push(newConfigurationObject);
                 }
@@ -237,21 +240,20 @@ export default function MEMConfigurations(props) {
     function addToDeployment(data) {
         // get Ids of all configVersions assigned to this deployment
         let deploymentConfigurationIds = data.configurations.map(configuration => configuration._id)
-        console.log("assigned config ids");
+        /*console.log("assigned config ids");
         console.log(deploymentConfigurationIds);
-
-        console.log(selectedConfigurations);
+        console.log(selectedConfigurations);*/
 
         // get existing configurations on deployment
         // find out which configVersion Ids needs to be added
         let configurationsToAddToDeployment = selectedConfigurations.filter(id => deploymentConfigurationIds.indexOf(id) === -1);
-        console.log("ids to add");
-        console.log(configurationsToAddToDeployment);
+        /*console.log("ids to add");
+        console.log(configurationsToAddToDeployment);*/
 
         // add new configs to existing configurations 
         let finalConfigurations = deploymentConfigurationIds.concat(configurationsToAddToDeployment);
-        console.log("final ids");
-        console.log(finalConfigurations);
+        /*console.log("final ids");
+        console.log(finalConfigurations);*/
 
         // update deployment if new configVersions have been found
         if (configurationsToAddToDeployment.length > 0) {
@@ -275,6 +277,46 @@ export default function MEMConfigurations(props) {
         setIsModalVisible(false);
     }
 
+    function triggerConfigurationDeletion() {
+        openNotificationWithIcon('Delete Config', 'Job started', 'info');
+
+        let configsToDeletePerTenant = [];
+
+        for (let r = 0; r < selectedRows.length; r++) {
+            let tenantId = selectedRows[r].tenantDbId
+            let configurationId = selectedRows[r].id
+
+            let filteredArray = configsToDeletePerTenant.filter(container => container.tenantId === tenantId);
+            
+            if(filteredArray.length == 0){
+                configsToDeletePerTenant.push({
+                    tenantId: tenantId,
+                    configurations: []
+                })
+            }else{
+                filteredArray[0].configurations.push(configurationId)
+            }
+        }
+
+        console.log(configsToDeletePerTenant);
+
+        postBackendApi("orchestrators/ORC1102MEMConfigurationsDelete", configsToDeletePerTenant)
+            .then(response => response.json())
+            .then(data => {
+                //console.log(data);       
+            }).catch((error) => {
+                console.log(error);
+            });
+    }
+
+    function closeDeleteModal() {
+        setIsDeleteModalVisible(false)
+    }
+
+    function openDeleteModal() {
+        setIsDeleteModalVisible(true)
+    }
+
     const history = useHistory();
 
     function openCompareView() {
@@ -290,12 +332,19 @@ export default function MEMConfigurations(props) {
                 <Space align="end">
                     <Button disabled={selectedRows.length === 0} onClick={openModal}>+ Deployment</Button>
                     <Button disabled={selectedRows.length !== 2} onClick={openCompareView}>Compare</Button>
+                    <Button disabled={selectedRows.length === 0} onClick={openDeleteModal}>Delete</Button>
                 </Space>
             </div>
             <AddToDeploymentModal
                 showModal={isModalVisible}
                 onClose={closeModal}
                 onAdd={addToDeployment}
+            />
+            <DeleteModal
+                objectNames={selectedRows.map(row => row.displayName)}
+                showModal={isDeleteModalVisible}
+                onClose={closeDeleteModal}
+                onDelete={triggerConfigurationDeletion}
             />
             {
                 error && <span>{JSON.parse(error)}</span>

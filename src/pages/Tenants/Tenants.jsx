@@ -60,6 +60,22 @@ export default function Tenants() {
       });
   }
 
+  async function triggerDataCheck(tenantDbId) {
+    //console.log("update tenant data for tenantId: " + tenantDbId);
+    openNotificationWithIcon('Check Data', 'start Job', 'success');
+
+    postBackendApi("orchestrators/ORC1400AzureCheckDataConsistencyInDB", { tenantDbId: tenantDbId })
+      .then(response => response.json())
+      .then(data => {
+        //console.log(data);
+        openNotificationWithIcon('Check Data', 'Job started', 'success');
+      }).catch((error) => {
+        openNotificationWithIcon('Check Data', 'Job error', 'error');
+        console.log(error);
+      });
+  }
+  
+
   async function triggerBackup(tenantDbId) {
     let fileName = "export.zip";
     // console.log("backup config for tenant " + tenantDbId);
@@ -117,6 +133,7 @@ export default function Tenants() {
           <a href="#" rel="noreferrer" onClick={() => triggerBackup(record._id)}>Backup</a>
           <a rel={'external'} rel="noreferrer" target="_blank" href={"https://login.microsoftonline.com/" + record.tenantId + "/adminconsent?client_id=" + record.appId}>Grant Permission</a>
           <a href="#" rel="noreferrer" onClick={() => triggerTenantUpdate(record._id)}>Pull Data</a>
+          <a href="#" rel="noreferrer" onClick={() => triggerDataCheck(record._id)}>Check Data</a>
           <a href="#" rel="noreferrer" onClick={() => {
             deleteTenant({
               variables: { id: record._id },
