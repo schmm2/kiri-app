@@ -286,12 +286,10 @@ export default function MEMConfiguration(props) {
     async function restoreVersion() {
         let tenantDbId = state.configuration.tenant._id;
         let configurationVersionDbId = state.selectedConfigurationVersion._id;
-        let msGraphResource = state.msGraphResource;
 
         postBackendApi("orchestrators/ORC1100MEMConfigurationUpdate", {
             tenantDbId: tenantDbId,
-            configurationVersionDbId: configurationVersionDbId,
-            msGraphResourceUrl: msGraphResource.resource
+            configurationVersionDbId: configurationVersionDbId
         })
             .then(response => response.json())
             .then(data => {
@@ -316,7 +314,6 @@ export default function MEMConfiguration(props) {
             tenantDbId: data.targetTenant._id,
             configurationName: data.newConfigName,
             configurationVersionDbId: state.newestConfigurationVersion._id,
-            msGraphResourceUrl: state.msGraphResource.resource,
         })
             .then(response => response.json())
             .then(data => {

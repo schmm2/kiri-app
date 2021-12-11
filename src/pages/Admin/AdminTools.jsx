@@ -38,6 +38,19 @@ export default function AdminTools() {
             });
     }
 
+    function clearLogs() {
+        openNotificationWithIcon('Clear Logs', 'start', 'success');
+        postBackendApi("TRG3002ClearLogs", {})
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                openNotificationWithIcon('Clear Logs', 'success', 'success');
+            }).catch((error) => {
+                openNotificationWithIcon('Clear Logs', 'error', 'error');
+                console.log(error);
+            });
+    }
+
     function stopTasks() {
         console.log("stop tasks initialized");
 
@@ -70,6 +83,9 @@ export default function AdminTools() {
                 </List.Item>
                 <List.Item actions={[<a href="#" onClick={() => stopTasks()}>Stop Tasks</a>]}>
                     <List.Item.Meta title="Stop Tasks" description="This function will stop all tasks in the backend." />
+                </List.Item>
+                <List.Item actions={[<a href="#" onClick={() => clearLogs()}>Clear Logs</a>]}>
+                    <List.Item.Meta title="Clear Logs" description="This function will delete all logs." />
                 </List.Item>
             </List>
         </DefaultPage>

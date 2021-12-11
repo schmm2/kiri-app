@@ -287,13 +287,14 @@ export default function MEMConfigurations(props) {
             let configurationId = selectedRows[r].id
 
             let filteredArray = configsToDeletePerTenant.filter(container => container.tenantId === tenantId);
-            
-            if(filteredArray.length == 0){
+
+            // intialize object
+            if (filteredArray.length == 0) {
                 configsToDeletePerTenant.push({
                     tenantId: tenantId,
-                    configurations: []
+                    configurations: [configurationId]
                 })
-            }else{
+            } else {
                 filteredArray[0].configurations.push(configurationId)
             }
         }
