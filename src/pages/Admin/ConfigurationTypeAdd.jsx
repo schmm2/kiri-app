@@ -14,12 +14,11 @@ const ajv = new Ajv({ allErrors: true, useDefaults: true });
 
 export default function ConfigurationTypeAdd() {
     const [configurationTypeSchema, setConfigurationTypeSchema] = useState(null);
-    const [dataPrepared, setDataPrepared] = useState(false);
     const history = useHistory();
 
     const [createConfigurationType] = useMutation(configurationTypeCreateOneMutation, {
         onCompleted(data) {
-            console.log(data);
+            // console.log(data);
             history.push("/configurationTypes");
         }
     });
@@ -31,7 +30,6 @@ export default function ConfigurationTypeAdd() {
             let schemaBridge = new JSONSchemaBridge(schema, schemaValidator);
 
             setConfigurationTypeSchema(schemaBridge);
-            setDataPrepared(true);
         }
     });
 
@@ -140,16 +138,15 @@ export default function ConfigurationTypeAdd() {
             ) : (
                 <div>
                     {
-                        dataPrepared &&
-                        <AutoForm schema={configurationTypeSchema} onSubmit={
-                            data => { createConfigurationType({ variables: { record: data } }) }
-                        } />
+                        configurationTypeSchema &&
+                        <AutoForm schema={configurationTypeSchema}
+                            onSubmit={data => { createConfigurationType({ variables: { record: data } }) }} />
                     }
-                    <Button>
-                        <Link to={"/configurationTypes"}>Back</Link>
-                    </Button>
                 </div>
             )}
+            <Button>
+                <Link to={"/configurationTypes"}>Back</Link>
+            </Button>
         </DefaultPage>
     );
 }

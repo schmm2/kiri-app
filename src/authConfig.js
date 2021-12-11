@@ -12,6 +12,8 @@ const isEdge = msedge > 0;
 const isFirefox = firefox > 0; // Only needed if you need to support the redirect flow in Firefox incognito
 
 const appClientId = process.env.REACT_APP_AUTHAPPID;
+const backendApiUrl = process.env.REACT_APP_BACKENDAPIURL;
+const backendApiAppId = process.env.REACT_APP_APIAPPID;
 
 // Config object to be passed to Msal on creation
 export const msalConfig = {
@@ -34,7 +36,7 @@ export const msalConfig = {
                         console.error(message);
                         return;
                     case LogLevel.Info:
-                        console.info(message);
+                        //console.info(message);
                         return;
                     case LogLevel.Verbose:
                         console.debug(message);
@@ -50,7 +52,6 @@ export const msalConfig = {
     }
 };
 
-// Add here scopes for id token to be used at MS Identity Platform endpoints.
 export const loginRequest = {
     scopes: [
         "User.Read",
@@ -59,6 +60,11 @@ export const loginRequest = {
 };
 
 // Add here the endpoints for MS Graph API services you would like to use.
-export const graphConfig = {
+export const msGraphConfig = {
     graphMeEndpoint: "https://graph.microsoft.com/v1.0/me"
 };
+
+export const backendApiRequest = {
+    url: backendApiUrl,
+    scopes: ['api://' + backendApiAppId + "/user_impersonation"],
+}

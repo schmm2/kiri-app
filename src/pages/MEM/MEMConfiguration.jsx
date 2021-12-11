@@ -1,4 +1,4 @@
-import React, { useReducer } from "react";
+import React, { useReducer, useState } from "react";
 import { configurationById } from "graphql/queries";
 import { Link } from "react-router-dom";
 import { updatedDiff } from 'deep-object-diff';
@@ -6,14 +6,46 @@ import { renderDate } from 'util/renderDate';
 import { findType } from 'util/findType';
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
 import { useQuery } from '@apollo/client';
-import { apipost } from 'util/api';
+import { postBackendApi } from 'util/api';
 import ReactJson from 'react-json-view'
 import DefaultPage from '../../layouts/DefaultPage';
 
 import { Table, Button, Menu, Dropdown, Badge, Space, Tabs, Spin } from 'antd';
+import { CodeViewer } from "components/CodeViewer";
+import { CopyConfigurationModal } from "components/CopyConfigurationModal";
+import { ClipboardButton } from "components/ClipboardButton";
+import { RenderData } from "components/RenderData";
 const { TabPane } = Tabs;
 
 export default function MEMConfiguration(props) {
+
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [settingsData, setSettingsData] = useState(null);
+
+    const settingsNamesToExclude = [
+        "@odata.context",
+        "@odata.type",
+        "id",
+        "lastModifiedDateTime",
+        "roleScopeTagIds",
+        "supportsScopeTags",
+        "createdDateTime",
+        "description",
+        "displayName",
+        "version",
+        "cellularData" // always allowed
+    ]
+
+    let settingsColumns = [
+        {
+            title: "Name",
+            dataIndex: "name",
+        },
+        {
+            title: "Value",
+            dataIndex: "value",
+        },
+    ]
 
     const { match: { params } } = props;
     const { data, dataLoading, dataError } = useQuery(configurationById, {
@@ -60,7 +92,50 @@ export default function MEMConfiguration(props) {
                 "newestConfigurationVersion": newestConfigurationVersionItem,
                 "msGraphResource": msGraphResource
             }
-            console.log(newState);
+
+            // build settings data
+            let index = 1;
+            let dataSourceTmp = [];
+
+            for (let key in newestConfigurationVersionItem.value) {
+                // key
+                // generic keys are skipped like displayName
+                if (settingsNamesToExclude.includes(key)) {
+                    continue;
+                }
+
+                // value
+                let value = newestConfigurationVersionItem.value[key]
+                let type = findType(value)
+
+                // skip null/empty data
+                if (value === null ||
+                    value === "notConfigured" ||
+                    value === "userDefined" ||
+                    value === "deviceDefault" ||
+                    value === false
+                ) { continue }
+
+                if (type === "array") {
+                    if (value.length == 0) {
+                        continue;
+                    }
+                }
+
+                if (type === "object") {
+                    value = JSON.stringify(value)
+                }
+
+                let newDataEntry = {
+                    key: index,
+                    name: key,
+                    value: value.toString(),
+                }
+                dataSourceTmp.push(newDataEntry);
+                index++;
+            }
+            setSettingsData(dataSourceTmp);
+
             dispatch({ type: "SET_CONFIGURATION", newState });
         }
     });
@@ -75,6 +150,10 @@ export default function MEMConfiguration(props) {
         versionHistoryDataSource: [],
         loading: true,
         error: false
+    }
+
+    function onChange(pagination, filters, sorter, extra) {
+        console.log("params", pagination, filters, sorter, extra);
     }
 
     function reducer(state, action) {
@@ -151,34 +230,12 @@ export default function MEMConfiguration(props) {
                     <h3>Configuration</h3>
                     <ReactJson name={false} enableClipboard={false} displayDataTypes={false} src={baseObject} />
                     <h3>Settings</h3>
-                    <ReactJson name={false} enableClipboard={true} displayDataTypes={false} src={record.gpoSettings} />
+                    <ReactJson name={false} enableClipboard={false} displayDataTypes={false} src={record.gpoSettings} />
                 </span>
             )
         }
         // handle the rest
         return (<ReactJson name={false} enableClipboard={false} displayDataTypes={false} src={record} />)
-    }
-
-    function renderData(record) {
-        let type = findType(record);
-        // console.log("found type " + type + " for data " + record);
-
-        switch (type) {
-            case "array":
-                return (<ReactJson name={false} enableClipboard={true} displayDataTypes={false} src={record} />)
-            case "object":
-                return (<ReactJson name={false} enableClipboard={true} displayDataTypes={false} src={record} />)
-            case "date":
-                return renderDate(record);
-                break;
-            case "boolean":
-                return record.toString()
-            case "null":
-                return "not set"
-            default:
-                console.log(record);
-                return (<span className="lineBreakAnywhere">{record}</span>)
-        }
     }
 
     const versionHistoryColumns = [
@@ -191,13 +248,13 @@ export default function MEMConfiguration(props) {
             title: 'Active Version',
             dataIndex: 'activeVersion',
             key: 'activeVersion',
-            render: (text, record) => renderData(record.activeVersion)
+            render: (text, record) => <RenderData record={record.activeVersion} />
         },
         {
             title: 'Previous Version',
             dataIndex: 'previousVersion',
             key: 'previousVersion',
-            render: (text, record) => renderData(record.previousVersion)
+            render: (text, record) => <RenderData record={record.previousVersion} />
         },
     ];
 
@@ -229,12 +286,10 @@ export default function MEMConfiguration(props) {
     async function restoreVersion() {
         let tenantDbId = state.configuration.tenant._id;
         let configurationVersionDbId = state.selectedConfigurationVersion._id;
-        let msGraphResource = state.msGraphResource;
 
-        apipost("orchestrators/ORC1100MEMConfigurationUpdate", {
+        postBackendApi("orchestrators/ORC1100MEMConfigurationUpdate", {
             tenantDbId: tenantDbId,
-            configurationVersionDbId: configurationVersionDbId,
-            msGraphResource: msGraphResource
+            configurationVersionDbId: configurationVersionDbId
         })
             .then(response => response.json())
             .then(data => {
@@ -246,9 +301,44 @@ export default function MEMConfiguration(props) {
             });
     }
 
+    function openModal() {
+        setIsModalVisible(true);
+    }
+
+    function closeModal() {
+        setIsModalVisible(false);
+    }
+
+    function copyConfiguration(data) {
+        postBackendApi("orchestrators/ORC1101MEMConfigurationCreate", {
+            tenantDbId: data.targetTenant._id,
+            configurationName: data.newConfigName,
+            configurationVersionDbId: state.newestConfigurationVersion._id,
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                openNotificationWithIcon('Copy Configuration', 'Job started', 'info');
+            }).catch((error) => {
+                openNotificationWithIcon('Copy Configuration', 'Job error', 'error');
+                console.log(error);
+            });
+    }
+
     return (
         <DefaultPage>
-            <div>
+            <div className="controlTop">
+                <Space align="end">
+                    <Button onClick={openModal}>Copy</Button>
+                </Space>
+            </div>
+            <CopyConfigurationModal
+                showModal={isModalVisible}
+                onClose={closeModal}
+                configurationDisplayName={state.newestConfigurationVersion.displayName}
+                onCopy={copyConfiguration}>
+            </CopyConfigurationModal>
+            <div className="contentArea">
                 {state.loading ? (
                     <div>
                         <Spin />
@@ -297,11 +387,22 @@ export default function MEMConfiguration(props) {
                         </TabPane>
                         <TabPane tab="Settings" key="2">
                             {
+                                settingsColumns && settingsData &&
+                                <Table
+                                    rowKey="_id"
+                                    columns={settingsColumns}
+                                    dataSource={settingsData}
+                                />
+                            }
+                        </TabPane>
+                        <TabPane tab="Object" key="3">
+                            <ClipboardButton data={state.newestConfigurationVersion.value}></ClipboardButton>
+                            {
                                 state.newestConfigurationVersion &&
                                 renderDataFullObject(state.newestConfigurationVersion.value)
                             }
                         </TabPane>
-                        <TabPane tab={versionTab} key="3" disabled={state.configurationVersions.length <= 1}>
+                        <TabPane tab={versionTab} key="4" disabled={state.configurationVersions.length <= 1}>
                             <Dropdown overlay={configurationVersionsMenu} placement="bottomRight" arrow>
                                 <Button>
                                     {
@@ -321,13 +422,43 @@ export default function MEMConfiguration(props) {
                                 </div>
                             </div>
                         </TabPane>
+                        {
+                            state.configurationType && state.configurationType.name === "deviceManagementScript" &&
+                            <TabPane tab="Script" key="4">
+                                {
+                                    state.newestConfigurationVersion &&
+                                    state.newestConfigurationVersion.value &&
+                                    state.newestConfigurationVersion.value.scriptContent &&
+                                    <CodeViewer code={state.newestConfigurationVersion.value.scriptContent} convertFromBase64={true} language="powershell"></CodeViewer>
+                                }
+                            </TabPane>
+                        }
+                        {
+                            state.configurationType && state.configurationType.name === "deviceHealthScript" &&
+                            <TabPane tab="Script" key="5">
+                                <h2>Detection Script</h2>
+                                {
+                                    state.newestConfigurationVersion &&
+                                    state.newestConfigurationVersion.value &&
+                                    state.newestConfigurationVersion.value.detectionScriptContent &&
+                                    <CodeViewer code={state.newestConfigurationVersion.value.detectionScriptContent} convertFromBase64={true} language="powershell"></CodeViewer>
+                                }
+                                <h2>Remediation Script</h2>
+                                {
+                                    state.newestConfigurationVersion &&
+                                    state.newestConfigurationVersion.value &&
+                                    state.newestConfigurationVersion.value.remediationScriptContent &&
+                                    <CodeViewer code={state.newestConfigurationVersion.value.remediationScriptContent} convertFromBase64={true} language="powershell"></CodeViewer>
+                                }
+                            </TabPane>
+                        }
                     </Tabs>
                 )}
             </div>
             <div className="controlBottom">
                 <Space align="end">
                     <Button>
-                        <Link onClick={props.history.goBack}>Back</Link>
+                        <Link to="#" onClick={props.history.goBack}>Back</Link>
                     </Button>
                 </Space>
             </div>

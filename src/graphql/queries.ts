@@ -6,11 +6,69 @@ export const deviceMany = gql`
     deviceMany{
       _id,
       deviceId,
-      manufacturer,
-      value,
       tenant {
         _id
       }
+    }
+  }
+`
+
+export const getNewestDeviceVersions = gql`
+  query GetNewestDeviceVersions {
+    deviceMany { 
+      tenant {
+        _id
+      }    
+      newestDeviceVersions {
+        deviceName
+        manufacturer
+        operatingSystem
+        osVersion
+        osVersionName
+        upn
+        value
+        _id
+      }
+      _id
+    }
+  }
+`
+
+export const deviceById = gql`
+  query deviceById($id: MongoID!) {
+    deviceById(_id: $id) {
+      _id,
+      newestDeviceVersions {
+        deviceName
+        manufacturer
+        operatingSystem
+        osVersion
+        osVersionName
+        upn
+        value
+        _id
+      }
+    } 
+  }
+`
+
+
+// Device Versions
+export const deviceVersionMany = gql`
+  query DeviceVersionMany($filter: FilterFindManyDeviceVersionInput) {
+    deviceVersionMany(filter: $filter) {
+      manufacturer
+      device {
+        tenant {
+          _id
+        }
+      }
+      operatingSystem
+      osVersion
+      upn
+      value
+      deviceName
+      _id
     }
   }
 `
@@ -27,8 +85,8 @@ export const configurationMany = gql`
 `
 
 export const configurationVersionManySortModified = gql`
-query configurationVersionManySortModified{
-  configurationVersionMany(sort: GRAPHMODIFIEDAT_DESC){
+query configurationVersionManySortModified($limit: Int){
+  configurationVersionMany(sort: GRAPHMODIFIEDAT_DESC, limit: $limit){
       displayName,
       graphModifiedAt,
       _id,
@@ -79,15 +137,19 @@ export const configurationById = gql`
 `
 
 export const getNewestConfigurationVersions = gql`
-  query GetNewestConfigurationVersions {
-    configurationMany {       
+  query GetNewestConfigurationVersions($limit: Int, $filter: FilterFindManyConfigurationInput) {
+    configurationMany(limit: $limit, filter: $filter) {       
       _id 
-      newestConfigurationVersions {
+      newestConfigurationVersion {
         _id
         displayName
         isNewest
         graphModifiedAt  
         state
+      }
+      tenant {
+        name
+        _id
       }
       configurationType {
         platform
@@ -95,9 +157,24 @@ export const getNewestConfigurationVersions = gql`
         name
       }
     } 
-   
   }
 `
+export const getNewestConfigurationVersionsByIds = gql`
+  query GetNewestConfigurationVersionByIds($ids: [MongoID!]!) {
+    configurationByIds(_ids: $ids) {       
+      _id 
+      newestConfigurationVersion {
+        _id
+        displayName
+        isNewest
+        graphModifiedAt  
+        state
+        value
+      }
+    } 
+  }
+`
+
 
 export const getNewestConfigurationVersionsByTenant = gql`
   query getNewestConfigurationVersionsByTenant($id: MongoID!) {
@@ -152,7 +229,11 @@ export const jobMany = gql`
       _id,
       type,
       state,
-      message,
+      log {
+        message
+        action
+        state
+      },
       updatedAt,
       tenant {
         name
@@ -170,6 +251,7 @@ export const msGraphResourceMany = gql`
       resource,
       version,
       createdAt,
+      objectDeepResolve,
       updatedAt,
       configurationTypes{
         name
@@ -189,6 +271,58 @@ export const configurationTypeMany = gql`
       createdAt
       updatedAt
     }
+  }
+`
+
+
+// Deployment
+export const deploymentMany = gql`
+  query DeploymentMany {
+    deploymentMany { 
+      _id
+      name
+      createdAt
+      updatedAt
+      executionDate
+      tenants {
+        _id
+      }
+      configurations {
+        _id
+      }
+    }
+  }
+`
+
+export const deploymentById = gql`
+  query DeploymentById($id: MongoID!) {
+    deploymentById(_id: $id) {
+      _id,
+      name
+      executionDate
+      tenants {
+        _id
+        name
+      }
+      configurations{
+        _id
+        newestConfigurationVersion {
+          _id
+          displayName
+          isNewest
+          graphModifiedAt  
+          state
+        }
+        tenant {
+          _id
+          name
+        }
+        configurationType {
+          _id
+          name
+        }
+      }
+    } 
   }
 `
 

@@ -2,19 +2,21 @@ import React from "react"
 import DefaultPage from '../../layouts/DefaultPage';
 import { List } from 'antd';
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
-import { apipost } from "util/api";
+import { postBackendApi } from "util/api";
 
-export default function AdminOverview() {
+export default function AdminTools() {
 
     function stageDatabase() {
         console.log("stage database initialized");
 
         openNotificationWithIcon('Stage Database', 'start', 'success');
-        apipost("TRG3000StageDatabase", {})
+        postBackendApi("TRG3000StageDatabase", {})
             .then(response => response.json())
             .then(data => {
                 console.log(data);
-                openNotificationWithIcon('Stage Database', 'success', 'success');
+                openNotificationWithIcon('Stage Database',
+                    'Success. New added data: MsGraphResources: ' + data.msGraphResources + ', ConfigurationTypes: ' + data.configurationTypes,
+                    'success');
             }).catch((error) => {
                 openNotificationWithIcon('Stage Database', 'error', 'error');
                 console.log(error);
@@ -25,7 +27,7 @@ export default function AdminOverview() {
         console.log("clear database initialized");
 
         openNotificationWithIcon('Clear Database', 'start', 'success');
-        apipost("TRG3001ClearDatabase", {})
+        postBackendApi("TRG3001ClearDatabase", {})
             .then(response => response.json())
             .then(data => {
                 console.log(data);
@@ -36,9 +38,37 @@ export default function AdminOverview() {
             });
     }
 
+    function clearLogs() {
+        openNotificationWithIcon('Clear Logs', 'start', 'success');
+        postBackendApi("TRG3002ClearLogs", {})
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                openNotificationWithIcon('Clear Logs', 'success', 'success');
+            }).catch((error) => {
+                openNotificationWithIcon('Clear Logs', 'error', 'error');
+                console.log(error);
+            });
+    }
+
+    function stopTasks() {
+        console.log("stop tasks initialized");
+
+        openNotificationWithIcon('Stop Tasks', 'start', 'success');
+        postBackendApi("TRG1002OrchestratorTerminateRunningInstance", {})
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                openNotificationWithIcon('Stop Tasks', 'success', 'success');
+            }).catch((error) => {
+                openNotificationWithIcon('Stop Tasks', 'error', 'error');
+                console.log(error);
+            });
+    }
+
     return (
         <DefaultPage>
-            <h1>Admin - Overview</h1>
+            <h1>Admin Tools</h1>
             <h2>Data Management</h2>
             <List
                 itemLayout="horizontal"
@@ -50,6 +80,12 @@ export default function AdminOverview() {
                 </List.Item>
                 <List.Item actions={[<a href="#" onClick={() => clearDatabase()}>Clear Database</a>]}>
                     <List.Item.Meta title="Clear Data" description="This function will delete all data currently stored in the database." />
+                </List.Item>
+                <List.Item actions={[<a href="#" onClick={() => stopTasks()}>Stop Tasks</a>]}>
+                    <List.Item.Meta title="Stop Tasks" description="This function will stop all tasks in the backend." />
+                </List.Item>
+                <List.Item actions={[<a href="#" onClick={() => clearLogs()}>Clear Logs</a>]}>
+                    <List.Item.Meta title="Clear Logs" description="This function will delete all logs." />
                 </List.Item>
             </List>
         </DefaultPage>

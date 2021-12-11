@@ -1,7 +1,15 @@
-.memDevices{
+.memDevices {
     padding: 2vh;
     background-color: #F5F7FA;
     min-height: 100%;
+}
+
+.memDevices .ant-avatar {
+    background: #989898;
+}
+
+.memDevices .defaultPage {
+    margin: 0px;
 }
 
 .card {
@@ -13,19 +21,30 @@
     border-bottom-left-radius: 2px;
     height: 100%;
     background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
-.ant-card-body{
+.card-body{
+    text-align: center;
+    font-size: 1.8rem;
+}
+
+.ant-card-body {
     text-align: center;
 }
 
+
 /* line connecting label text */
-.recharts-pie-label-line{
+
+.recharts-pie-label-line {
     display: none;
 }
 
 
 /* card icon */
+
 .ant-card svg {
     width: 25px;
     height: 25px;

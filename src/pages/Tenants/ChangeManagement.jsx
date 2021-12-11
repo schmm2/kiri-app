@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import DefaultPage from '../../layouts/DefaultPage';
 import { configurationVersionManySortModified } from 'graphql/queries';
 import { Table, Space } from "antd";
-import { useLazyQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import TenantContext from "components/TenantContext"
 import { renderDate } from 'util/renderDate';
 import { Link } from "react-router-dom";
@@ -15,26 +15,28 @@ import {
 
 export default function ChangeManagement() {
     const selectedTenant = useContext(TenantContext);
+    const [configurationVersions, setConfigurationVersions] = useState([])
 
-    const [configurationVersions, setConfigurationVersions] = useState([]);
-    const [loading, setLoading] = useState(true)
-
-    const [getConfigurationVersionManySortModified] = useLazyQuery(configurationVersionManySortModified, {
+    const { loading, error, data } = useQuery(configurationVersionManySortModified, {
         fetchPolicy: "cache-and-network",
-        onCompleted: (data) => {
-            if (selectedTenant && selectedTenant._id) {
-                let filteredConfigurationVersions = data.configurationVersionMany.filter(configurationVersion => configurationVersion.configuration.tenant._id === selectedTenant._id)
-                setConfigurationVersions(filteredConfigurationVersions);
-            } else {
-                setConfigurationVersions(data.configurationVersionMany)
-            }
-            setLoading(false);
-        }
+        variables: { limit: 50 }
     });
 
+    function refilter() {
+        let filteredConfigurationVersions = data.configurationVersionMany;
+
+        // filter if needed
+        if (selectedTenant && selectedTenant._id) {
+            filteredConfigurationVersions = data.configurationVersionMany.filter(configurationVersion => configurationVersion.configuration.tenant._id === selectedTenant._id)
+        }
+        setConfigurationVersions(filteredConfigurationVersions);
+    }
+
     useEffect(() => {
-        getConfigurationVersionManySortModified();
-    }, [selectedTenant, getConfigurationVersionManySortModified]);
+        if (data && data.configurationVersionMany) {
+            refilter();
+        }
+    }, [selectedTenant, data]);
 
     function StateIcon(props) {
         switch (props.state) {
@@ -86,6 +88,9 @@ export default function ChangeManagement() {
     return (
         <DefaultPage>
             <h1>Change Management</h1>
+            {
+                error && <span>error loading change management</span>
+            }
             <Table loading={loading} rowKey="_id" columns={columns} dataSource={configurationVersions}></Table>
         </DefaultPage>
     );

@@ -1,31 +1,59 @@
 import React, { useEffect, useContext } from "react";
 import { jobMany } from "graphql/queries";
-import { Table, Button, Tag, Space } from "antd";
+import { Table, Button, Tag, Space, Badge } from "antd";
 import { Link } from "react-router-dom";
 import { renderDate } from 'util/renderDate'
-import moment from 'moment';
-import { useLazyQuery, useQuery } from '@apollo/client';
+import { useLazyQuery } from '@apollo/client';
 import DefaultPage from '../../layouts/DefaultPage';
 import TenantContext from "components/TenantContext"
+import moment from 'moment';
+
+import {
+  ReloadOutlined
+} from '@ant-design/icons';
 
 export default function Jobs(props) {
   const selectedTenant = useContext(TenantContext);
 
-  const [getJobs, { loadingJobs, data: jobdata }] = useLazyQuery(jobMany,
-    {
-      onCompleted: (data) => console.log(jobdata),
-      fetchPolicy: "cache-and-network"
-    });
+  const [getJobs, { loadingJobs, data: jobdata }] = useLazyQuery(jobMany, {
+    onCompleted: (data) => console.log(jobdata),
+    fetchPolicy: "cache-and-network"
+  });
 
   useEffect(() => {
     if (selectedTenant) {
-      getJobs({
-        variables: { filter: { tenant: selectedTenant._id } }
-      });
+      getJobs({ variables: { filter: { tenant: selectedTenant._id } } });
     } else {
       getJobs(); // no tenant defined, load all jobs
     }
   }, [selectedTenant, getJobs]);
+
+  const expandedRowRender = (dataRow) => {
+    const logs = dataRow.log
+    const data = [];
+    const columns = [
+      { title: 'Message', dataIndex: 'message', key: 'message' },
+      { title: 'Action', dataIndex: 'action', key: 'action' },
+      {
+        title: 'State',
+        key: 'state',
+        render: (record) => (
+          <span>
+            <Badge status={record.state.toLowerCase()} text={record.state} /> 
+          </span>
+        ),
+      }
+    ]
+
+    for (let i = 0; i < logs.length; ++i) {
+      data.push({
+        key: i,
+        message: logs[i].message,
+        state: logs[i].state
+      });
+    }
+    return <Table columns={columns} dataSource={data} pagination={false} />;
+  }
 
   const columns = [
     {
@@ -46,11 +74,11 @@ export default function Jobs(props) {
           case "RUNNING":
             color = "blue";
             break;
-          case "ERROR":
-            color = "red";
-            break;
           case "WARNING":
             color = "orange";
+            break;
+          case "ERROR":
+            color = "red";
             break;
           default:
             break;
@@ -87,10 +115,20 @@ export default function Jobs(props) {
   return (
     <DefaultPage>
       <h1>Jobs</h1>
-      <Table loading={loadingJobs} rowKey="_id" columns={columns} dataSource={jobdata && jobdata.jobMany} onChange={onChange} />
+      <div className="controlTop">
+        <Space align="end">
+          <Button onClick={getJobs}>Refresh <ReloadOutlined /></Button>
+        </Space>
+      </div>
+      <Table
+        loading={loadingJobs}
+        rowKey="_id"
+        columns={columns}
+        expandable={{ expandedRowRender }}
+        dataSource={jobdata && jobdata.jobMany}
+        onChange={onChange} />
       <div className="controlBottom">
         <Space align="end">
-          <Button onClick={getJobs}>Refresh</Button>
           <Button>
             <Link to={"/tenants"}>Back</Link>
           </Button>
