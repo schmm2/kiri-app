@@ -1,5 +1,5 @@
 import React from "react";
-import { Table, Switch, Button } from 'antd';
+import { Table, Button } from 'antd';
 import { Link } from "react-router-dom";
 import { renderDate } from 'util/renderDate';
 import moment from 'moment';
