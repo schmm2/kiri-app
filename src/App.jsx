@@ -34,6 +34,7 @@ import DeploymentAdd from 'pages/Deplyoments/DeploymentAdd';
 import Deployment from 'pages/Deplyoments/Deployment';
 import Health from 'pages/Admin/Health';
 import MEMConfigurationCompare from 'pages/MEM/MEMConfigurationCompare';
+import Expiration from 'pages/Reports/Expiration';
 
 function App({ pca }) {
 
@@ -105,6 +106,7 @@ function Pages() {
       </Route>
       <Route path="/memDevices/:deviceId" component={MEMDevice} />
       <Route path="/memDevices" component={MEMDevices} />
+      <Route path="/expiration" component={Expiration} />
       <Route path="/deploymentAdd" component={DeploymentAdd} />
       <Route path="/deployments/:deploymentId" component={Deployment} />
       <Route path="/deployments" component={Deployments} />
