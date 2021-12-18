@@ -424,7 +424,7 @@ export default function MEMConfiguration(props) {
                         </TabPane>
                         {
                             state.configurationType && state.configurationType.name === "deviceManagementScript" &&
-                            <TabPane tab="Script" key="4">
+                            <TabPane tab="Script" key="5">
                                 {
                                     state.newestConfigurationVersion &&
                                     state.newestConfigurationVersion.value &&
@@ -435,7 +435,7 @@ export default function MEMConfiguration(props) {
                         }
                         {
                             state.configurationType && state.configurationType.name === "deviceHealthScript" &&
-                            <TabPane tab="Script" key="5">
+                            <TabPane tab="Script" key="6">
                                 <h2>Detection Script</h2>
                                 {
                                     state.newestConfigurationVersion &&

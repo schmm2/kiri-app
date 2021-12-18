@@ -14,7 +14,6 @@ export const RenderData = ({ record }) => {
             return (<ReactJson name={false} enableClipboard={true} displayDataTypes={false} src={record} />)
         case "date":
             return renderDate(record);
-            break;
         case "boolean":
             return record.toString()
         case "null":

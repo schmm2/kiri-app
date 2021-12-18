@@ -78,10 +78,6 @@ export default function Health() {
                     <Button onClick={checkBackend}>Check</Button>
                 </Space>
             </div>
-
-            <p>
-                {}
-            </p>
             <List
                 itemLayout="horizontal"
                 dataSource={data}

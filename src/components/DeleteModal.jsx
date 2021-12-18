@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Modal } from 'antd';
 
 
@@ -12,7 +12,6 @@ export const DeleteModal = ({ objectNames, showModal, onDelete, onClose }) => {
     const handleCancel = (e) => {
         onClose(e);
     };
-
 
     return (
         <Modal

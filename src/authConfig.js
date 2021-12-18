@@ -1,3 +1,6 @@
+// Info
+// https://jannehansen.com/call-aad-functions-from-spa/
+
 import { LogLevel } from "@azure/msal-browser";
 // Browser check variables
 // If you support IE, our recommendation is that you sign-in using Redirect APIs

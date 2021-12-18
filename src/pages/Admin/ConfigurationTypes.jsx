@@ -67,6 +67,10 @@ export default function ConfigurationTypes() {
     return (
         <DefaultPage>
             <h1>ConfigurationTypes</h1>
+            {
+                error &&
+                <span>{error}</span>
+            }
             <Table loading={loading} rowKey="id" columns={columns} dataSource={data.configurationTypeMany} onChange={onChange}></Table>
             <Button>
                 <Link to="/configurationTypeAdd">
