@@ -8,10 +8,11 @@ import {
     DeploymentUnitOutlined,
     SecurityScanOutlined
 } from '@ant-design/icons';
+import { renderDate} from 'util/renderDate'
 
 export const DeviceData = ({ deviceData }) => {
     console.log(deviceData)
-    let graphData = JSON.parse(deviceData.value);
+    let graphData = JSON.parse(deviceData.newestDeviceVersions[0].value);
 
     return (
         <List className="deviceData">
@@ -51,7 +52,9 @@ export const DeviceData = ({ deviceData }) => {
                         Manufacturer: {graphData.manufacturer}<br />
                         SerialNumber: {graphData.serialNumber}<br />
                         Storage Space: {Math.floor(graphData.totalStorageSpaceInBytes / 1024 / 1024 / 1024)} GB <br />
-                        Free Space: {Math.floor(graphData.freeStorageSpaceInBytes / 1024 / 1024 / 1024)} GB
+                        Free Space: {Math.floor(graphData.freeStorageSpaceInBytes / 1024 / 1024 / 1024)} GB <br />
+                        Warranty Start: {deviceData.deviceWarranty && renderDate(deviceData.deviceWarranty.startDate)} <br />
+                        Warranty End: {deviceData.deviceWarranty && renderDate(deviceData.deviceWarranty.endDate)}
                     </span>
                     }
                 />

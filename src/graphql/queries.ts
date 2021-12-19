@@ -29,6 +29,10 @@ export const getNewestDeviceVersions = gql`
         value
         _id
       }
+      deviceWarranty{
+        startDate,
+        endDate
+      }
       _id
     }
   }
@@ -47,6 +51,10 @@ export const deviceById = gql`
         upn
         value
         _id
+      }
+      deviceWarranty{
+        startDate,
+        endDate
       }
     } 
   }

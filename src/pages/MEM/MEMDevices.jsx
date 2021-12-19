@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { getNewestDeviceVersions } from "graphql/queries";
-import { List, Avatar, Tabs } from 'antd';
+import { Space, Button, List, Avatar, Tabs } from 'antd';
 import { Link } from "react-router-dom";
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import TenantContext from "components/TenantContext"
@@ -8,6 +8,8 @@ import MyBarChart from "components/BarChart";
 import DoughnutChart from 'components/DoughnutChart'
 import { useQuery } from '@apollo/client';
 import DefaultPage from "layouts/DefaultPage";
+import { postBackendApi } from 'util/api';
+import { openNotificationWithIcon } from "util/openNotificationWithIcon";
 
 import {
     AndroidOutlined,
@@ -33,11 +35,13 @@ export default function MEMDeviceConfigurations() {
     const [osCount, setOsCount] = useState(null);
     const [encryptionCount, setEncryptionCount] = useState([]);
     const [complianceCount, setComplianceCount] = useState([]);
+    const [warrantyCount, setWarrantyCount] = useState([]);
 
     function buildGraphData(deviceArray) {
         let osBuildVersionCount = [];
         let osVersionCount = [];
         let manufacturerCount = [];
+        let now = new Date()
 
         let osCount = {
             Windows: 0,
@@ -77,10 +81,29 @@ export default function MEMDeviceConfigurations() {
             }
         ]
 
+        let warrantyCount = [
+            {
+                name: "OK",
+                count: 0,
+                color: "#08979c"
+            },
+            {
+                name: "Expired",
+                count: 0,
+                color: "#fa541c"
+            },
+            {
+                name: "Unknown",
+                count: 0,
+                color: "#a1a4a9"
+            }
+        ]
+
         for (let i = 0; i < deviceArray.length; i++) {
             if (deviceArray[i].newestDeviceVersions[0]) {
-                let deviceData = deviceArray[i].newestDeviceVersions[0];
-                let deviceDataValue = JSON.parse(deviceData.value);
+                let deviceWarranty = deviceArray[i].deviceWarranty
+                let deviceData = deviceArray[i].newestDeviceVersions[0]
+                let deviceDataValue = JSON.parse(deviceData.value)
                 //console.log(deviceData);
 
                 // OS DATA
@@ -154,6 +177,17 @@ export default function MEMDeviceConfigurations() {
                         default: break;
                     }
                 }
+
+                // WARRANTY
+                if (deviceWarranty) {
+                    if (deviceWarranty.endDate > now) { // warranty ok
+                        warrantyCount[0].count++
+                    } else { // warranty expired
+                        warrantyCount[1].count++
+                    }
+                } else { // no warranty data
+                    warrantyCount[2].count++
+                }
             }
         }
         setOsBuildVersionCount(osBuildVersionCount)
@@ -162,6 +196,7 @@ export default function MEMDeviceConfigurations() {
         setEncryptionCount(encryptionCount)
         setComplianceCount(complianceCount)
         setOsVersionCount(osVersionCount);
+        setWarrantyCount(warrantyCount)
     }
 
 
@@ -207,6 +242,18 @@ export default function MEMDeviceConfigurations() {
         }
     }
 
+    function triggerWarranytCheck() {
+        openNotificationWithIcon('Check Warrenty', 'Job started', 'info');
+
+        postBackendApi("orchestrators/ORC1011DevicesWarrantyCheckPerTenant", { tenantDbId: selectedTenant._id })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+            }).catch((error) => {
+                console.log(error);
+            });
+    }
+
     const layout = {
         lg: [
             { i: "devices-desktops", w: 3, h: 2, x: 0, y: 0, minW: 2, minH: 2, static: true },
@@ -217,13 +264,19 @@ export default function MEMDeviceConfigurations() {
             { i: "encryption", w: 3, h: 3, x: 3, y: 3 },
             { i: "osversion", w: 3, h: 3, x: 6, y: 3 },
             { i: "compliance", w: 3, h: 3, x: 9, y: 3 },
-            { i: "manufacturer", w: 3, h: 3, x: 0, y: 6 }
+            { i: "manufacturer", w: 3, h: 3, x: 0, y: 6 },
+            { i: "warranty", w: 3, h: 3, x: 3, y: 6 }
         ]
     }
 
     return (
         <div className="memDevices">
             <h1>Devices</h1>
+            <div className="controlTop">
+                <Space align="end">
+                    <Button onClick={triggerWarranytCheck}>Check Warranty</Button>
+                </Space>
+            </div>
             <Tabs defaultActiveKey="1">
                 <TabPane
                     tab={
@@ -298,6 +351,11 @@ export default function MEMDeviceConfigurations() {
                             <div key="manufacturer">
                                 <div className="card">
                                     <DoughnutChart data={manufacturerCount}></DoughnutChart>
+                                </div>
+                            </div>
+                            <div key="warranty">
+                                <div className="card">
+                                    <DoughnutChart data={warrantyCount}></DoughnutChart>
                                 </div>
                             </div>
                         </ResponsiveGridLayout>

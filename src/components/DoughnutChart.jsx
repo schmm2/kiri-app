@@ -22,14 +22,18 @@ export default function DoughnutChart(props) {
         );
     }
 
+    // define Randome colors if no specidif color is defined
     const COLORS = ['#36cfc9', '#bfbfbf', '#7cb305', '#08979c', '#1890ff', '#eb2f96'];
+    
+    // remove 0 count values
+    const filtredData = props.data.filter(row => row.count > 0)
 
     return (
         <ResponsiveContainer>
             <PieChart>
                 <Pie
                     isAnimationActive={false}
-                    data={props.data}
+                    data={filtredData}
                     innerRadius={60}
                     outerRadius={90}
                     fill="#8884d8"
@@ -38,6 +42,7 @@ export default function DoughnutChart(props) {
                     label={renderCustomizedLabel}>
                     {
                         props.data && (props.data.length > 0) && props.data.map((entry, index) => {
+
                             if (entry.color) { // defined color
                                 return <Cell key={`cell-${index}`} fill={entry.color} />
                             }

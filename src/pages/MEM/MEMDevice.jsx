@@ -22,8 +22,8 @@ export default function MEMDevice(props) {
                 <span>{error}</span>
             }
             {
-                !loading && data && data.deviceById && data.deviceById.newestDeviceVersions &&
-                <DeviceData deviceData={data.deviceById.newestDeviceVersions[0]}></DeviceData>
+                !loading && data && data.deviceById &&
+                <DeviceData deviceData={data.deviceById}></DeviceData>
             }
             <div className="controlBottom">
                 <Space align="end">
