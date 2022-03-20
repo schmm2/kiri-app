@@ -17,14 +17,15 @@ export default function Jobs(props) {
 
   const [getJobs, { loadingJobs, data: jobdata }] = useLazyQuery(jobMany, {
     onCompleted: (data) => console.log(jobdata),
+    onError: (error) => console.log(error),
     fetchPolicy: "cache-and-network"
   });
 
   useEffect(() => {
     if (selectedTenant) {
-      getJobs({ variables: { filter: { tenant: selectedTenant._id } } });
+      getJobs({ variables: { filter: { tenant: selectedTenant._id }, limit: 50 } });
     } else {
-      getJobs(); // no tenant defined, load all jobs
+      getJobs({ variables: { limit: 50 } }); // no tenant defined, load all jobs
     }
   }, [selectedTenant, getJobs]);
 
@@ -39,7 +40,7 @@ export default function Jobs(props) {
         key: 'state',
         render: (record) => (
           <span>
-            <Badge status={record.state.toLowerCase()} text={record.state} /> 
+            <Badge status={record.state.toLowerCase()} text={record.state} />
           </span>
         ),
       }

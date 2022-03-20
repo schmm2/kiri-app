@@ -5,6 +5,7 @@ import { DeviceData } from "components/DeviceData";
 import { Button, Space } from 'antd';
 import { Link } from "react-router-dom";
 
+
 import './MEMDevice.css'
 
 export default function MEMDevice(props) {

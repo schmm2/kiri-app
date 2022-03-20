@@ -232,8 +232,8 @@ export const getTenantNewestConfigurationVersions = gql`
 
 // Jobs
 export const jobMany = gql`
-  query JobMany($filter: FilterFindManyJobInput) {
-    jobMany(filter: $filter) {
+  query JobMany($filter: FilterFindManyJobInput, $limit: Int) {
+    jobMany(filter: $filter, limit: $limit) {
       _id,
       type,
       state,

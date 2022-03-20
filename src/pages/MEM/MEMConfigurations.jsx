@@ -9,11 +9,11 @@ import { useQuery, useLazyQuery, useMutation } from '@apollo/client';
 import { AddToDeploymentModal } from "components/AddToDeploymentModal";
 import DefaultPage from "layouts/DefaultPage";
 import { deploymentUpdateOne as deploymentUpdateOneMutation } from "graphql/mutations"
-import { openNotificationWithIcon } from "util/openNotificationWithIcon";
 import { SearchOutlined } from '@ant-design/icons';
 import { useHistory } from "react-router-dom";
 import { DeleteModal } from "components/DeleteModal";
 import { postBackendApi } from 'util/api';
+import { openNotificationWithIcon } from "util/openNotificationWithIcon";
 
 export default function MEMConfigurations(props) {
 

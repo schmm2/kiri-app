@@ -8,7 +8,7 @@ import {
     DeploymentUnitOutlined,
     SecurityScanOutlined
 } from '@ant-design/icons';
-import { renderDate} from 'util/renderDate'
+import { renderDate } from 'util/renderDate'
 
 export const DeviceData = ({ deviceData }) => {
     console.log(deviceData)
@@ -49,12 +49,18 @@ export const DeviceData = ({ deviceData }) => {
                     avatar={<DesktopOutlined />}
                     title="Hardware"
                     description={<span>
+                        Model: {graphData.model}<br />
                         Manufacturer: {graphData.manufacturer}<br />
                         SerialNumber: {graphData.serialNumber}<br />
                         Storage Space: {Math.floor(graphData.totalStorageSpaceInBytes / 1024 / 1024 / 1024)} GB <br />
                         Free Space: {Math.floor(graphData.freeStorageSpaceInBytes / 1024 / 1024 / 1024)} GB <br />
-                        Warranty Start: {deviceData.deviceWarranty && renderDate(deviceData.deviceWarranty.startDate)} <br />
-                        Warranty End: {deviceData.deviceWarranty && renderDate(deviceData.deviceWarranty.endDate)}
+                        {
+                            deviceData.deviceWarranty &&
+                            <span>
+                                Warranty Start: {deviceData.deviceWarranty && renderDate(deviceData.deviceWarranty.startDate)} <br />
+                                Warranty End: {deviceData.deviceWarranty && renderDate(deviceData.deviceWarranty.endDate)}
+                            </span>
+                        }
                     </span>
                     }
                 />
