@@ -7,7 +7,8 @@ import {
   FormOutlined,
   RightSquareOutlined,
   ExportOutlined,
-  CloudOutlined
+  CloudOutlined,
+  SafetyCertificateOutlined
 } from '@ant-design/icons';
 
 import { Link, useLocation } from "react-router-dom";
@@ -33,6 +34,11 @@ export default function SideMenu(props) {
       <Menu.Item key="/memDevicesMenu" icon={<DesktopOutlined />}>
         <Link to="/memDevices">
           Devices
+          </Link>
+      </Menu.Item>
+      <Menu.Item key="/memEndpointSecurityMenu" icon={<SafetyCertificateOutlined />}>
+        <Link to="/endpointSecurity">
+          Endpoint Security
           </Link>
       </Menu.Item>
       <SubMenu key="/mem" icon={<FormOutlined />} title="Configurations">

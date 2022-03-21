@@ -106,13 +106,17 @@ function Pages() {
       </Route>
       <Route path="/memDevices/:deviceId" component={MEMDevice} />
       <Route path="/memDevices" component={MEMDevices} />
+      <Route path="/endpointSecurity/:configurationId" component={MEMConfiguration} />
+      <Route path="/endpointSecurity">
+        <MEMConfigurations title={"Endpoint Security"} category={'endpointSecurity'} />
+      </Route>
       <Route path="/expiration" component={Expiration} />
       <Route path="/deploymentAdd" component={DeploymentAdd} />
       <Route path="/deployments/:deploymentId" component={Deployment} />
       <Route path="/deployments" component={Deployments} />
       <Route path="/tenantAdd" component={TenantAdd} />
       <Route path="/tenants" component={Tenants} />
-      <Route path="/profile" component={Profile} />   
+      <Route path="/profile" component={Profile} />
       <Route path="/changeManagement" component={ChangeManagement} />
       <Route path="/jobs/:tenantId" component={Jobs} />
       <Route path="/jobs" component={Jobs} />

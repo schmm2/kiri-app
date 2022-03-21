@@ -48,6 +48,10 @@ export default function MsGraphResources() {
             render: (text, record) => (text.toString())
         },
         {
+            title: "Expand Attributes",
+            dataIndex: "expandAttributes"
+        },
+        {
             title: "Number of ConfigurationTypes",
             key: "countconfigurationtypes",
             render: (text, record) => (

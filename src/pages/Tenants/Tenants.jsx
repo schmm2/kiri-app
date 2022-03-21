@@ -49,7 +49,7 @@ export default function Tenants() {
     //console.log("update tenant data for tenantId: " + tenantDbId);
     openNotificationWithIcon('Pull Data', 'start Job', 'success');
 
-    postBackendApi("orchestrators/ORC1000AzureDataCollect", { tenantDbId: tenantDbId })
+    postBackendApi("orchestrators/ORC1000AzureDataCollect", { tenantDbId: tenantDbId, msGraphResourceDbIdFilter : "62382dd8c92a63f3921b7c1b" })
       .then(response => response.json())
       .then(data => {
         //console.log(data);
