@@ -157,13 +157,12 @@ export default function Tenants() {
       )
     },
     {
-      title: 'Action',
+      title: 'Other Actions',
       key: 'action',
       render: (text, record) => (
         <Space size="middle">
           <a href="#" rel="noreferrer" onClick={() => triggerBackup(record._id)}>Backup</a>
           <a rel={'external'} rel="noreferrer" target="_blank" href={"https://login.microsoftonline.com/" + record.tenantId + "/adminconsent?client_id=" + record.appId}>Grant Permission</a>
-          <a href="#" rel="noreferrer" onClick={() => triggerTenantUpdate(record._id)}>Pull Data</a>
           <a href="#" rel="noreferrer" onClick={() => triggerDataCheck(record._id)}>Check Data</a>
           <a href="#" rel="noreferrer" onClick={() => {
             deleteTenant({

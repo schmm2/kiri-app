@@ -43,11 +43,6 @@ export default function MsGraphResources() {
             dataIndex: "version",
         },
         {
-            title: "Deep Resolve",
-            dataIndex: "objectDeepResolve",
-            render: (text, record) => (text.toString())
-        },
-        {
             title: "Expand Attributes",
             dataIndex: "expandAttributes"
         },

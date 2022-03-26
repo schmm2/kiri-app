@@ -259,7 +259,7 @@ export const msGraphResourceMany = gql`
       resource,
       version,
       createdAt,
-      objectDeepResolve,
+      expandAttributes,
       updatedAt,
       configurationTypes{
         name
