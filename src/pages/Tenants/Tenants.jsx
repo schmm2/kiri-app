@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { tenantMany } from "graphql/queries";
+import { tenantMany, msGraphResourceMany } from "graphql/queries";
 import { tenantRemoveById } from "graphql/mutations";
 import { Link } from "react-router-dom";
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
@@ -9,7 +9,7 @@ import { AddToDeploymentModal } from "components/AddToDeploymentModal";
 import { deploymentUpdateOne as deploymentUpdateOneMutation } from "graphql/mutations"
 
 // antd components
-import { Table, Button, Space } from "antd";
+import { Table, Button, Space, Menu, Dropdown } from "antd";
 import {
   PlusOutlined,
   CheckCircleTwoTone,
@@ -21,6 +21,11 @@ var fileDownload = require('js-file-download');
 export default function Tenants() {
   const { loading, error, data } = useQuery(tenantMany, {
     fetchPolicy: "cache-and-network"
+  });
+
+  const { loading: loadingMsGraphResource, error: errorMsGraphResource, data: dataMsGraphResource } = useQuery(msGraphResourceMany, {
+    fetchPolicy: "cache-and-network",
+    onCompleted: (dataMsGraphResource) => { console.log(dataMsGraphResource) }
   });
 
   // states
@@ -45,11 +50,26 @@ export default function Tenants() {
     }
   });
 
-  async function triggerTenantUpdate(tenantDbId) {
+  const msGraphResourceMenu = (tenantDbId) => (
+  
+      <Menu>
+        <Menu.Item key={"all"} onClick={() => triggerTenantUpdate(tenantDbId)}>All Resources</Menu.Item>
+        {dataMsGraphResource && dataMsGraphResource.msGraphResourceMany && dataMsGraphResource.msGraphResourceMany.map((msGraphResource, index) => {
+          return (
+            <Menu.Item key={msGraphResource._id} onClick={() => triggerTenantUpdate(tenantDbId, msGraphResource._id)}>
+              <span>{msGraphResource.name}</span>
+            </Menu.Item>
+          )
+        })}
+      </Menu>
+    
+  );
+
+  async function triggerTenantUpdate(tenantDbId, msGraphResourceDbIdFilter = "") {
     //console.log("update tenant data for tenantId: " + tenantDbId);
     openNotificationWithIcon('Pull Data', 'start Job', 'success');
 
-    postBackendApi("orchestrators/ORC1000AzureDataCollect", { tenantDbId: tenantDbId, msGraphResourceDbIdFilter : "62382dd8c92a63f3921b7c1b" })
+    postBackendApi("orchestrators/ORC1000AzureDataCollect", { tenantDbId: tenantDbId, msGraphResourceDbIdFilter: msGraphResourceDbIdFilter })
       .then(response => response.json())
       .then(data => {
         //console.log(data);
@@ -74,7 +94,7 @@ export default function Tenants() {
         console.log(error);
       });
   }
-  
+
 
   async function triggerBackup(tenantDbId) {
     let fileName = "export.zip";
@@ -126,6 +146,17 @@ export default function Tenants() {
       ),
     },
     {
+      title: 'Pull Data',
+      key: 'pulldata',
+      render: (text, record) => (
+        <Space size="middle">
+          <Dropdown overlay={msGraphResourceMenu(record._id)}>
+            <a onClick={e => e.preventDefault()}>Pull Data</a>
+          </Dropdown>
+        </Space>
+      )
+    },
+    {
       title: 'Action',
       key: 'action',
       render: (text, record) => (
@@ -144,8 +175,9 @@ export default function Tenants() {
           }}>Delete</a>
         </Space>
       ),
-    },
+    }
   ];
+
 
   function onChange(pagination, filters, sorter, extra) {
     console.log("params", pagination, filters, sorter, extra);

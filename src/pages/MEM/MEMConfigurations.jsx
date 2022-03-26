@@ -29,6 +29,63 @@ export default function MEMConfigurations(props) {
     const [searchText, setSearchText] = useState("");
     const [searchedColumn, setSearchedColumn] = useState("");
 
+
+    /**
+     * TEST  Area
+     * 
+     */
+
+     const [expirationData, setExpirationData] = useState(null);
+     const [error, setError] = useState(null);
+     const [awaitJob, setAwaitJob] = useState(false);
+
+    const sleep = (milliseconds) => {
+        return new Promise(resolve => setTimeout(resolve, milliseconds))
+    }
+
+
+    async function getConfigs(tenantDbId) {
+        //console.log("update tenant data for tenantId: " + tenantDbId);
+        openNotificationWithIcon('Pull Data', 'start Job', 'success');
+
+        try {
+            let response = await postBackendApi("orchestrators/ORC1111GetConfigs", { tenantDbId: tenantDbId, configType: props.category })
+            let job = await response.json();
+
+            if (job.statusQueryGetUri) {
+                openNotificationWithIcon('Pull Data', 'Job started', 'success');
+                setAwaitJob(true)
+                let loading = true
+
+                while (loading) {
+                    console.log("query Status");
+
+                    let response = await fetch(job.statusQueryGetUri)
+                    let data = await response.json()
+
+                    if (data.runtimeStatus === "Completed") {
+                        setExpirationData(data.output)
+                        setAwaitJob(false)
+                        loading = false
+                        console.log(data.output);
+                    } else if (data.runtimeStatus === "Error") {
+                        setError("error in backend")
+                        setAwaitJob(false)
+                        loading = false
+                    }
+                    await sleep(1000)
+                }
+            }
+        } catch (error) {
+            openNotificationWithIcon('Pull Data', 'Job error', 'error');
+            setError(error)
+            setAwaitJob(false)
+            // console.log(error)
+        }
+    }
+
+
+    //******************* */
     const selectedTenant = useContext(TenantContext);
     let searchInput = React.createRef();
 
@@ -144,7 +201,7 @@ export default function MEMConfigurations(props) {
         }
     });
 
-    const [getConfigurations, { loading, error, data }] = useLazyQuery(getNewestConfigurationVersions, {
+    const [getConfigurations, { loading, error2, data }] = useLazyQuery(getNewestConfigurationVersions, {
         onCompleted: (data) => {
             console.log("done loading");
             refilter();
@@ -164,6 +221,7 @@ export default function MEMConfigurations(props) {
         }
     }
 
+    
     useEffect(() => {
         console.log(selectedTenant);
         console.log("get configurations...")
@@ -186,6 +244,14 @@ export default function MEMConfigurations(props) {
         }
     }, [props.category, selectedTenant]);
 
+    /*
+    useEffect(() => {
+        if (selectedTenant) {
+          getConfigs(selectedTenant._id)
+        }
+      }, [selectedTenant]);
+      */
+     
     const columns = [
         {
             title: "Name",
