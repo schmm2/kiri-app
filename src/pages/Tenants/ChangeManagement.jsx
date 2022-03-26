@@ -79,6 +79,10 @@ export default function ChangeManagement() {
             }
         },
         {
+            title: "Type",
+            dataIndex: ["configuration","configurationType","category"]
+        },
+        {
             title: "Change Date",
             dataIndex: "graphModifiedAt",
             render: (text, record) => renderDate(text),
