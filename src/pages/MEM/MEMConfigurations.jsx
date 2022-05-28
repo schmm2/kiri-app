@@ -10,12 +10,13 @@ import { AddToDeploymentModal } from "components/AddToDeploymentModal";
 import DefaultPage from "layouts/DefaultPage";
 import { deploymentUpdateOne as deploymentUpdateOneMutation } from "graphql/mutations"
 import { SearchOutlined } from '@ant-design/icons';
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { DeleteModal } from "components/DeleteModal";
 import { postBackendApi } from 'util/api';
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
 
 export default function MEMConfigurations(props) {
+    const navigate = useNavigate();
 
     // states
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -29,15 +30,9 @@ export default function MEMConfigurations(props) {
     const [searchText, setSearchText] = useState("");
     const [searchedColumn, setSearchedColumn] = useState("");
 
-
-    /**
-     * TEST  Area
-     * 
-     */
-
-     const [expirationData, setExpirationData] = useState(null);
-     const [error, setError] = useState(null);
-     const [awaitJob, setAwaitJob] = useState(false);
+    const [expirationData, setExpirationData] = useState(null);
+    const [error, setError] = useState(null);
+    const [awaitJob, setAwaitJob] = useState(false);
 
     const sleep = (milliseconds) => {
         return new Promise(resolve => setTimeout(resolve, milliseconds))
@@ -85,7 +80,6 @@ export default function MEMConfigurations(props) {
     }
 
 
-    //******************* */
     const selectedTenant = useContext(TenantContext);
     let searchInput = React.createRef();
 
@@ -221,8 +215,26 @@ export default function MEMConfigurations(props) {
         }
     }
 
-    
+    const loadingConfigurations = () => {
+        let query = "search * | where Category == '" + props.category + "' | where id_g != '' |  summarize arg_max(TimeGenerated, *) by id_g"
+
+        if (selectedTenant) {
+            //    query = logType + " | where id_g != '' and azureTenantId_g == '" + selectedTenant.tenantId + "' |  summarize arg_max(TimeGenerated, *) by id_g"
+        }
+        console.log("query used:" + query)
+
+        postBackendApi("TRG4000LogAnalyticsGet", { kustoQuery: query })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
+
     useEffect(() => {
+        loadingConfigurations()
         console.log(selectedTenant);
         console.log("get configurations...")
 
@@ -252,13 +264,13 @@ export default function MEMConfigurations(props) {
       }, [selectedTenant]);
       */
 
-      
+
     const columns = [
         {
             title: "Name",
             index: "name",
             dataIndex: "displayName",
-            render: (text, record) => <Link to={props.category + '/' + record.id} > {record.displayName} </Link>,
+            render: (text, record) => <Link to={record.id} > {record.displayName} </Link>,
             ...getColumnSearchProps('displayName'),
         },
         {
@@ -385,12 +397,12 @@ export default function MEMConfigurations(props) {
         setIsDeleteModalVisible(true)
     }
 
-    const history = useHistory();
+    
 
     function openCompareView() {
         console.log(selectedConfigurations);
         let path = 'configurationCompare/' + selectedConfigurations[0] + "/" + selectedConfigurations[1];
-        history.push(path);
+        navigate(path);
     }
 
     return (
