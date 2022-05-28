@@ -6,15 +6,15 @@ import { Button } from "antd"
 import { tenantCreateOne } from "graphql/mutations";
 import { useMutation } from '@apollo/client';
 import DefaultPage from '../../layouts/DefaultPage';
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function TenantAdd() {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [createTenant] = useMutation(tenantCreateOne, {
     onCompleted(data) {
       console.log(data);
-      history.push("/tenants");
+      navigate("/tenants");
     }
   });
 

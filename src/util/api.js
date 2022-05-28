@@ -21,7 +21,7 @@ export async function getBearerToken(scopes) {
 }
 
 
-async function buildHeader(token) {
+function buildHeader(token) {
     const headers = new Headers()
     headers.append('Content-Type', 'application/json')
 
@@ -48,7 +48,7 @@ function buildFunctionUrl(functionName) {
 
 export async function getMsGraphProfile() {
     const token = await getBearerToken(loginRequest)
-    const headers = await buildHeader(token);
+    const headers = buildHeader(token);
 
     const options = {
         method: "GET",
@@ -69,7 +69,7 @@ export async function postBackendApi(functionName, payload) {
         token = await getBearerToken(backendApiRequest);
     }
 
-    const headers = await buildHeader(token)
+    const headers = buildHeader(token)
     const url = buildFunctionUrl(functionName)
     const body = JSON.stringify(payload)
 
@@ -77,6 +77,28 @@ export async function postBackendApi(functionName, payload) {
         method: 'POST',
         headers: headers,
         body: body
+    };
+
+    // return promise
+    return fetch(url, requestOptions);
+}
+
+
+export async function getBackendApi(functionName) {
+    const environment = process.env.NODE_ENV || 'development'
+    let token = null
+
+    // prod env, auth needed
+    if (environment !== "development") {
+        token = await getBearerToken(backendApiRequest);
+    }
+
+    const headers = buildHeader(token)
+    const url = buildFunctionUrl(functionName)
+
+    const requestOptions = {
+        method: 'GET',
+        headers: headers,
     };
 
     // return promise

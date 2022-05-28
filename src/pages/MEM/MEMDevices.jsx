@@ -1,14 +1,14 @@
 import React, { useEffect, useState, useContext } from "react";
 import { getNewestDeviceVersions } from "graphql/queries";
 import { Space, Button, List, Avatar, Tabs } from 'antd';
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import TenantContext from "components/TenantContext"
 import MyBarChart from "components/BarChart";
 import DoughnutChart from 'components/DoughnutChart'
 import { useQuery } from '@apollo/client';
 import DefaultPage from "layouts/DefaultPage";
-import { postBackendApi } from 'util/api';
+import { getBackendApi, postBackendApi } from 'util/api';
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
 
 import {
@@ -21,11 +21,15 @@ import {
 } from '@ant-design/icons'
 
 import './MEMDevices.css'
+import { osBuildToVersion } from "util/osBuildToVersion";
 
 const { TabPane } = Tabs;
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 export default function MEMDeviceConfigurations() {
+    const navigate = useNavigate();
+    const params = useParams();
+
     const selectedTenant = useContext(TenantContext);
     const [devices, setDevices] = useState([]);
     const [filteredDevices, setfilteredDevices] = useState([]);
@@ -38,6 +42,7 @@ export default function MEMDeviceConfigurations() {
     const [warrantyCount, setWarrantyCount] = useState([]);
 
     function buildGraphData(deviceArray) {
+        console.log(deviceArray)
         let osBuildVersionCount = [];
         let osVersionCount = [];
         let manufacturerCount = [];
@@ -100,95 +105,93 @@ export default function MEMDeviceConfigurations() {
         ]
 
         for (let i = 0; i < deviceArray.length; i++) {
-            if (deviceArray[i].newestDeviceVersions[0]) {
-                let deviceWarranty = deviceArray[i].deviceWarranty
-                let deviceData = deviceArray[i].newestDeviceVersions[0]
-                let deviceDataValue = JSON.parse(deviceData.value)
-                //console.log(deviceData);
+            let deviceData = deviceArray[i]
 
-                // OS DATA
-                if (deviceData.osVersion && deviceData.operatingSystem) {
-                    // build identification string        
-                    const osString = deviceData.operatingSystem + " " + deviceData.osVersion
-                    const foundIndex = osBuildVersionCount.findIndex(item => item.id === osString)
+            // OS DATA
+            if (deviceData.osVersion_s && deviceData.operatingSystem_s) {
+                // build identification string        
+                const osString = deviceData.operatingSystem_s + " " + deviceData.osVersion_s
+                const foundIndex = osBuildVersionCount.findIndex(item => item.id === osString)
 
-                    // count os build version like 10.0.19043.1288
-                    if (foundIndex >= 0) {
-                        osBuildVersionCount[foundIndex].count++;
-                    } else {
-                        osBuildVersionCount.push({
-                            "name": osString,
-                            "osVersion": deviceData.osVersion,
-                            "count": 1,
-                            "operatingSytem": deviceData.operatingSystem
-                        });
-                    }
-
-                    // count os version like 20H2
-                    // add os if not added already
-                    if (deviceData.osVersionName) {
-                        const foundIndex = osVersionCount.findIndex(item => item.name === deviceData.osVersionName)
-                        // count os build version
-                        if (foundIndex >= 0) {
-                            osVersionCount[foundIndex].count++;
-                        } else {
-                            osVersionCount.push({
-                                "name": deviceData.osVersionName,
-                                "count": 1,
-                            });
-                        }
-                    }
-
-                    // count os / platform like Windows, Android
-                    // add os if not added already
-                    if (osCount[deviceData.operatingSystem]) {
-                        osCount[deviceData.operatingSystem]++;
-                    } else {
-                        osCount[deviceData.operatingSystem] = 1;
-                    }
-                }
-
-                // MANUFACTURER
-                let manufacturer = deviceData.manufacturer;
-                const foundIndex = manufacturerCount.findIndex(item => item.name === manufacturer)
-
+                // count os build version like 10.0.19043.1288
                 if (foundIndex >= 0) {
-                    manufacturerCount[foundIndex].count++;
+                    osBuildVersionCount[foundIndex].count++;
                 } else {
-                    manufacturerCount.push({
-                        "name": manufacturer,
-                        "count": 1
+                    osBuildVersionCount.push({
+                        "name": osString,
+                        "osVersion": deviceData.osVersion_s,
+                        "count": 1,
+                        "operatingSytem": deviceData.operatingSystem_s
                     });
                 }
 
-                // ENCRYPTION
-                if (deviceDataValue.isEncrypted) {
-                    encryptionCount[0].count++;
+                // count os version like 20H2
+                // add os if not added already
+                let osVersionName = osBuildToVersion(deviceData.osVersion_s)
+
+                if (osVersionName) {
+                    const foundIndex = osVersionCount.findIndex(item => item.name === osVersionName)
+                    // count os build version
+                    if (foundIndex >= 0) {
+                        osVersionCount[foundIndex].count++;
+                    } else {
+                        osVersionCount.push({
+                            "name": osVersionName,
+                            "count": 1,
+                        });
+                    }
+                }
+
+                // count os / platform like Windows, Android
+                // add os if not added already
+                if (osCount[deviceData.operatingSystem_s]) {
+                    osCount[deviceData.operatingSystem_s]++;
                 } else {
-                    encryptionCount[1].count++;
-                }
-
-                // COMPLIANCE
-                if (deviceDataValue.complianceState) {
-                    switch (deviceDataValue.complianceState) {
-                        case "compliant": complianceCount[0].count++; break;
-                        case "noncompliant": complianceCount[1].count++; break;
-                        case "graceperiod": complianceCount[2].count++; break;
-                        default: break;
-                    }
-                }
-
-                // WARRANTY
-                if (deviceWarranty) {
-                    if (deviceWarranty.endDate > now) { // warranty ok
-                        warrantyCount[0].count++
-                    } else { // warranty expired
-                        warrantyCount[1].count++
-                    }
-                } else { // no warranty data
-                    warrantyCount[2].count++
+                    osCount[deviceData.operatingSystem_s] = 1;
                 }
             }
+
+            // MANUFACTURER
+            let manufacturer = deviceData.manufacturer_s;
+            const foundIndex = manufacturerCount.findIndex(item => item.name === manufacturer)
+
+            if (foundIndex >= 0) {
+                manufacturerCount[foundIndex].count++;
+            } else {
+                manufacturerCount.push({
+                    "name": manufacturer,
+                    "count": 1
+                });
+            }
+
+            // ENCRYPTION
+            if (deviceData.isEncrypted_b) {
+                encryptionCount[0].count++;
+            } else {
+                encryptionCount[1].count++;
+            }
+
+            // COMPLIANCE
+            if (deviceData.complianceState_s) {
+                switch (deviceData.complianceState_s) {
+                    case "compliant": complianceCount[0].count++; break;
+                    case "noncompliant": complianceCount[1].count++; break;
+                    case "graceperiod": complianceCount[2].count++; break;
+                    default: break;
+                }
+            }
+
+            // WARRANTY
+            /*if (deviceWarranty) {
+                if (deviceWarranty.endDate > now) { // warranty ok
+                    warrantyCount[0].count++
+                } else { // warranty expired
+                    warrantyCount[1].count++
+                }
+            } else { // no warranty data
+                warrantyCount[2].count++
+            }*/
+
         }
         setOsBuildVersionCount(osBuildVersionCount)
         setManufacturerCount(manufacturerCount)
@@ -199,35 +202,29 @@ export default function MEMDeviceConfigurations() {
         setWarrantyCount(warrantyCount)
     }
 
-
-    const { loadingDevices } = useQuery(getNewestDeviceVersions, {
-        variables: { filter: { successorVersion: null } },
-        onCompleted: (data) => {
-            // console.log(data);
-            setDevices(data.deviceMany);
-            setfilteredDevices(data.deviceMany);
-        },
-        fetchPolicy: "cache-and-network",
-        onError: (error) => {
-            console.log(error)
-        }
-    });
-
-    function refilter() {
-        let filteredDevices = devices;
-
-        // filter if needed
+    const loadingDevices = () => {
+        let query = "managedDevice_CL | where id_g != '' |  summarize arg_max(TimeGenerated, *) by id_g"
         if (selectedTenant) {
-            filteredDevices = devices.filter(device => device.tenant && (device.tenant._id === selectedTenant._id));
+            query = "managedDevice_CL | where id_g != '' and tenantId_g == '" + selectedTenant.tenantId + "' |  summarize arg_max(TimeGenerated, *) by id_g"
         }
-        // console.log(filteredDevices);
-        setfilteredDevices(filteredDevices);
-        buildGraphData(filteredDevices);
+        console.log("query used:" + query)
+
+        postBackendApi("TRG4000LogAnalyticsGet", { kustoQuery: query })
+            .then(response => response.json())
+            .then(data => {
+                console.group(data)
+                setfilteredDevices(data);
+                buildGraphData(data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     }
 
+
     useEffect(() => {
-        refilter();
-    }, [selectedTenant, devices]);
+        loadingDevices();
+    }, [selectedTenant]);
 
     function renderIcon(operatingSystem) {
         switch (operatingSystem) {
@@ -241,6 +238,8 @@ export default function MEMDeviceConfigurations() {
                 return '';
         }
     }
+
+
 
     function triggerWarranytCheck() {
         openNotificationWithIcon('Check Warrenty', 'Job started', 'info');
@@ -376,17 +375,16 @@ export default function MEMDeviceConfigurations() {
                             <List
                                 itemLayout="horizontal"
                                 dataSource={filteredDevices}
-                                loading={loadingDevices}
                                 renderItem={item => (
                                     <List.Item
-                                        key={item.newestDeviceVersions[0].id}
+                                        key={item.id_g}
                                     >
                                         <List.Item.Meta
                                             avatar={
-                                                <Avatar icon={renderIcon(item.newestDeviceVersions[0].operatingSystem)} />
+                                                <Avatar icon={renderIcon(item.operatingSystem_s)} />
                                             }
-                                            title={<Link to={"/memDevices/" + item._id}>{item.newestDeviceVersions[0].deviceName}</Link>}
-                                            description={item.newestDeviceVersions[0].upn}
+                                            title={<Link to={"/memDevices/" + item.id_g}>{item.deviceName_s}</Link>}
+                                            description={item.userPrincipalName_s}
                                         />
                                     </List.Item>
                                 )}

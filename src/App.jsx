@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Switch, useHistory } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 
 // Layout
 import MainLayout from 'layouts/MainLayout';
@@ -39,8 +39,8 @@ import Expiration from 'pages/Reports/Expiration';
 function App({ pca }) {
 
   // The next 3 lines are optional. This is how you configure MSAL to take advantage of the router's navigate functions when MSAL redirects between pages in your app
-  const history = useHistory();
-  const navigationClient = new CustomNavigationClient(history);
+  const navigate = useNavigate();
+  const navigationClient = new CustomNavigationClient(navigate);
   pca.setNavigationClient(navigationClient);
 
   return (
@@ -59,70 +59,76 @@ function App({ pca }) {
 
 function Pages() {
   return (
-    <Switch>
-      <Route path="/" component={Home} exact />
-      <Route path="/health" component={Health} />
-      <Route path="/home" component={Home} />
-      <Route path="/msGraphResources" component={MsGraphResources} />
-      <Route path="/msGraphResourceAdd" component={MsGraphResourceAdd} />
-      <Route path="/configurationTypes" component={ConfigurationTypes} />
-      <Route path="/configurationCompare/:configOne/:configTwo" component={MEMConfigurationCompare} />
-      <Route path="/configurationTypeAdd" component={ConfigurationTypeAdd} />
-      <Route path="/configurationprofile/:configurationId" component={MEMConfiguration} />
-      <Route path="/configurationprofile">
-        <MEMConfigurations title={"Configuration Profiles"} category={'configurationprofile'} />
+    <Routes>
+      <Route path="/" element={<Home />} index />
+      <Route path="health" element={<Health />} />
+      <Route path="home" element={<Home />} />
+      <Route path="msGraphResources" element={<MsGraphResources />} />
+      <Route path="msGraphResourceAdd" element={<MsGraphResourceAdd />} />
+      <Route path="configurationTypes" element={<ConfigurationTypes />} />
+      <Route path="configurationCompare/:configOne/:configTwo" element={<MEMConfigurationCompare />} />
+      <Route path="configurationTypeAdd" element={<ConfigurationTypeAdd />} />
+      <Route path="configurationprofile">
+        <Route index={true} element={<MEMConfigurations title={"Configuration Profiles"} category={'configurationprofile'} />} />
+        <Route path=":configurationId" element={<MEMConfiguration />} />
       </Route>
-      <Route path="/compliance/:configurationId" component={MEMConfiguration} />
-      <Route path="/compliance">
-        <MEMConfigurations title={"Compliance"} category={'compliance'} />
+      <Route path="compliance">
+        <Route index={true} element={<MEMConfigurations title={"Compliance"} category={'compliance'} />} />
+        <Route path=":configurationId" element={<MEMConfiguration />} />
       </Route>
-      <Route path="/enrollment/:configurationId" component={MEMConfiguration} />
-      <Route path="/enrollment">
-        <MEMConfigurations title={"Enrollment"} category={'enrollment'} />
+      <Route path="enrollment">
+        <Route index={true} element={<MEMConfigurations title={"Enrollment"} category={'enrollment'} />} />
+        <Route path=":configurationId" element={<MEMConfiguration />} />
       </Route>
-      <Route path="/appprotection/:configurationId" component={MEMConfiguration} />
-      <Route path="/appprotection">
-        <MEMConfigurations title={"App Protection"} category={'appprotection'} />
+      <Route path="appprotection">
+        <Route index={true} element={<MEMConfigurations title={"App Protection"} category={'appprotection'} />} />
+        <Route path=":configurationId" element={<MEMConfiguration />} />
       </Route>
-      <Route path="/appconfiguration/:configurationId" component={MEMConfiguration} />
-      <Route path="/appconfiguration">
-        <MEMConfigurations title={"App Configuration"} category={'appconfiguration'} />
+      <Route path="appconfiguration">
+        <Route index={true} element={<MEMConfigurations title={"App Configuration"} category={'appconfiguration'} />} />
+        <Route path=":configurationId" element={<MEMConfiguration />} />
       </Route>
-      <Route path="/update/:configurationId" component={MEMConfiguration} />
-      <Route path="/update">
-        <MEMConfigurations title={"Update Ring"} category={'update'} />
+      <Route path="update">
+        <Route index={true} element={<MEMConfigurations title={"Update Ring"} category={'update'} />} />
+        <Route path=":configurationId" element={<MEMConfiguration />} />
       </Route>
-      <Route path="/autopilot/:configurationId" component={MEMConfiguration} />
-      <Route path="/autopilot">
-        <MEMConfigurations title={"Autopilot"} category={'autopilot'} />
+      <Route path="autopilot">
+        <Route index={true} element={<MEMConfigurations title={"Autopilot"} category={'autopilot'} />} />
+        <Route path=":configurationId" element={<MEMConfiguration />} />
       </Route>
-      <Route path="/deviceManagementScript/:configurationId" component={MEMConfiguration} />
-      <Route path="/deviceManagementScript">
-        <MEMConfigurations title={"Powershell"} category={'deviceManagementScript'} />
+      <Route path="deviceManagementScript">
+        <Route index={true} element={<MEMConfigurations title={"Powershell"} category={'deviceManagementScript'} />} />
+        <Route path=":configurationId" element={<MEMConfiguration />} />
       </Route>
-      <Route path="/deviceHealthScript/:configurationId" component={MEMConfiguration} />
-      <Route path="/deviceHealthScript">
-        <MEMConfigurations title={"Proactive Remediation"} category={'deviceHealthScript'} />
+      <Route path="deviceHealthScript">
+        <Route index={true} element={<MEMConfigurations title={"Proactive Remediation"} category={'deviceHealthScript'} />} />
+        <Route path=":configurationId" element={<MEMConfiguration />} />
       </Route>
-      <Route path="/memDevices/:deviceId" component={MEMDevice} />
-      <Route path="/memDevices" component={MEMDevices} />
-      <Route path="/endpointSecurity/:configurationId" component={MEMConfiguration} />
-      <Route path="/endpointSecurity">
-        <MEMConfigurations title={"Endpoint Security"} category={'endpointSecurity'} />
+      <Route path="memDevices">
+        <Route index={true} element={<MEMDevices />} />
+        <Route path=":deviceId" element={<MEMDevice />} />
       </Route>
-      <Route path="/expiration" component={Expiration} />
-      <Route path="/deploymentAdd" component={DeploymentAdd} />
-      <Route path="/deployments/:deploymentId" component={Deployment} />
-      <Route path="/deployments" component={Deployments} />
-      <Route path="/tenantAdd" component={TenantAdd} />
-      <Route path="/tenants" component={Tenants} />
-      <Route path="/profile" component={Profile} />
-      <Route path="/changeManagement" component={ChangeManagement} />
-      <Route path="/jobs/:tenantId" component={Jobs} />
-      <Route path="/jobs" component={Jobs} />
-      <Route path="/adminTools" component={AdminTools} />
-      <Route path="/tenantverification" component={TenantVerification} />
-    </Switch>
+      <Route path="endpointSecurity">
+        <Route index={true} element={<MEMConfigurations title={"Endpoint Security"} category={'endpointSecurity'} />} />
+        <Route path=":configurationId" element={<MEMConfiguration />} />
+      </Route>
+      <Route path="expiration" element={<Expiration />} />
+      <Route path="deploymentAdd" element={<DeploymentAdd />} />
+      <Route path="deployments">
+        <Route index={true} element={<Deployments />}></Route>
+        <Route path=":deploymentId" element={<Deployment />} />
+      </Route>
+      <Route path="tenantAdd" element={<TenantAdd />} />
+      <Route path="tenants" element={<Tenants />} />
+      <Route path="profile" element={<Profile />} />
+      <Route path="changeManagement" element={<ChangeManagement />} />
+      <Route path="jobs">
+        <Route index={true} element={<Jobs />} />
+        <Route path=":tenantId" element={<Jobs />} />
+      </Route>
+      <Route path="adminTools" element={<AdminTools />} />
+      <Route path="tenantverification" element={<TenantVerification />} />
+    </Routes>
   )
 }
 

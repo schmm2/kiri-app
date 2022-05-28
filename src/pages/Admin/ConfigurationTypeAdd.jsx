@@ -8,18 +8,18 @@ import { JSONSchemaBridge } from "uniforms-bridge-json-schema";
 import { useQuery, useMutation } from '@apollo/client';
 import Ajv from "ajv";
 import DefaultPage from '../../layouts/DefaultPage';
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const ajv = new Ajv({ allErrors: true, useDefaults: true });
 
 export default function ConfigurationTypeAdd() {
     const [configurationTypeSchema, setConfigurationTypeSchema] = useState(null);
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const [createConfigurationType] = useMutation(configurationTypeCreateOneMutation, {
         onCompleted(data) {
             // console.log(data);
-            history.push("/configurationTypes");
+            navigate("/configurationTypes");
         }
     });
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { tenantVerify as tenantVerifyMutation } from "graphql/mutations"
-import { useLocation, useHistory } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import DefaultPage from '../../layouts/DefaultPage'
 import { useMutation } from '@apollo/client';
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
@@ -11,8 +11,7 @@ function useQuery() {
 
 export default function TenantVerification() {
     let query = useQuery();
-    const history = useHistory();
-
+    const navigate = useNavigate();
     const [error, setError] = useState()
 
     const [verifiyTenant] = useMutation(tenantVerifyMutation, {
@@ -30,7 +29,7 @@ export default function TenantVerification() {
                 if (record.verified) {
                     // tenant verified status was updated in backend
                     openNotificationWithIcon('Tenant Verification', 'verified', 'success');
-                    history.push("/tenants");
+                    navigate("/tenants");
                 }
                 else {
                     // something went wrong updating the tenant status in the backend

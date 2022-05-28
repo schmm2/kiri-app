@@ -9,7 +9,7 @@ import { ProfileData } from "components/ProfileData";
 
 export default function Profile() {
   const { instance, inProgress } = useMsal();
-  const [graphData, setGraphData] = useState < null | GraphData > (null);
+  const [graphData, setGraphData] = useState < null | graphData > (null);
 
   useEffect(() => {
     if (!graphData && inProgress === InteractionStatus.None) {

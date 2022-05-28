@@ -35,7 +35,7 @@ function App() {
   return (
     <div className="App">
       <Main>
-        <Switch>
+        <Routes>
           <Route path="/" component={Home} exact />
           <Route path="/home" component={Home} />
           <Route path="/msGraphResources" component={MsGraphResources} />
@@ -52,7 +52,7 @@ function App() {
           <Route path="/tenantAdd" component={TenantAdd} />
           <Route path="/jobs/:tenantId" component={Jobs} />
           <Route path="/jobs" component={Jobs} />
-        </Switch>
+        </Routes>
       </Main>
     </div>
   );

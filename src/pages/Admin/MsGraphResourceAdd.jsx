@@ -6,15 +6,15 @@ import { bridge as addMsGraphResourceSchema } from 'forms/msGraphResourceAdd';
 import { Button } from "antd"
 import { useMutation } from '@apollo/client';
 import DefaultPage from '../../layouts/DefaultPage';
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function MsGraphResourceAdd() {
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const [createMsGraphResource] = useMutation(msGraphResourceCreateOneMutation, {
         onCompleted(data) {
             console.log(data);
-            history.push("/msGraphResources");
+            navigate("/msGraphResources");
         }
     });
 

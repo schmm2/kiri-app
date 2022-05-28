@@ -6,15 +6,15 @@ import { Button } from "antd";
 import { deploymentCreateOne } from "graphql/mutations";
 import { useMutation } from '@apollo/client';
 import DefaultPage from '../../layouts/DefaultPage';
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function DeploymentAdd() {
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const [createDeployment] = useMutation(deploymentCreateOne, {
         onCompleted(data) {
             console.log(data);
-            history.push("/deployments");
+            navigate("/deployments");
         }
     });
 

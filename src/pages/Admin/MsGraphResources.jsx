@@ -43,6 +43,10 @@ export default function MsGraphResources() {
             dataIndex: "version",
         },
         {
+            title: "Category",
+            dataIndex: "category",
+        },
+        {
             title: "Expand Attributes",
             dataIndex: "expandAttributes"
         },

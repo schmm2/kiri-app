@@ -260,6 +260,7 @@ export const msGraphResourceMany = gql`
       version,
       createdAt,
       expandAttributes,
+      category,
       updatedAt,
       configurationTypes{
         name

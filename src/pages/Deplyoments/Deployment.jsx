@@ -2,12 +2,13 @@ import React from "react";
 import { deploymentById } from "graphql/queries";
 import { useQuery } from '@apollo/client';
 import { Button, Space, Table } from 'antd';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Row, Col } from 'antd';
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
 import { postBackendApi } from 'util/api';
 
 export default function Deployment(props) {
+    const navigate = useNavigate();
 
     const { match: { params } } = props;
     const { loading, error, data } = useQuery(deploymentById, {
@@ -89,7 +90,7 @@ export default function Deployment(props) {
             <div className="controlBottom">
                 <Space align="end">
                     <Button>
-                        <Link to="#" onClick={props.history.goBack}>Back</Link>
+                        <Link to="#" onClick={() => navigate(-1)}>Back</Link>
                     </Button>
                 </Space>
             </div>

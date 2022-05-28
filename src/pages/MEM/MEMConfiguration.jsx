@@ -1,6 +1,6 @@
 import React, { useReducer, useState } from "react";
 import { configurationById } from "graphql/queries";
-import { Link } from "react-router-dom";
+import { Link, useParams, useNavigate, Navigate } from "react-router-dom";
 import { updatedDiff } from 'deep-object-diff';
 import { renderDate } from 'util/renderDate';
 import { findType } from 'util/findType';
@@ -18,6 +18,8 @@ import { RenderData } from "components/RenderData";
 const { TabPane } = Tabs;
 
 export default function MEMConfiguration(props) {
+    const params = useParams();
+    const navigate = useNavigate();
 
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [settingsData, setSettingsData] = useState(null);
@@ -47,7 +49,7 @@ export default function MEMConfiguration(props) {
         },
     ]
 
-    const { match: { params } } = props;
+
     const { data, dataLoading, dataError } = useQuery(configurationById, {
         variables: { id: params.configurationId },
         onCompleted: (data) => {
@@ -458,7 +460,7 @@ export default function MEMConfiguration(props) {
             <div className="controlBottom">
                 <Space align="end">
                     <Button>
-                        <Link to="#" onClick={props.history.goBack}>Back</Link>
+                        <Link to="#" onClick={() => navigate(-1)}>Back</Link>
                     </Button>
                 </Space>
             </div>
