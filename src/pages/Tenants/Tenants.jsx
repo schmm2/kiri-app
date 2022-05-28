@@ -80,6 +80,22 @@ export default function Tenants() {
       });
   }
 
+  
+  async function triggerTest(tenantDbId) {
+    //console.log("update tenant data for tenantId: " + tenantDbId);
+    openNotificationWithIcon('Pull Data', 'start Job', 'success');
+
+    postBackendApi("orchestrators/ORC5101MEMConfigurationCreateTest", { tenantDbId: tenantDbId})
+      .then(response => response.json())
+      .then(data => {
+        //console.log(data);
+        openNotificationWithIcon('Pull Data', 'Job started', 'success');
+      }).catch((error) => {
+        openNotificationWithIcon('Pull Data', 'Job error', 'error');
+        console.log(error);
+      });
+  }
+
   async function triggerDataCheck(tenantDbId) {
     //console.log("update tenant data for tenantId: " + tenantDbId);
     openNotificationWithIcon('Check Data', 'start Job', 'success');
@@ -164,6 +180,7 @@ export default function Tenants() {
           <a href="#" rel="noreferrer" onClick={() => triggerBackup(record._id)}>Backup</a>
           <a rel={'external'} rel="noreferrer" target="_blank" href={"https://login.microsoftonline.com/" + record.tenantId + "/adminconsent?client_id=" + record.appId}>Grant Permission</a>
           <a href="#" rel="noreferrer" onClick={() => triggerDataCheck(record._id)}>Check Data</a>
+          <a href="#" rel="noreferrer" onClick={() => triggerTest(record._id)}>Test</a>
           <a href="#" rel="noreferrer" onClick={() => {
             deleteTenant({
               variables: { id: record._id },

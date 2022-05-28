@@ -45,32 +45,32 @@ export default function MEMConfigurationCompare(props) {
             key: 'value',
         },
         {
-            title: 'Active Version',
-            dataIndex: 'activeVersion',
-            key: 'activeVersion',
-            render: (text, record) => <RenderData record={record.versionOne} />
+            title: 'Config 1',
+            dataIndex: 'configOne',
+            key: 'configOne',
+            render: (text, record) => <RenderData record={record.configOne} />
         },
         {
-            title: 'Previous Version',
-            dataIndex: 'previousVersion',
-            key: 'previousVersion',
-            render: (text, record) => <RenderData record={record.versionTwo} />
+            title: 'Config 2',
+            dataIndex: 'configTwo',
+            key: 'configTwo',
+            render: (text, record) => <RenderData record={record.configTwo} />
         },
     ];
 
 
-    const showDiff = (versionOne, versionTwo) => {
+    const showDiff = (configOne, configTwo) => {
 
-        let versionOneValue = JSON.parse(versionOne.value);
-        let versionTwoValue = JSON.parse(versionTwo.value);
+        let configOneValue = JSON.parse(configOne.value);
+        let configTwoValue = JSON.parse(configTwo.value);
 
-        let difference = updatedDiff(versionOneValue, versionTwoValue);
+        let difference = updatedDiff(configOneValue, configTwoValue);
 
         /*
         console.log("Version One")
-        console.log(versionOneValue)
+        console.log(configOneValue)
         console.log("Version Two")
-        console.log(versionTwoValue)
+        console.log(configTwoValue)
         console.log("difference")
         console.log(difference);*/
 
@@ -82,8 +82,8 @@ export default function MEMConfigurationCompare(props) {
             let newDataEntry = {
                 key: index,
                 value: key,
-                versionOne: versionOneValue[key],
-                versionTwo: versionTwoValue[key]
+                configOne: configOneValue[key],
+                configTwo: configTwoValue[key]
             }
             // console.log(newDataEntry);
             dataSourceTmp.push(newDataEntry);
