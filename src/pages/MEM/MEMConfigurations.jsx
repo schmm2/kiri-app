@@ -251,7 +251,8 @@ export default function MEMConfigurations(props) {
         }
       }, [selectedTenant]);
       */
-     
+
+      
     const columns = [
         {
             title: "Name",
