@@ -204,14 +204,15 @@ export default function MEMDeviceConfigurations() {
 
     const loadingDevices = () => {
         let query = "managedDevice_CL | where id_g != '' |  summarize arg_max(TimeGenerated, *) by id_g"
+        // filter for selected Tenant
         if (selectedTenant) {
             query = "managedDevice_CL | where id_g != '' and tenantId_g == '" + selectedTenant.tenantId + "' |  summarize arg_max(TimeGenerated, *) by id_g"
         }
-        console.log("query used:" + query)
 
         postBackendApi("TRG4000LogAnalyticsGet", { kustoQuery: query })
             .then(response => response.json())
             .then(data => {
+                console.log("query used:" + query)
                 console.group(data)
                 setfilteredDevices(data);
                 buildGraphData(data);

@@ -122,7 +122,6 @@ export const configurationById = gql`
       configurationVersions(sort: GRAPHMODIFIEDAT_DESC) {
         _id
         displayName
-        isNewest
         graphModifiedAt
         value
         state
@@ -151,7 +150,6 @@ export const getNewestConfigurationVersions = gql`
       newestConfigurationVersion {
         _id
         displayName
-        isNewest
         graphModifiedAt  
         state
       }
@@ -174,7 +172,6 @@ export const getNewestConfigurationVersionsByIds = gql`
       newestConfigurationVersion {
         _id
         displayName
-        isNewest
         graphModifiedAt  
         state
         value
@@ -193,7 +190,6 @@ export const getNewestConfigurationVersionsByTenant = gql`
         newestConfigurationVersions {
           _id
           displayName
-          isNewest
           graphModifiedAt  
           state
         }
@@ -216,7 +212,6 @@ export const getTenantNewestConfigurationVersions = gql`
         newestConfigurationVersions {
           _id
           displayName
-          isNewest
           graphModifiedAt  
           state
         }
@@ -260,6 +255,14 @@ export const msGraphResourceMany = gql`
       version,
       createdAt,
       expandAttributes,
+      transformRulesPatch{
+        action,
+        property
+      },
+      transformRulesCreate{
+        action,
+        property
+      },
       category,
       updatedAt,
       configurationTypes{
@@ -318,7 +321,6 @@ export const deploymentById = gql`
         newestConfigurationVersion {
           _id
           displayName
-          isNewest
           graphModifiedAt  
           state
         }

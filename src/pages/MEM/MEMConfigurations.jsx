@@ -153,8 +153,15 @@ export default function MEMConfigurations(props) {
                 }
             }
 
+            if(!configurationType){
+                console.error("configtype for config not set, configName: " + JSON.stringify(configuration))
+            }
+
             // check for matching category
-            if (props.category && (props.category === configurationType.category)) {
+            if (props.category &&
+                configurationType &&
+                configurationType.category &&
+                (props.category === configurationType.category)) {
 
                 if (configuration.newestConfigurationVersion) {
                     let newConfigurationObject = {};
@@ -215,29 +222,13 @@ export default function MEMConfigurations(props) {
         }
     }
 
-    const loadingConfigurations = () => {
-        let query = "search * | where Category == '" + props.category + "' | where id_g != '' |  summarize arg_max(TimeGenerated, *) by id_g"
-
-        if (selectedTenant) {
-            //    query = logType + " | where id_g != '' and azureTenantId_g == '" + selectedTenant.tenantId + "' |  summarize arg_max(TimeGenerated, *) by id_g"
-        }
-        console.log("query used:" + query)
-
-        postBackendApi("TRG4000LogAnalyticsGet", { kustoQuery: query })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data)
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    }
-
+    // Category Change -> Refilter
     useEffect(() => {
-        loadingConfigurations()
-        console.log(selectedTenant);
-        console.log("get configurations...")
+        refilter()
+    }, [props.category])
 
+    // Selected Tenant Change -> Query new Data
+    useEffect(() => {
         if (selectedTenant) {
             getConfigurations({
                 variables: {
@@ -254,15 +245,8 @@ export default function MEMConfigurations(props) {
                 }
             });
         }
-    }, [props.category, selectedTenant]);
+    }, [selectedTenant]);
 
-    /*
-    useEffect(() => {
-        if (selectedTenant) {
-          getConfigs(selectedTenant._id)
-        }
-      }, [selectedTenant]);
-      */
 
 
     const columns = [
@@ -397,11 +381,11 @@ export default function MEMConfigurations(props) {
         setIsDeleteModalVisible(true)
     }
 
-    
+
 
     function openCompareView() {
         console.log(selectedConfigurations);
-        let path = 'configurationCompare/' + selectedConfigurations[0] + "/" + selectedConfigurations[1];
+        let path = '/configurationCompare/' + selectedConfigurations[0] + "/" + selectedConfigurations[1];
         navigate(path);
     }
 

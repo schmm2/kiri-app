@@ -2,14 +2,16 @@ import React, { useEffect, useState } from "react";
 import { updatedDiff } from 'deep-object-diff';
 import { Table, Space, Button } from 'antd';
 import { RenderData } from 'components/RenderData'
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { useLazyQuery, useMutation } from '@apollo/client';
 import { getNewestConfigurationVersionsByIds } from "graphql/queries"
 import DefaultPage from '../../layouts/DefaultPage';
 
 export default function MEMConfigurationCompare(props) {
-    const { match: { params } } = props;
+    const params = useParams();
+    const navigate = useNavigate()
+
     const [diffTable, setDiffTable] = useState([]);
 
     const [getConfigurations, { loading, error, data }] = useLazyQuery(getNewestConfigurationVersionsByIds, {
@@ -98,7 +100,7 @@ export default function MEMConfigurationCompare(props) {
             <div className="controlBottom">
                 <Space align="end">
                     <Button>
-                        <Link to="#" onClick={props.history.goBack}>Back</Link>
+                        <Link to="#" onClick={() => {navigate(-1)}}>Back</Link>
                     </Button>
                 </Space>
             </div>

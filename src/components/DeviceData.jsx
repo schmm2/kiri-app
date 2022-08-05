@@ -9,10 +9,11 @@ import {
     SecurityScanOutlined
 } from '@ant-design/icons';
 import { renderDate } from 'util/renderDate'
+import { osBuildToVersion } from "util/osBuildToVersion";
 
 export const DeviceData = ({ deviceData }) => {
     console.log(deviceData)
-    let graphData = JSON.parse(deviceData.newestDeviceVersions[0].value);
+    let graphData = deviceData;
 
     return (
         <List className="deviceData">
@@ -21,7 +22,7 @@ export const DeviceData = ({ deviceData }) => {
                     avatar={<IdcardOutlined />}
                     title="General"
                     description={<span>
-                        Device Name: {graphData.deviceName}
+                        Device Name: {graphData.deviceName_s}
                     </span>}
                 />
             </List.Item>
@@ -30,8 +31,8 @@ export const DeviceData = ({ deviceData }) => {
                     avatar={<SecurityScanOutlined />}
                     title="Security"
                     description={<span>
-                        Compliance: {graphData.complianceState}<br />
-                        Encrypted: {(graphData.isEncrypted).toString()} <br />
+                        Compliance: {graphData.complianceState_s}<br />
+                        Encrypted: {(graphData.isEncrypted_b).toString()} <br />
                     </span>}
                 />
             </List.Item>
@@ -39,7 +40,7 @@ export const DeviceData = ({ deviceData }) => {
                 <List.Item.Meta
                     avatar={<UserOutlined />}
                     description={<span>
-                        UPN: {graphData.userPrincipalName}
+                        UPN: {graphData.userPrincipalName_s}
                     </span>}
                     title="User"
                 />
@@ -49,11 +50,11 @@ export const DeviceData = ({ deviceData }) => {
                     avatar={<DesktopOutlined />}
                     title="Hardware"
                     description={<span>
-                        Model: {graphData.model}<br />
-                        Manufacturer: {graphData.manufacturer}<br />
-                        SerialNumber: {graphData.serialNumber}<br />
-                        Storage Space: {Math.floor(graphData.totalStorageSpaceInBytes / 1024 / 1024 / 1024)} GB <br />
-                        Free Space: {Math.floor(graphData.freeStorageSpaceInBytes / 1024 / 1024 / 1024)} GB <br />
+                        Model: {graphData.model_s}<br />
+                        Manufacturer: {graphData.manufacturer_s}<br />
+                        SerialNumber: {graphData.serialNumber_s}<br />
+                        Storage Space: {Math.floor(graphData.totalStorageSpaceInBytes_d / 1024 / 1024 / 1024)} GB <br />
+                        Free Space: {Math.floor(graphData.freeStorageSpaceInBytes_d / 1024 / 1024 / 1024)} GB <br />
                         {
                             deviceData.deviceWarranty &&
                             <span>
@@ -70,8 +71,8 @@ export const DeviceData = ({ deviceData }) => {
                     avatar={<SettingOutlined />}
                     title="Management"
                     description={<span>
-                        Join Type: {graphData.joinType} <br />
-                        Autopilot: {graphData.autopilotEnrolled.toString()}
+                        Join Type: {graphData.joinType_s} <br />
+                        Autopilot: {(graphData.autopilotEnrolled_b).toString()}
                     </span>
                     }
                 />
@@ -81,10 +82,10 @@ export const DeviceData = ({ deviceData }) => {
                     avatar={<DeploymentUnitOutlined />}
                     title="Operating System"
                     description={<span>
-                        OS: {graphData.operatingSystem}<br />
-                        Version: {deviceData.osVersionName} <br />
-                        Build: {graphData.osVersion} <br />
-                        Edition: {graphData.skuFamily}
+                        OS: {graphData.operatingSystem_s}<br />
+                        Version: {osBuildToVersion(graphData.osVersion_s)} <br />
+                        Build: {graphData.osVersion_s} <br />
+                        Edition: {graphData.skuFamily_s}
                     </span>}
                 />
             </List.Item>

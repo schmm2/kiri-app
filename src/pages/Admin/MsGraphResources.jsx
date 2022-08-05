@@ -13,12 +13,15 @@ import DefaultPage from '../../layouts/DefaultPage';
 
 export default function MsGraphResources() {
     const { loading, error, data = [] } = useQuery(msGraphResourceMany, {
-        fetchPolicy: "cache-and-network"
+        fetchPolicy: "cache-and-network",
+        onCompleted: (data) =>{
+            console.log(data)
+        } 
     });
 
     const [deleteMsGraphResource] = useMutation(msGraphResourceRemoveByIdMutation, {
         onCompleted(data) {
-            // console.log(data);
+            //console.log(data);
             if (!data.msGraphResourceRemoveById) {
                 openNotificationWithIcon('Delete', 'error deleting object', 'error');
             }
@@ -49,6 +52,20 @@ export default function MsGraphResources() {
         {
             title: "Expand Attributes",
             dataIndex: "expandAttributes"
+        },
+        {
+            title: "Transform Rules Create",
+            dataIndex: "transformRulesCreate",
+            render: (text, record) => {
+                <span>{(record.transformRulesCreate).toString()}</span>
+            }
+        },
+        {
+            title: "Transform Rules Patch",
+            dataIndex: "transformRulesPatch",
+            render: (text, record) => {
+                <span>{(record.transformRulesPatch).toString()}</span>
+            }
         },
         {
             title: "Number of ConfigurationTypes",

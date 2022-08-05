@@ -20,7 +20,7 @@ export default function Deployments(props) {
         {
             title: "Name",
             dataIndex: "name",
-            render: (text, record) => <Link to={'deployments/' + record._id} > {record.name} </Link>,
+            render: (text, record) => <Link to={record._id} > {record.name} </Link>,
             visible: true
         },
         {

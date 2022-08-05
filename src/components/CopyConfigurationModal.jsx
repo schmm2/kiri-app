@@ -9,10 +9,11 @@ export const CopyConfigurationModal = ({ configurationDisplayName, showModal, on
     let input = React.createRef();
 
     const handleOk = (e) => {
+        //console.log(input)
         onCopy({
             targetTenant: selectedTenantInModal,
             // https://reactjs.org/docs/uncontrolled-components.html
-            newConfigName: input.current.state.value
+            newConfigName: input.current.input.value
         });
         onClose(e);
     };

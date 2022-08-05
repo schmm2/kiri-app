@@ -115,7 +115,7 @@ function Pages() {
       <Route path="expiration" element={<Expiration />} />
       <Route path="deploymentAdd" element={<DeploymentAdd />} />
       <Route path="deployments">
-        <Route index={true} element={<Deployments />}></Route>
+        <Route index={true} element={<Deployments />} />
         <Route path=":deploymentId" element={<Deployment />} />
       </Route>
       <Route path="tenantAdd" element={<TenantAdd />} />

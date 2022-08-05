@@ -2,15 +2,15 @@ import React from "react";
 import { deploymentById } from "graphql/queries";
 import { useQuery } from '@apollo/client';
 import { Button, Space, Table } from 'antd';
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Row, Col } from 'antd';
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
 import { postBackendApi } from 'util/api';
 
 export default function Deployment(props) {
     const navigate = useNavigate();
+    const params = useParams();
 
-    const { match: { params } } = props;
     const { loading, error, data } = useQuery(deploymentById, {
         variables: { id: params.deploymentId },
         onCompleted: (data) => { console.log(data) },
