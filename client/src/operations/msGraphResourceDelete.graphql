@@ -1,0 +1,5 @@
+mutation msGraphResourceDelete($id: ID!) {
+  msGraphResourceDelete(id: $id) {
+    id
+  }
+}

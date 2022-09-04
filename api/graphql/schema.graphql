@@ -1,0 +1,360 @@
+scalar Date
+
+type Mutation {
+  tenantCreate(record: CreateTenantInput): Tenant
+  tenantUpdate(id: ID!, record: UpdateTenantInput!): Tenant
+  tenantDelete(id: ID!): Tenant
+
+  msGraphResourceCreate(record: CreateMsGraphResourceInput): MsGraphResource
+  msGraphResourceDelete(id: ID!): MsGraphResource
+
+  configurationTypeCreate(
+    record: CreateConfigurationTypeInput
+  ): ConfigurationType
+  configurationTypeDelete(id: ID!): ConfigurationType
+
+  deviceCreate(record: CreateDeviceInput): Device
+  deviceDelete(id: ID!): Device
+
+  configurationVersionCreate(
+    record: CreateConfigurationVersionInput
+  ): ConfigurationVersion
+  configurationVersionDelete(id: ID!): ConfigurationVersion
+
+  configurationCreate(record: CreateConfigurationInput!): Configuration
+  configurationDelete(id: ID!): Configuration
+
+  jobCreate(record: CreateJobInput!): Job
+  jobDelete(id: ID!): Job
+
+  deploymentCreate(record: CreateDeploymentInput!): Deployment
+  deploymentUpdate(id: ID!, record: UpdateDeploymentInput!): Deployment
+  deploymentDelete(id: ID!): Deployment
+
+  deviceVersionCreate(record: CreateDeviceVersionInput!): DeviceVersion
+  deviceVersionDelete(id: ID!): DeviceVersion
+
+  deviceWarrantyCreate(record: CreateDeviceWarrantyInput!): DeviceWarranty
+  deviceWarrantyDelete(id: ID!): DeviceWarranty
+}
+
+type Query {
+  tenantById(id: ID!): Tenant
+  tenantMany: [Tenant!]!
+
+  configurationById(id: ID!): Configuration
+  configurationMany: [Configuration!]!
+  configurationByIds(ids: [ID!]!, limit: Int = 100): [Configuration!]!
+  
+  msGraphResourceByIds(ids: [ID!]!, limit: Int = 100): [MsGraphResource!]!
+  msGraphResourceById(id: ID!): MsGraphResource
+  msGraphResourceMany: [MsGraphResource!]!
+
+  configurationTypeByIds(ids: [ID!]!, limit: Int = 100): [ConfigurationType!]!
+  configurationTypeById(id: ID!): ConfigurationType
+  configurationTypeMany: [ConfigurationType!]!
+
+  deviceById(id: ID!): Device
+  deviceMany: [Device!]!
+
+  configurationVersionByIds(
+    ids: [ID!]!
+    limit: Int = 100
+  ): [ConfigurationVersion!]!
+  configurationVersionById(id: ID!): ConfigurationVersion
+  configurationVersionMany: [ConfigurationVersion!]!
+
+  jobByIds(ids: [ID!]!, limit: Int = 100): [Job!]!
+  jobById(id: ID!): Job
+  jobMany: [Job!]!
+
+  deploymentById(id: ID!): Deployment
+  deploymentMany: [Deployment!]!
+
+  deviceVersionById(id: ID!): DeviceVersion
+  deviceVersionMany: [DeviceVersion!]!
+
+  deviceWarrantyById(id: ID!): DeviceWarranty
+  deviceWarrantyMany: [DeviceWarranty!]!
+}
+
+type Tenant {
+  tenantId: String!
+  appId: String!
+  name: String!
+  verified: Boolean
+  id: ID!
+  updatedAt: Date
+  createdAt: Date
+  configurations(skip: Int, limit: Int = 100): [Configuration!]!
+  jobs(skip: Int, limit: Int = 100): [Job!]!
+}
+
+input CreateTenantInput {
+  tenantId: String!
+  appId: String!
+  name: String!
+  verified: Boolean
+  updatedAt: Date
+  createdAt: Date
+}
+
+input UpdateTenantInput {
+  tenantId: String
+  appId: String
+  name: String
+  verified: Boolean
+  updatedAt: Date
+  createdAt: Date
+}
+
+type Configuration {
+  graphId: String!
+  graphCreatedAt: String!
+  tenant: Tenant!
+  configurationType: ConfigurationType
+  newestConfigurationVersion: ConfigurationVersion
+  id: ID!
+  updatedAt: Date
+  createdAt: Date
+  configurationVersions(skip: Int, limit: Int = 100): [ConfigurationVersion]
+}
+
+input CreateConfigurationInput {
+  graphId: String!
+  graphCreatedAt: String!
+  tenant: ID!
+  configurationType: ID!
+  newestConfigurationVersion: ID
+  updatedAt: Date
+  createdAt: Date
+}
+
+type MsGraphResource {
+  name: String!
+  resource: String!
+  version: String!
+  nameAttribute: String
+  expandAttributes: [String]
+  category: String
+  id: ID!
+  updatedAt: Date
+  createdAt: Date
+  
+}
+
+input CreateMsGraphResourceInput {
+  name: String!
+  resource: String!
+  version: String!
+  nameAttribute: String
+  expandAttributes: [String]
+  category: String
+  updatedAt: Date
+  createdAt: Date
+}
+
+type ConfigurationType {
+  name: String!
+  platform: String!
+  category: String!
+  msGraphResource: MsGraphResource
+  id: ID!
+  updatedAt: Date
+  createdAt: Date
+  configurations(ids: [ID!]!): [Configuration]!
+}
+
+input CreateConfigurationTypeInput {
+  name: String!
+  platform: String!
+  category: String!
+  msGraphResource: ID
+  updatedAt: Date
+  createdAt: Date
+}
+
+type Device {
+  deviceId: String!
+  tenant: Tenant
+  deviceWarranty: DeviceWarranty
+  id: ID!
+  updatedAt: Date
+  createdAt: Date
+  newestDeviceVersions(skip: Int, limit: Int = 100): [DeviceVersion!]!
+}
+
+input CreateDeviceInput {
+  deviceId: String!
+  tenant: ID!
+  deviceWarranty: ID
+  updatedAt: Date
+  createdAt: Date
+}
+
+input CreateDeviceWarrantyInput {
+  serialNumber: String!
+  productName: String
+  endDate: Date!
+  startDate: Date!
+  device: ID!
+  updatedAt: Date
+  createdAt: Date
+}
+
+type DeviceWarranty {
+  serialNumber: String!
+  productName: String
+  endDate: Date!
+  startDate: Date!
+  device: ID!
+  id: ID!
+  updatedAt: Date
+  createdAt: Date
+}
+
+type DeviceVersion {
+  deviceName: String!
+  manufacturer: String
+  operatingSystem: String
+  upn: String
+  osVersion: String
+  osVersionName: String
+  state: EnumDeviceVersionState!
+  value: String!
+  version: String!
+  device: Device
+  successorVersion: ID
+  id: ID!
+  updatedAt: Date
+  createdAt: Date
+}
+
+input CreateDeviceVersionInput {
+  deviceName: String!
+  manufacturer: String
+  operatingSystem: String
+  upn: String
+  osVersion: String
+  osVersionName: String
+  state: EnumDeviceVersionState!
+  value: String!
+  version: String!
+  device: ID
+  successorVersion: ID
+  updatedAt: Date
+  createdAt: Date
+}
+
+input CreateConfigurationVersionInput {
+  displayName: String!
+  graphModifiedAt: String!
+  graphVersion: String
+  state: EnumConfigurationVersionState!
+  value: String!
+  version: String!
+  configuration: ID
+  updatedAt: Date
+  createdAt: Date
+}
+
+enum EnumDeviceVersionState {
+  new
+  modified
+  deleted
+}
+
+type ConfigurationVersion {
+  displayName: String!
+  graphModifiedAt: String!
+  graphVersion: String
+  state: EnumConfigurationVersionState!
+  value: String!
+  version: String!
+  configuration: Configuration
+  id: ID!
+  updatedAt: Date
+  createdAt: Date
+}
+
+enum EnumConfigurationVersionState {
+  new
+  modified
+  deleted
+}
+
+type Job {
+  type: String!
+  state: EnumJobState!
+  log: [Log]
+  tenant: Tenant
+  id: ID!
+  updatedAt: Date
+  createdAt: Date
+}
+
+enum EnumJobState {
+  STARTED
+  RUNNING
+  FINISHED
+  WARNING
+  ERROR
+}
+
+type Log {
+  message: String
+  action: String
+  state: EnumLogState
+  id: ID!
+}
+
+input CreateJobInput {
+  type: String!
+  state: EnumJobState!
+  log: [LogInput]
+  tenant: ID
+  updatedAt: Date
+  createdAt: Date
+}
+
+input LogInput {
+  message: String
+  action: String
+  state: EnumLogState
+  id: ID
+}
+
+enum EnumLogState {
+  DEFAULT
+  WARNING
+  ERROR
+  SUCCESS
+}
+
+type Deployment {
+  name: String!
+  configurations(limit: Int = 100): [Configuration!]!
+  executionDate: Date
+  tenants(limit: Int = 100): [Tenant!]!
+  id: ID!
+  updatedAt: Date
+  createdAt: Date
+}
+
+input CreateDeploymentInput {
+  name: String!
+  configurations: [ID]
+  executionDate: Date
+  tenants: [ID]
+  updatedAt: Date
+  createdAt: Date
+}
+
+input UpdateDeploymentInput {
+  name: String
+  configurations: [ID]
+  executionDate: Date
+  tenants: [ID]
+  updatedAt: Date
+  createdAt: Date
+}

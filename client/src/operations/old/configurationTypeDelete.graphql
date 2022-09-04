@@ -1,0 +1,5 @@
+ mutation ConfigurationTypeRemoveById($id: ID!) {
+    configurationTypeRemoveById(id: $id) {
+      recordId
+    }
+  }

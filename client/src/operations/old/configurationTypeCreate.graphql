@@ -1,0 +1,8 @@
+mutation ConfigurationTypeCreateOne($record: CreateOneConfigurationTypeInput!) {
+  configurationTypeCreateOne(record: $record) {
+    record {
+      id
+      configurationVersions
+    }
+  }
+}

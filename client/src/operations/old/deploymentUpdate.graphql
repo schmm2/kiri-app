@@ -1,0 +1,14 @@
+mutation DeploymentUpdateOneMutation($record: UpdateOneDeploymentInput!, $filter: FilterUpdateOneDeploymentInput!) {
+  deploymentUpdateOne(record: $record, filter: $filter) {
+    record {
+      id
+      name
+      tenants {
+        id
+      }
+      configurations {
+        id
+      }
+    }
+  }
+}

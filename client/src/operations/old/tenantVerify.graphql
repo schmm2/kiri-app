@@ -1,0 +1,11 @@
+mutation ($tenantId: String!, $verified: Boolean!) {
+  tenantUpdateOne(
+    filter: { tenantId: $tenantId }
+    record: { verified: $verified }
+  ) {
+    record {
+      _id
+      verified
+    }
+  }
+}
