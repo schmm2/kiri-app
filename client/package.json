@@ -1,5 +1,5 @@
 {
-    "name": "kiri-app",
+    "name": "kiri-client",
     "version": "0.1.0",
     "private": true,
     "dependencies": {
@@ -43,9 +43,8 @@
     },
     "scripts": {
         "start": "craco start",
-        "build": "craco --max_old_space_size=3072 build",
+        "build": "craco build",
         "test": "craco test",
-        "postinstall": "npm run build",
         "eject": "craco eject"
     },
     "eslintConfig": {

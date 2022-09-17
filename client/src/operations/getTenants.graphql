@@ -1,0 +1,7 @@
+query getTenants {
+  tenantMany {
+    name,
+    id,
+    tenantId
+  }
+}

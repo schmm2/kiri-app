@@ -16,6 +16,12 @@ const resolvers: Resolvers = {
     msGraphResourceMany(_, __, { dataSources }) {
       return dataSources.msgraphresource.getMsGraphResources();
     },
+    configurationTypeMany(_, __, { dataSources }) {
+      return dataSources.configurationType.getConfigurationTypes();
+    },
+    configurationTypeById(_, { id }, { dataSources }) {
+      return dataSources.configurationType.getConfigurationType(id);
+    },
     configurationMany(_, __, { dataSources }) {
       return dataSources.configuration.getConfigurations();
     },
@@ -25,6 +31,15 @@ const resolvers: Resolvers = {
     deploymentMany(_, __, { dataSources }) {
       return dataSources.deployment.getDeployments();
     },
+    deploymentById(_, {id}, { dataSources }) {
+      return dataSources.deployment.getDeployment(id);
+    },
+    jobMany(_, __, { dataSources }) {
+      return dataSources.job.getJobs();
+    },
+    jobById(_, {id}, { dataSources }) {
+      return dataSources.job.getJob(id);
+    }
   },
   Deployment: {
     async targetTenants(deployment, args, { dataSources }) {
@@ -43,14 +58,12 @@ const resolvers: Resolvers = {
       return newTenant;
     },
     async createDeployment(_, { record }, { dataSources }) {
-      console.log(record);
       const newDeployment = await dataSources.deployment.createDeployment(
         record
       );
-      console.log(newDeployment);
       return newDeployment;
     },
-  }
+  },
 };
 
 export default resolvers;

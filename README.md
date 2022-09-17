@@ -18,13 +18,19 @@ Local installation
 - Yarn
 - Nodejs
 
-### Setup
+### Development Setup
+
+## API
+
+Todo
+
+## Client
 
 - git clone
 - yarn install
-- Create .env file
-  - Add backend URI: REACT_APP_BACKENDAPIURL="localhost:7071/api"
-  - Add auth app id: REACT_APP_AUTHAPPID="xxxx"
+- Create .env file in folder client
+  - Add backend URI: REACT_APP_BACKENDAPIURL="http://localhost:7071/api"
+  - Add auth app id: REACT_APP_AUTHAPPID="xxxx" from Azure AD
 
 ## Get started
 

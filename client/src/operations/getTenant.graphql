@@ -1,0 +1,6 @@
+query getTenant($id: ID!) {
+  tenantById(id: $id) {
+    name,
+    id
+  }
+}

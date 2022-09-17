@@ -1,0 +1,6 @@
+query getMsGraphResources {
+  msGraphResourceMany {
+    name,
+    id
+  }
+}

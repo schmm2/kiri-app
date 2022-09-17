@@ -514,6 +514,38 @@ export type DeleteTenantMutation = {
   deleteTenant?: { __typename?: "Tenant"; id: string } | null;
 };
 
+export type GetMsGraphResourcesQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetMsGraphResourcesQuery = {
+  __typename?: "Query";
+  msGraphResourceMany: Array<{
+    __typename?: "MsGraphResource";
+    name: string;
+    id: string;
+  }>;
+};
+
+export type GetTenantQueryVariables = Exact<{
+  id: Scalars["ID"];
+}>;
+
+export type GetTenantQuery = {
+  __typename?: "Query";
+  tenantById?: { __typename?: "Tenant"; name: string; id: string } | null;
+};
+
+export type GetTenantsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetTenantsQuery = {
+  __typename?: "Query";
+  tenantMany: Array<{
+    __typename?: "Tenant";
+    name: string;
+    id: string;
+    tenantId: string;
+  }>;
+};
+
 export const CreateMsGraphResourceDocument = {
   kind: "Document",
   definitions: [
@@ -719,3 +751,105 @@ export const DeleteTenantDocument = {
   DeleteTenantMutation,
   DeleteTenantMutationVariables
 >;
+export const GetMsGraphResourcesDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "getMsGraphResources" },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "msGraphResourceMany" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "name" } },
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  GetMsGraphResourcesQuery,
+  GetMsGraphResourcesQueryVariables
+>;
+export const GetTenantDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "getTenant" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "tenantById" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "name" } },
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<GetTenantQuery, GetTenantQueryVariables>;
+export const GetTenantsDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "getTenants" },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "tenantMany" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "name" } },
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "tenantId" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<GetTenantsQuery, GetTenantsQueryVariables>;

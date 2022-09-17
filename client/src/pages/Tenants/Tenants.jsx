@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { tenantMany, msGraphResourceMany } from "graphql/queries";
+//import { tenantMany, msGraphResourceMany } from "graphql/queries";
 import { tenantRemoveById } from "graphql/mutations";
 import { Link } from "react-router-dom";
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
@@ -7,6 +7,7 @@ import { useQuery, useMutation } from '@apollo/client';
 import { postBackendApi } from 'util/api';
 import { AddToDeploymentModal } from "components/AddToDeploymentModal";
 import { deploymentUpdateOne as deploymentUpdateOneMutation } from "graphql/mutations"
+import { Tenant, GetTenantsDocument, GetMsGraphResourcesDocument } from "generated";
 
 // antd components
 import { Table, Button, Space, Menu, Dropdown } from "antd";
@@ -19,11 +20,11 @@ import {
 var fileDownload = require('js-file-download');
 
 export default function Tenants() {
-  const { loading, error, data } = useQuery(tenantMany, {
+  const { loading, error, data } = useQuery(GetTenantsDocument, {
     fetchPolicy: "cache-and-network"
   });
 
-  const { loading: loadingMsGraphResource, error: errorMsGraphResource, data: dataMsGraphResource } = useQuery(msGraphResourceMany, {
+  const { loading: loadingMsGraphResource, error: errorMsGraphResource, data: dataMsGraphResource } = useQuery(GetMsGraphResourcesDocument, {
     fetchPolicy: "cache-and-network",
     onCompleted: (dataMsGraphResource) => { console.log(dataMsGraphResource) }
   });
@@ -56,7 +57,7 @@ export default function Tenants() {
         <Menu.Item key={"all"} onClick={() => triggerTenantUpdate(tenantDbId)}>All Resources</Menu.Item>
         {dataMsGraphResource && dataMsGraphResource.msGraphResourceMany && dataMsGraphResource.msGraphResourceMany.map((msGraphResource, index) => {
           return (
-            <Menu.Item key={msGraphResource._id} onClick={() => triggerTenantUpdate(tenantDbId, msGraphResource._id)}>
+            <Menu.Item key={msGraphResource.id} onClick={() => triggerTenantUpdate(tenantDbId, msGraphResource.id)}>
               <span>{msGraphResource.name}</span>
             </Menu.Item>
           )
@@ -166,7 +167,7 @@ export default function Tenants() {
       key: 'pulldata',
       render: (text, record) => (
         <Space size="middle">
-          <Dropdown overlay={msGraphResourceMenu(record._id)}>
+          <Dropdown overlay={msGraphResourceMenu(record.id)}>
             <a onClick={e => e.preventDefault()}>Pull Data</a>
           </Dropdown>
         </Space>
@@ -177,15 +178,15 @@ export default function Tenants() {
       key: 'action',
       render: (text, record) => (
         <Space size="middle">
-          <a href="#" rel="noreferrer" onClick={() => triggerBackup(record._id)}>Backup</a>
-          <a rel={'external'} rel="noreferrer" target="_blank" href={"https://login.microsoftonline.com/" + record.tenantId + "/adminconsent?client_id=" + record.appId}>Grant Permission</a>
-          <a href="#" rel="noreferrer" onClick={() => triggerDataCheck(record._id)}>Check Data</a>
-          <a href="#" rel="noreferrer" onClick={() => triggerTest(record._id)}>Test</a>
+          <a href="#" rel="noreferrer" onClick={() => triggerBackup(record.id)}>Backup</a>
+          <a rel={'external'} target="_blank" href={"https://login.microsoftonline.com/" + record.tenantId + "/adminconsent?clientid=" + record.appId}>Grant Permission</a>
+          <a href="#" rel="noreferrer" onClick={() => triggerDataCheck(record.id)}>Check Data</a>
+          <a href="#" rel="noreferrer" onClick={() => triggerTest(record.id)}>Test</a>
           <a href="#" rel="noreferrer" onClick={() => {
             deleteTenant({
-              variables: { id: record._id },
+              variables: { id: record.id },
               refetchQueries: [
-                { query: tenantMany }
+                { query: GetTenantsDocument }
               ]
             });
           }}>Delete</a>
@@ -210,7 +211,7 @@ export default function Tenants() {
   });
 
   function addToDeployment(data) {
-    let deploymentTenantIds = data.tenants.map(tenant => tenant._id);
+    let deploymentTenantIds = data.tenants.map(tenant => tenant.id);
     // console.log(deploymentTenantIds);
     let tenantIdsToAddToDeployment = selectedTenants.filter(id => deploymentTenantIds.indexOf(id) === -1);
     // console.log(tenantIdsToAddToDeployment);
@@ -222,7 +223,7 @@ export default function Tenants() {
       let parameter = {
         variables: {
           record: { tenants: finalTenantIds },
-          filter: { _id: data._id }
+          filter: { id: data.id }
         }
       }
       // console.log(parameter);
@@ -258,7 +259,7 @@ export default function Tenants() {
           ...rowSelection
         }}
         loading={loading}
-        rowKey="_id"
+        rowKey="id"
         columns={columns}
         dataSource={data && data.tenantMany}
         onChange={onChange} />

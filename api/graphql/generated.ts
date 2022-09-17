@@ -3,7 +3,13 @@ import {
   GraphQLScalarType,
   GraphQLScalarTypeConfig,
 } from "graphql";
-import { TenantModel, DeploymentModel, ConfigurationModel } from "./data/types";
+import {
+  TenantModel,
+  DeploymentModel,
+  ConfigurationModel,
+  ConfigurationTypeModel,
+  JobModel,
+} from "./data/types";
 import { ApolloContext } from "./apolloContext";
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
@@ -597,11 +603,7 @@ export type DirectiveResolverFn<
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars["Boolean"]>;
   Configuration: ResolverTypeWrapper<ConfigurationModel>;
-  ConfigurationType: ResolverTypeWrapper<
-    Omit<ConfigurationType, "configurations"> & {
-      configurations: Array<Maybe<ResolversTypes["Configuration"]>>;
-    }
-  >;
+  ConfigurationType: ResolverTypeWrapper<ConfigurationTypeModel>;
   ConfigurationVersion: ResolverTypeWrapper<
     Omit<ConfigurationVersion, "configuration"> & {
       configuration?: Maybe<ResolversTypes["Configuration"]>;
@@ -635,9 +637,7 @@ export type ResolversTypes = {
   EnumLogState: EnumLogState;
   ID: ResolverTypeWrapper<Scalars["ID"]>;
   Int: ResolverTypeWrapper<Scalars["Int"]>;
-  Job: ResolverTypeWrapper<
-    Omit<Job, "tenant"> & { tenant?: Maybe<ResolversTypes["Tenant"]> }
-  >;
+  Job: ResolverTypeWrapper<JobModel>;
   Log: ResolverTypeWrapper<Log>;
   LogInput: LogInput;
   MsGraphResource: ResolverTypeWrapper<MsGraphResource>;
@@ -653,9 +653,7 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
   Boolean: Scalars["Boolean"];
   Configuration: ConfigurationModel;
-  ConfigurationType: Omit<ConfigurationType, "configurations"> & {
-    configurations: Array<Maybe<ResolversParentTypes["Configuration"]>>;
-  };
+  ConfigurationType: ConfigurationTypeModel;
   ConfigurationVersion: Omit<ConfigurationVersion, "configuration"> & {
     configuration?: Maybe<ResolversParentTypes["Configuration"]>;
   };
@@ -681,7 +679,7 @@ export type ResolversParentTypes = {
   DeviceWarranty: DeviceWarranty;
   ID: Scalars["ID"];
   Int: Scalars["Int"];
-  Job: Omit<Job, "tenant"> & { tenant?: Maybe<ResolversParentTypes["Tenant"]> };
+  Job: JobModel;
   Log: Log;
   LogInput: LogInput;
   MsGraphResource: MsGraphResource;

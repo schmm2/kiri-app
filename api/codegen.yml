@@ -9,6 +9,8 @@ generates:
         Tenant: ./data/types#TenantModel
         Deployment: ./data/types#DeploymentModel
         Configuration: ./data/types#ConfigurationModel
+        ConfigurationType: ./data/types#ConfigurationTypeModel
+        Job: ./data/types#JobModel
     plugins:
       - "typescript"
       - "typescript-resolvers"
