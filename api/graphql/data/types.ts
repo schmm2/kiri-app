@@ -1,3 +1,11 @@
+import {
+  CreateConfigurationInput,
+  CreateConfigurationTypeInput,
+  CreateDeploymentInput,
+  CreateMsGraphResourceInput,
+  CreateTenantInput,
+} from "../generated";
+
 export enum ModelType {
   Tenant = "Tenant",
   Configuration = "Configuration",
@@ -8,7 +16,7 @@ export enum ModelType {
   DeviceWarranty = "DeviceWarranty",
   DeviceVersion = "DeviceVersion",
   Job = "Job",
-  Deployment = "Deployment"
+  Deployment = "Deployment",
 }
 
 type BaseModel = {
@@ -18,23 +26,23 @@ type BaseModel = {
 
 export type TenantModel = {
   tenantId: string;
-  appId: string; 
+  appId: string;
   name: string;
 } & BaseModel;
 
 export type JobModel = {
   type: string;
   state: string;
-  log: string; 
-  tenant: TenantModel;
+  log: string;
+  tenant: string;
 } & BaseModel;
 
 export type DeploymentModel = {
-  displayName: string;
-  configurations: ConfigurationModel[];
-  executionDate: string; 
+  name: string;
+  configurations: string[];
+  targetTenants: string[];
+  executionDate: string;
   result: string;
-  tenant: TenantModel;
 } & BaseModel;
 
 export type DeviceWarrantyModel = {
@@ -42,30 +50,30 @@ export type DeviceWarrantyModel = {
   productName: string;
   startDate: string;
   endDate: string;
-  device: DeviceModel;
+  device: string;
 } & BaseModel;
 
 export type DeviceModel = {
   deviceId: string;
-  tenant: TenantModel;
+  tenant: string;
 } & BaseModel;
 
 export type DeviceVersionModel = {
-  deviceName: string,
-  manufacturerur: string,
-  operatingSystem: string,
+  deviceName: string;
+  manufacturerur: string;
+  operatingSystem: string;
   upn: string;
   osVersion: string;
   osVersionName: string;
   value: string;
   version: string;
-  device: DeviceModel;
+  device: string;
 } & BaseModel;
 
 export type ConfigurationModel = {
   graphId: string;
   graphCreatedAt: string;
-  tenant: TenantModel;
+  tenant: string;
 } & BaseModel;
 
 export type ConfigurationVersionModel = {
@@ -74,14 +82,14 @@ export type ConfigurationVersionModel = {
   graphVersion: string;
   value: string;
   version: string;
-  configuration: ConfigurationModel;
+  configuration: string;
 } & BaseModel;
 
 export type ConfigurationTypeModel = {
   name: string;
   platform: string;
   category: string;
-  msGraphResource: MsGraphResourceModel;
+  msGraphResource: string;
 } & BaseModel;
 
 export type MsGraphResourceModel = {
@@ -96,7 +104,8 @@ export type MsGraphResourceModel = {
 export interface ITenantDataSource {
   getTenants(): Promise<TenantModel[]>;
   getTenant(id: string): Promise<TenantModel>;
-  createTenant(name: string, tenantId: string, appId: string): Promise<TenantModel>;
+  getTenantsByIds(ids: string[]): Promise<TenantModel[]>;
+  createTenant(record: CreateTenantInput): Promise<TenantModel>;
   updateTenant(tenant: TenantModel): Promise<TenantModel>;
 }
 
@@ -113,7 +122,6 @@ export interface IDeviceWarrantyDataSource {
   //createConfiguration(graphId: string, graphCreatedAt: string): Promise<ConfigurationModel>;
   //updateConfiguration(tenant: ConfigurationModel): Promise<ConfigurationModel>;
 }
-
 
 export interface IConfigurationDataSource {
   getConfigurations(): Promise<ConfigurationModel[]>;
@@ -135,39 +143,20 @@ export interface IDeviceVersionDataSource {
 export interface IDeploymentDataSource {
   getDeployments(): Promise<DeploymentModel[]>;
   getDeployment(id: string): Promise<DeploymentModel>;
-  createDeployment(
-    displayName: string,
-    configurations: ConfigurationModel[],
-    executionDate: string,
-    result: string,
-    tenant: TenantModel,
-  ): Promise<DeploymentModel>;
+  createDeployment(record: CreateDeploymentInput): Promise<DeploymentModel>;
   updateDeployment(deployment: DeploymentModel): Promise<DeploymentModel>;
 }
 
 export interface IConfigurationVersionDataSource {
   getConfigurationVersions(): Promise<ConfigurationVersionModel[]>;
   getConfigurationVersion(id: string): Promise<ConfigurationVersionModel>;
-  /*createConfigurationVersion(
-    displayName: string,
-    graphModifiedAt: string,
-    graphVersion: string,
-    value: string,
-    configuration: ConfigurationModel,
-  ): Promise<ConfigurationVersionModel>;
-  updateConfiguration(configurationVersion: ConfigurationVersionModel): Promise<ConfigurationVersionModel>;*/
 }
 
 export interface IMsGraphResourceDataSource {
   getMsGraphResources(): Promise<MsGraphResourceModel[]>;
   getMsGraphResource(id: string): Promise<MsGraphResourceModel>;
   createMsGraphResource(
-    name: string,
-    resource: string,
-    version: string,
-    category: string,
-    nameAttribute: string,
-    expandAttributes: string[]
+    record: CreateMsGraphResourceInput
   ): Promise<MsGraphResourceModel>;
   updateMsGraphResource(
     msGraphResource: MsGraphResourceModel
@@ -177,12 +166,7 @@ export interface IMsGraphResourceDataSource {
 export interface IConfigurationTypeDataSource {
   getConfigurationTypes(): Promise<ConfigurationTypeModel[]>;
   getConfigurationType(id: string): Promise<ConfigurationTypeModel>;
-  createConfigurationType(
-    name: string,
-    platform: string,
-    category: string,
-    msGraphResource: MsGraphResourceModel
-  ): Promise<ConfigurationTypeModel>;
+  createConfigurationType(record: CreateConfigurationTypeInput): Promise<ConfigurationTypeModel>;
   updateConfigurationType(
     configurationType: ConfigurationTypeModel
   ): Promise<ConfigurationTypeModel>;

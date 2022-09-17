@@ -1,5 +1,6 @@
 import { CosmosDataSource } from "apollo-datasource-cosmosdb";
 import { arrayRandomiser, idGenerator } from "../../../utils";
+import { CreateTenantInput } from "../../generated";
 import { ITenantDataSource, TenantModel, ModelType } from "../types";
 
 export class TenantDataSource
@@ -14,24 +15,26 @@ export class TenantDataSource
     return Tenants.resources;
   }
 
-  async getTenant(id: string) {
-    const Tenant = await this.findManyByQuery({
-      query: "SELECT TOP 1 * FROM c WHERE c.id = @id",
-      parameters: [
-        { name: "@id", value: id }
-      ],
-    });
-
-    return Tenant.resources[0];
+  async getTenantsByIds(ids: string[]) {
+    const Tenants = await this.findManyByIds(ids)
+    return Tenants;
   }
 
-  async createTenant(name: string, tenantId: string, appId: string ) {
+  async getTenant(id: string) {
+    const Tenant = await this.findOneById(id);
+    return Tenant;
+  }
+
+  async createTenant(record: CreateTenantInput) {
+    console.log("reuqest new tenant")
+    console.log(record);
+
     const newTenant: TenantModel = {
       id: idGenerator(),
       modelType: ModelType.Tenant,
-      name,
-      tenantId,
-      appId
+      name: record.name,
+      tenantId: record.tenantId,
+      appId: record.appId
     };
 
     const savedTenant = await this.createOne(newTenant);

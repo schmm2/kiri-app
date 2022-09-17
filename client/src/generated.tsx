@@ -104,7 +104,7 @@ export type CreateDeploymentInput = {
   createdAt?: InputMaybe<Scalars["Date"]>;
   executionDate?: InputMaybe<Scalars["Date"]>;
   name: Scalars["String"];
-  tenants?: InputMaybe<Array<InputMaybe<Scalars["ID"]>>>;
+  targetTenants?: InputMaybe<Array<InputMaybe<Scalars["ID"]>>>;
   updatedAt?: InputMaybe<Scalars["Date"]>;
 };
 
@@ -173,21 +173,13 @@ export type CreateTenantInput = {
 
 export type Deployment = {
   __typename?: "Deployment";
-  configurations: Array<Configuration>;
+  configurations: Array<Maybe<Configuration>>;
   createdAt?: Maybe<Scalars["Date"]>;
   executionDate?: Maybe<Scalars["Date"]>;
   id: Scalars["ID"];
   name: Scalars["String"];
-  tenants: Array<Tenant>;
+  targetTenants: Array<Maybe<Tenant>>;
   updatedAt?: Maybe<Scalars["Date"]>;
-};
-
-export type DeploymentConfigurationsArgs = {
-  limit?: InputMaybe<Scalars["Int"]>;
-};
-
-export type DeploymentTenantsArgs = {
-  limit?: InputMaybe<Scalars["Int"]>;
 };
 
 export type Device = {
@@ -304,116 +296,56 @@ export type MsGraphResource = {
 
 export type Mutation = {
   __typename?: "Mutation";
-  configurationCreate?: Maybe<Configuration>;
-  configurationDelete?: Maybe<Configuration>;
-  configurationTypeCreate?: Maybe<ConfigurationType>;
-  configurationTypeDelete?: Maybe<ConfigurationType>;
-  configurationVersionCreate?: Maybe<ConfigurationVersion>;
-  configurationVersionDelete?: Maybe<ConfigurationVersion>;
-  deploymentCreate?: Maybe<Deployment>;
-  deploymentDelete?: Maybe<Deployment>;
-  deploymentUpdate?: Maybe<Deployment>;
-  deviceCreate?: Maybe<Device>;
-  deviceDelete?: Maybe<Device>;
-  deviceVersionCreate?: Maybe<DeviceVersion>;
-  deviceVersionDelete?: Maybe<DeviceVersion>;
-  deviceWarrantyCreate?: Maybe<DeviceWarranty>;
-  deviceWarrantyDelete?: Maybe<DeviceWarranty>;
-  jobCreate?: Maybe<Job>;
-  jobDelete?: Maybe<Job>;
-  msGraphResourceCreate?: Maybe<MsGraphResource>;
-  msGraphResourceDelete?: Maybe<MsGraphResource>;
-  tenantCreate?: Maybe<Tenant>;
-  tenantDelete?: Maybe<Tenant>;
-  tenantUpdate?: Maybe<Tenant>;
+  createConfigurationType?: Maybe<ConfigurationType>;
+  createDeployment?: Maybe<Deployment>;
+  createMsGraphResource?: Maybe<MsGraphResource>;
+  createTenant?: Maybe<Tenant>;
+  deleteConfigurationType?: Maybe<ConfigurationType>;
+  deleteDeployment?: Maybe<Deployment>;
+  deleteMsGraphResource?: Maybe<MsGraphResource>;
+  deleteTenant?: Maybe<Tenant>;
+  updateDeployment?: Maybe<Deployment>;
+  updateTenant?: Maybe<Tenant>;
 };
 
-export type MutationConfigurationCreateArgs = {
-  record: CreateConfigurationInput;
-};
-
-export type MutationConfigurationDeleteArgs = {
-  id: Scalars["ID"];
-};
-
-export type MutationConfigurationTypeCreateArgs = {
+export type MutationCreateConfigurationTypeArgs = {
   record?: InputMaybe<CreateConfigurationTypeInput>;
 };
 
-export type MutationConfigurationTypeDeleteArgs = {
-  id: Scalars["ID"];
-};
-
-export type MutationConfigurationVersionCreateArgs = {
-  record?: InputMaybe<CreateConfigurationVersionInput>;
-};
-
-export type MutationConfigurationVersionDeleteArgs = {
-  id: Scalars["ID"];
-};
-
-export type MutationDeploymentCreateArgs = {
+export type MutationCreateDeploymentArgs = {
   record: CreateDeploymentInput;
 };
 
-export type MutationDeploymentDeleteArgs = {
+export type MutationCreateMsGraphResourceArgs = {
+  record?: InputMaybe<CreateMsGraphResourceInput>;
+};
+
+export type MutationCreateTenantArgs = {
+  record?: InputMaybe<CreateTenantInput>;
+};
+
+export type MutationDeleteConfigurationTypeArgs = {
   id: Scalars["ID"];
 };
 
-export type MutationDeploymentUpdateArgs = {
+export type MutationDeleteDeploymentArgs = {
+  id: Scalars["ID"];
+};
+
+export type MutationDeleteMsGraphResourceArgs = {
+  id: Scalars["ID"];
+};
+
+export type MutationDeleteTenantArgs = {
+  id: Scalars["ID"];
+};
+
+export type MutationUpdateDeploymentArgs = {
   id: Scalars["ID"];
   record: UpdateDeploymentInput;
 };
 
-export type MutationDeviceCreateArgs = {
-  record?: InputMaybe<CreateDeviceInput>;
-};
-
-export type MutationDeviceDeleteArgs = {
-  id: Scalars["ID"];
-};
-
-export type MutationDeviceVersionCreateArgs = {
-  record: CreateDeviceVersionInput;
-};
-
-export type MutationDeviceVersionDeleteArgs = {
-  id: Scalars["ID"];
-};
-
-export type MutationDeviceWarrantyCreateArgs = {
-  record: CreateDeviceWarrantyInput;
-};
-
-export type MutationDeviceWarrantyDeleteArgs = {
-  id: Scalars["ID"];
-};
-
-export type MutationJobCreateArgs = {
-  record: CreateJobInput;
-};
-
-export type MutationJobDeleteArgs = {
-  id: Scalars["ID"];
-};
-
-export type MutationMsGraphResourceCreateArgs = {
-  record?: InputMaybe<CreateMsGraphResourceInput>;
-};
-
-export type MutationMsGraphResourceDeleteArgs = {
-  id: Scalars["ID"];
-};
-
-export type MutationTenantCreateArgs = {
-  record?: InputMaybe<CreateTenantInput>;
-};
-
-export type MutationTenantDeleteArgs = {
-  id: Scalars["ID"];
-};
-
-export type MutationTenantUpdateArgs = {
+export type MutationUpdateTenantArgs = {
   id: Scalars["ID"];
   record: UpdateTenantInput;
 };
@@ -444,6 +376,7 @@ export type Query = {
   msGraphResourceByIds: Array<MsGraphResource>;
   msGraphResourceMany: Array<MsGraphResource>;
   tenantById?: Maybe<Tenant>;
+  tenantByIds?: Maybe<Array<Maybe<Tenant>>>;
   tenantMany: Array<Tenant>;
 };
 
@@ -512,27 +445,19 @@ export type QueryTenantByIdArgs = {
   id: Scalars["ID"];
 };
 
+export type QueryTenantByIdsArgs = {
+  id?: InputMaybe<Array<Scalars["ID"]>>;
+};
+
 export type Tenant = {
   __typename?: "Tenant";
   appId: Scalars["String"];
-  configurations: Array<Configuration>;
   createdAt?: Maybe<Scalars["Date"]>;
   id: Scalars["ID"];
-  jobs: Array<Job>;
   name: Scalars["String"];
   tenantId: Scalars["String"];
   updatedAt?: Maybe<Scalars["Date"]>;
   verified?: Maybe<Scalars["Boolean"]>;
-};
-
-export type TenantConfigurationsArgs = {
-  limit?: InputMaybe<Scalars["Int"]>;
-  skip?: InputMaybe<Scalars["Int"]>;
-};
-
-export type TenantJobsArgs = {
-  limit?: InputMaybe<Scalars["Int"]>;
-  skip?: InputMaybe<Scalars["Int"]>;
 };
 
 export type UpdateDeploymentInput = {
@@ -540,7 +465,7 @@ export type UpdateDeploymentInput = {
   createdAt?: InputMaybe<Scalars["Date"]>;
   executionDate?: InputMaybe<Scalars["Date"]>;
   name?: InputMaybe<Scalars["String"]>;
-  tenants?: InputMaybe<Array<InputMaybe<Scalars["ID"]>>>;
+  targetTenants?: InputMaybe<Array<InputMaybe<Scalars["ID"]>>>;
   updatedAt?: InputMaybe<Scalars["Date"]>;
 };
 
@@ -553,112 +478,49 @@ export type UpdateTenantInput = {
   verified?: InputMaybe<Scalars["Boolean"]>;
 };
 
-export type ConfigurationCreateMutationVariables = Exact<{
-  record: CreateConfigurationInput;
-}>;
-
-export type ConfigurationCreateMutation = {
-  __typename?: "Mutation";
-  configurationCreate?: { __typename?: "Configuration"; id: string } | null;
-};
-
-export type MsGraphResourceCreateMutationVariables = Exact<{
+export type CreateMsGraphResourceMutationVariables = Exact<{
   record: CreateMsGraphResourceInput;
 }>;
 
-export type MsGraphResourceCreateMutation = {
+export type CreateMsGraphResourceMutation = {
   __typename?: "Mutation";
-  msGraphResourceCreate?: { __typename?: "MsGraphResource"; id: string } | null;
+  createMsGraphResource?: { __typename?: "MsGraphResource"; id: string } | null;
 };
 
-export type MsGraphResourceDeleteMutationVariables = Exact<{
-  id: Scalars["ID"];
-}>;
-
-export type MsGraphResourceDeleteMutation = {
-  __typename?: "Mutation";
-  msGraphResourceDelete?: { __typename?: "MsGraphResource"; id: string } | null;
-};
-
-export type TenantCreateMutationVariables = Exact<{
+export type CreateTenantMutationVariables = Exact<{
   record: CreateTenantInput;
 }>;
 
-export type TenantCreateMutation = {
+export type CreateTenantMutation = {
   __typename?: "Mutation";
-  tenantCreate?: { __typename?: "Tenant"; id: string; name: string } | null;
+  createTenant?: { __typename?: "Tenant"; id: string; name: string } | null;
 };
 
-export type TenantDeleteMutationVariables = Exact<{
+export type DeleteMsGraphResourceMutationVariables = Exact<{
   id: Scalars["ID"];
 }>;
 
-export type TenantDeleteMutation = {
+export type DeleteMsGraphResourceMutation = {
   __typename?: "Mutation";
-  tenantDelete?: { __typename?: "Tenant"; id: string } | null;
+  deleteMsGraphResource?: { __typename?: "MsGraphResource"; id: string } | null;
 };
 
-export const ConfigurationCreateDocument = {
+export type DeleteTenantMutationVariables = Exact<{
+  id: Scalars["ID"];
+}>;
+
+export type DeleteTenantMutation = {
+  __typename?: "Mutation";
+  deleteTenant?: { __typename?: "Tenant"; id: string } | null;
+};
+
+export const CreateMsGraphResourceDocument = {
   kind: "Document",
   definitions: [
     {
       kind: "OperationDefinition",
       operation: "mutation",
-      name: { kind: "Name", value: "ConfigurationCreate" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "record" },
-          },
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "CreateConfigurationInput" },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "configurationCreate" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "record" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "record" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                { kind: "Field", name: { kind: "Name", value: "id" } },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  ConfigurationCreateMutation,
-  ConfigurationCreateMutationVariables
->;
-export const MsGraphResourceCreateDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "mutation",
-      name: { kind: "Name", value: "MsGraphResourceCreate" },
+      name: { kind: "Name", value: "CreateMsGraphResource" },
       variableDefinitions: [
         {
           kind: "VariableDefinition",
@@ -680,7 +542,7 @@ export const MsGraphResourceCreateDocument = {
         selections: [
           {
             kind: "Field",
-            name: { kind: "Name", value: "msGraphResourceCreate" },
+            name: { kind: "Name", value: "createMsGraphResource" },
             arguments: [
               {
                 kind: "Argument",
@@ -703,64 +565,16 @@ export const MsGraphResourceCreateDocument = {
     },
   ],
 } as unknown as DocumentNode<
-  MsGraphResourceCreateMutation,
-  MsGraphResourceCreateMutationVariables
+  CreateMsGraphResourceMutation,
+  CreateMsGraphResourceMutationVariables
 >;
-export const MsGraphResourceDeleteDocument = {
+export const CreateTenantDocument = {
   kind: "Document",
   definitions: [
     {
       kind: "OperationDefinition",
       operation: "mutation",
-      name: { kind: "Name", value: "msGraphResourceDelete" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
-          type: {
-            kind: "NonNullType",
-            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "msGraphResourceDelete" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "id" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "id" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                { kind: "Field", name: { kind: "Name", value: "id" } },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  MsGraphResourceDeleteMutation,
-  MsGraphResourceDeleteMutationVariables
->;
-export const TenantCreateDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "mutation",
-      name: { kind: "Name", value: "TenantCreate" },
+      name: { kind: "Name", value: "CreateTenant" },
       variableDefinitions: [
         {
           kind: "VariableDefinition",
@@ -782,7 +596,7 @@ export const TenantCreateDocument = {
         selections: [
           {
             kind: "Field",
-            name: { kind: "Name", value: "tenantCreate" },
+            name: { kind: "Name", value: "createTenant" },
             arguments: [
               {
                 kind: "Argument",
@@ -806,16 +620,16 @@ export const TenantCreateDocument = {
     },
   ],
 } as unknown as DocumentNode<
-  TenantCreateMutation,
-  TenantCreateMutationVariables
+  CreateTenantMutation,
+  CreateTenantMutationVariables
 >;
-export const TenantDeleteDocument = {
+export const DeleteMsGraphResourceDocument = {
   kind: "Document",
   definitions: [
     {
       kind: "OperationDefinition",
       operation: "mutation",
-      name: { kind: "Name", value: "TenantDelete" },
+      name: { kind: "Name", value: "DeleteMsGraphResource" },
       variableDefinitions: [
         {
           kind: "VariableDefinition",
@@ -831,7 +645,7 @@ export const TenantDeleteDocument = {
         selections: [
           {
             kind: "Field",
-            name: { kind: "Name", value: "tenantDelete" },
+            name: { kind: "Name", value: "deleteMsGraphResource" },
             arguments: [
               {
                 kind: "Argument",
@@ -854,6 +668,54 @@ export const TenantDeleteDocument = {
     },
   ],
 } as unknown as DocumentNode<
-  TenantDeleteMutation,
-  TenantDeleteMutationVariables
+  DeleteMsGraphResourceMutation,
+  DeleteMsGraphResourceMutationVariables
+>;
+export const DeleteTenantDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "DeleteTenant" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "deleteTenant" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  DeleteTenantMutation,
+  DeleteTenantMutationVariables
 >;

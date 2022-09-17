@@ -1,5 +1,0 @@
-mutation ConfigurationCreate($record: CreateConfigurationInput!) {
-  configurationCreate(record: $record) {
-    id
-  }
-}

@@ -1,45 +1,26 @@
 scalar Date
 
 type Mutation {
-  tenantCreate(record: CreateTenantInput): Tenant
-  tenantUpdate(id: ID!, record: UpdateTenantInput!): Tenant
-  tenantDelete(id: ID!): Tenant
+  createTenant(record: CreateTenantInput): Tenant
+  updateTenant(id: ID!, record: UpdateTenantInput!): Tenant
+  deleteTenant(id: ID!): Tenant
 
-  msGraphResourceCreate(record: CreateMsGraphResourceInput): MsGraphResource
-  msGraphResourceDelete(id: ID!): MsGraphResource
+  createMsGraphResource(record: CreateMsGraphResourceInput): MsGraphResource
+  deleteMsGraphResource(id: ID!): MsGraphResource
 
-  configurationTypeCreate(
+  createConfigurationType(
     record: CreateConfigurationTypeInput
   ): ConfigurationType
-  configurationTypeDelete(id: ID!): ConfigurationType
+  deleteConfigurationType(id: ID!): ConfigurationType
 
-  deviceCreate(record: CreateDeviceInput): Device
-  deviceDelete(id: ID!): Device
-
-  configurationVersionCreate(
-    record: CreateConfigurationVersionInput
-  ): ConfigurationVersion
-  configurationVersionDelete(id: ID!): ConfigurationVersion
-
-  configurationCreate(record: CreateConfigurationInput!): Configuration
-  configurationDelete(id: ID!): Configuration
-
-  jobCreate(record: CreateJobInput!): Job
-  jobDelete(id: ID!): Job
-
-  deploymentCreate(record: CreateDeploymentInput!): Deployment
-  deploymentUpdate(id: ID!, record: UpdateDeploymentInput!): Deployment
-  deploymentDelete(id: ID!): Deployment
-
-  deviceVersionCreate(record: CreateDeviceVersionInput!): DeviceVersion
-  deviceVersionDelete(id: ID!): DeviceVersion
-
-  deviceWarrantyCreate(record: CreateDeviceWarrantyInput!): DeviceWarranty
-  deviceWarrantyDelete(id: ID!): DeviceWarranty
+  createDeployment(record: CreateDeploymentInput!): Deployment
+  updateDeployment(id: ID!, record: UpdateDeploymentInput!): Deployment
+  deleteDeployment(id: ID!): Deployment
 }
 
 type Query {
   tenantById(id: ID!): Tenant
+  tenantByIds(id: [ID!]): [Tenant]
   tenantMany: [Tenant!]!
 
   configurationById(id: ID!): Configuration
@@ -86,14 +67,12 @@ type Tenant {
   id: ID!
   updatedAt: Date
   createdAt: Date
-  configurations(skip: Int, limit: Int = 100): [Configuration!]!
-  jobs(skip: Int, limit: Int = 100): [Job!]!
 }
 
 input CreateTenantInput {
+  name: String!
   tenantId: String!
   appId: String!
-  name: String!
   verified: Boolean
   updatedAt: Date
   createdAt: Date
@@ -333,9 +312,9 @@ enum EnumLogState {
 
 type Deployment {
   name: String!
-  configurations(limit: Int = 100): [Configuration!]!
+  configurations: [Configuration]!
+  targetTenants: [Tenant]!
   executionDate: Date
-  tenants(limit: Int = 100): [Tenant!]!
   id: ID!
   updatedAt: Date
   createdAt: Date
@@ -344,8 +323,8 @@ type Deployment {
 input CreateDeploymentInput {
   name: String!
   configurations: [ID]
+  targetTenants: [ID]
   executionDate: Date
-  tenants: [ID]
   updatedAt: Date
   createdAt: Date
 }
@@ -353,8 +332,8 @@ input CreateDeploymentInput {
 input UpdateDeploymentInput {
   name: String
   configurations: [ID]
+  targetTenants: [ID]
   executionDate: Date
-  tenants: [ID]
   updatedAt: Date
   createdAt: Date
 }

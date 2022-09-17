@@ -1,7 +1,7 @@
 import { CosmosDataSource } from "apollo-datasource-cosmosdb";
 import { arrayRandomiser, idGenerator } from "../../../utils";
-import { MsGraphResource } from "../../generated";
-import { IConfigurationTypeDataSource, ConfigurationTypeModel, ModelType, MsGraphResourceModel } from "../types";
+import { CreateConfigurationTypeInput } from "../../generated";
+import { IConfigurationTypeDataSource, ConfigurationTypeModel, ModelType } from "../types";
 
 export class ConfigurationTypeDataSource
   extends CosmosDataSource<ConfigurationTypeModel, any>
@@ -26,14 +26,14 @@ export class ConfigurationTypeDataSource
     return ConfigurationType.resources[0];
   }
 
-  async createConfigurationType(name: string, category: string, platform: string, msGraphResource: MsGraphResourceModel) {
+  async createConfigurationType(record: CreateConfigurationTypeInput) {
     const newConfigurationType: ConfigurationTypeModel = {
       id: idGenerator(),
       modelType: ModelType.ConfigurationType,
-      name,
-      category,
-      platform,
-      msGraphResource
+      name: record.name,
+      category: record.category,
+      platform: record.platform,
+      msGraphResource: record.msGraphResource
     };
 
     const savedConfigurationType = await this.createOne(newConfigurationType);

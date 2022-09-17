@@ -1,5 +1,6 @@
 import { CosmosDataSource } from "apollo-datasource-cosmosdb";
 import { arrayRandomiser, idGenerator } from "../../../utils";
+import { CreateMsGraphResourceInput } from "../../generated";
 import { IMsGraphResourceDataSource, MsGraphResourceModel, ModelType } from "../types";
 
 export class MsGraphResourceDataSource
@@ -25,17 +26,17 @@ export class MsGraphResourceDataSource
     return MsGraphResource.resources[0];
   }
 
-  async createMsGraphResource(name: string, resource: string, version: string, category: string, nameAttribute: string,  expandAttributes: string[]) {
+  async createMsGraphResource(record: CreateMsGraphResourceInput) {
     
     const newMsGraphResource: MsGraphResourceModel = {
       id: idGenerator(),
       modelType: ModelType.MsGraphResource,
-      name,
-      resource,
-      version,
-      nameAttribute,
-      category,
-      expandAttributes
+      name: record.name,
+      resource: record.resource,
+      version: record.version,
+      nameAttribute: record.nameAttribute,
+      category: record.category,
+      expandAttributes: record.expandAttributes
     };
 
     const savedMsGraphResource = await this.createOne(newMsGraphResource);

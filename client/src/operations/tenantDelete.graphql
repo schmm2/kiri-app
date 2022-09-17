@@ -1,5 +1,0 @@
-mutation TenantDelete($id: ID!) {
-  tenantDelete(id: $id) {
-    id
-  }
-}

@@ -3,7 +3,7 @@ import {
   GraphQLScalarType,
   GraphQLScalarTypeConfig,
 } from "graphql";
-import { TenantModel } from "./data/types";
+import { TenantModel, DeploymentModel, ConfigurationModel } from "./data/types";
 import { ApolloContext } from "./apolloContext";
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
@@ -114,7 +114,7 @@ export type CreateDeploymentInput = {
   createdAt?: InputMaybe<Scalars["Date"]>;
   executionDate?: InputMaybe<Scalars["Date"]>;
   name: Scalars["String"];
-  tenants?: InputMaybe<Array<InputMaybe<Scalars["ID"]>>>;
+  targetTenants?: InputMaybe<Array<InputMaybe<Scalars["ID"]>>>;
   updatedAt?: InputMaybe<Scalars["Date"]>;
 };
 
@@ -183,21 +183,13 @@ export type CreateTenantInput = {
 
 export type Deployment = {
   __typename?: "Deployment";
-  configurations: Array<Configuration>;
+  configurations: Array<Maybe<Configuration>>;
   createdAt?: Maybe<Scalars["Date"]>;
   executionDate?: Maybe<Scalars["Date"]>;
   id: Scalars["ID"];
   name: Scalars["String"];
-  tenants: Array<Tenant>;
+  targetTenants: Array<Maybe<Tenant>>;
   updatedAt?: Maybe<Scalars["Date"]>;
-};
-
-export type DeploymentConfigurationsArgs = {
-  limit?: InputMaybe<Scalars["Int"]>;
-};
-
-export type DeploymentTenantsArgs = {
-  limit?: InputMaybe<Scalars["Int"]>;
 };
 
 export type Device = {
@@ -314,116 +306,56 @@ export type MsGraphResource = {
 
 export type Mutation = {
   __typename?: "Mutation";
-  configurationCreate?: Maybe<Configuration>;
-  configurationDelete?: Maybe<Configuration>;
-  configurationTypeCreate?: Maybe<ConfigurationType>;
-  configurationTypeDelete?: Maybe<ConfigurationType>;
-  configurationVersionCreate?: Maybe<ConfigurationVersion>;
-  configurationVersionDelete?: Maybe<ConfigurationVersion>;
-  deploymentCreate?: Maybe<Deployment>;
-  deploymentDelete?: Maybe<Deployment>;
-  deploymentUpdate?: Maybe<Deployment>;
-  deviceCreate?: Maybe<Device>;
-  deviceDelete?: Maybe<Device>;
-  deviceVersionCreate?: Maybe<DeviceVersion>;
-  deviceVersionDelete?: Maybe<DeviceVersion>;
-  deviceWarrantyCreate?: Maybe<DeviceWarranty>;
-  deviceWarrantyDelete?: Maybe<DeviceWarranty>;
-  jobCreate?: Maybe<Job>;
-  jobDelete?: Maybe<Job>;
-  msGraphResourceCreate?: Maybe<MsGraphResource>;
-  msGraphResourceDelete?: Maybe<MsGraphResource>;
-  tenantCreate?: Maybe<Tenant>;
-  tenantDelete?: Maybe<Tenant>;
-  tenantUpdate?: Maybe<Tenant>;
+  createConfigurationType?: Maybe<ConfigurationType>;
+  createDeployment?: Maybe<Deployment>;
+  createMsGraphResource?: Maybe<MsGraphResource>;
+  createTenant?: Maybe<Tenant>;
+  deleteConfigurationType?: Maybe<ConfigurationType>;
+  deleteDeployment?: Maybe<Deployment>;
+  deleteMsGraphResource?: Maybe<MsGraphResource>;
+  deleteTenant?: Maybe<Tenant>;
+  updateDeployment?: Maybe<Deployment>;
+  updateTenant?: Maybe<Tenant>;
 };
 
-export type MutationConfigurationCreateArgs = {
-  record: CreateConfigurationInput;
-};
-
-export type MutationConfigurationDeleteArgs = {
-  id: Scalars["ID"];
-};
-
-export type MutationConfigurationTypeCreateArgs = {
+export type MutationCreateConfigurationTypeArgs = {
   record?: InputMaybe<CreateConfigurationTypeInput>;
 };
 
-export type MutationConfigurationTypeDeleteArgs = {
-  id: Scalars["ID"];
-};
-
-export type MutationConfigurationVersionCreateArgs = {
-  record?: InputMaybe<CreateConfigurationVersionInput>;
-};
-
-export type MutationConfigurationVersionDeleteArgs = {
-  id: Scalars["ID"];
-};
-
-export type MutationDeploymentCreateArgs = {
+export type MutationCreateDeploymentArgs = {
   record: CreateDeploymentInput;
 };
 
-export type MutationDeploymentDeleteArgs = {
+export type MutationCreateMsGraphResourceArgs = {
+  record?: InputMaybe<CreateMsGraphResourceInput>;
+};
+
+export type MutationCreateTenantArgs = {
+  record?: InputMaybe<CreateTenantInput>;
+};
+
+export type MutationDeleteConfigurationTypeArgs = {
   id: Scalars["ID"];
 };
 
-export type MutationDeploymentUpdateArgs = {
+export type MutationDeleteDeploymentArgs = {
+  id: Scalars["ID"];
+};
+
+export type MutationDeleteMsGraphResourceArgs = {
+  id: Scalars["ID"];
+};
+
+export type MutationDeleteTenantArgs = {
+  id: Scalars["ID"];
+};
+
+export type MutationUpdateDeploymentArgs = {
   id: Scalars["ID"];
   record: UpdateDeploymentInput;
 };
 
-export type MutationDeviceCreateArgs = {
-  record?: InputMaybe<CreateDeviceInput>;
-};
-
-export type MutationDeviceDeleteArgs = {
-  id: Scalars["ID"];
-};
-
-export type MutationDeviceVersionCreateArgs = {
-  record: CreateDeviceVersionInput;
-};
-
-export type MutationDeviceVersionDeleteArgs = {
-  id: Scalars["ID"];
-};
-
-export type MutationDeviceWarrantyCreateArgs = {
-  record: CreateDeviceWarrantyInput;
-};
-
-export type MutationDeviceWarrantyDeleteArgs = {
-  id: Scalars["ID"];
-};
-
-export type MutationJobCreateArgs = {
-  record: CreateJobInput;
-};
-
-export type MutationJobDeleteArgs = {
-  id: Scalars["ID"];
-};
-
-export type MutationMsGraphResourceCreateArgs = {
-  record?: InputMaybe<CreateMsGraphResourceInput>;
-};
-
-export type MutationMsGraphResourceDeleteArgs = {
-  id: Scalars["ID"];
-};
-
-export type MutationTenantCreateArgs = {
-  record?: InputMaybe<CreateTenantInput>;
-};
-
-export type MutationTenantDeleteArgs = {
-  id: Scalars["ID"];
-};
-
-export type MutationTenantUpdateArgs = {
+export type MutationUpdateTenantArgs = {
   id: Scalars["ID"];
   record: UpdateTenantInput;
 };
@@ -454,6 +386,7 @@ export type Query = {
   msGraphResourceByIds: Array<MsGraphResource>;
   msGraphResourceMany: Array<MsGraphResource>;
   tenantById?: Maybe<Tenant>;
+  tenantByIds?: Maybe<Array<Maybe<Tenant>>>;
   tenantMany: Array<Tenant>;
 };
 
@@ -522,27 +455,19 @@ export type QueryTenantByIdArgs = {
   id: Scalars["ID"];
 };
 
+export type QueryTenantByIdsArgs = {
+  id?: InputMaybe<Array<Scalars["ID"]>>;
+};
+
 export type Tenant = {
   __typename?: "Tenant";
   appId: Scalars["String"];
-  configurations: Array<Configuration>;
   createdAt?: Maybe<Scalars["Date"]>;
   id: Scalars["ID"];
-  jobs: Array<Job>;
   name: Scalars["String"];
   tenantId: Scalars["String"];
   updatedAt?: Maybe<Scalars["Date"]>;
   verified?: Maybe<Scalars["Boolean"]>;
-};
-
-export type TenantConfigurationsArgs = {
-  limit?: InputMaybe<Scalars["Int"]>;
-  skip?: InputMaybe<Scalars["Int"]>;
-};
-
-export type TenantJobsArgs = {
-  limit?: InputMaybe<Scalars["Int"]>;
-  skip?: InputMaybe<Scalars["Int"]>;
 };
 
 export type UpdateDeploymentInput = {
@@ -550,7 +475,7 @@ export type UpdateDeploymentInput = {
   createdAt?: InputMaybe<Scalars["Date"]>;
   executionDate?: InputMaybe<Scalars["Date"]>;
   name?: InputMaybe<Scalars["String"]>;
-  tenants?: InputMaybe<Array<InputMaybe<Scalars["ID"]>>>;
+  targetTenants?: InputMaybe<Array<InputMaybe<Scalars["ID"]>>>;
   updatedAt?: InputMaybe<Scalars["Date"]>;
 };
 
@@ -671,24 +596,7 @@ export type DirectiveResolverFn<
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars["Boolean"]>;
-  Configuration: ResolverTypeWrapper<
-    Omit<
-      Configuration,
-      | "configurationType"
-      | "configurationVersions"
-      | "newestConfigurationVersion"
-      | "tenant"
-    > & {
-      configurationType?: Maybe<ResolversTypes["ConfigurationType"]>;
-      configurationVersions?: Maybe<
-        Array<Maybe<ResolversTypes["ConfigurationVersion"]>>
-      >;
-      newestConfigurationVersion?: Maybe<
-        ResolversTypes["ConfigurationVersion"]
-      >;
-      tenant: ResolversTypes["Tenant"];
-    }
-  >;
+  Configuration: ResolverTypeWrapper<ConfigurationModel>;
   ConfigurationType: ResolverTypeWrapper<
     Omit<ConfigurationType, "configurations"> & {
       configurations: Array<Maybe<ResolversTypes["Configuration"]>>;
@@ -710,12 +618,7 @@ export type ResolversTypes = {
   CreateMsGraphResourceInput: CreateMsGraphResourceInput;
   CreateTenantInput: CreateTenantInput;
   Date: ResolverTypeWrapper<Scalars["Date"]>;
-  Deployment: ResolverTypeWrapper<
-    Omit<Deployment, "configurations" | "tenants"> & {
-      configurations: Array<ResolversTypes["Configuration"]>;
-      tenants: Array<ResolversTypes["Tenant"]>;
-    }
-  >;
+  Deployment: ResolverTypeWrapper<DeploymentModel>;
   Device: ResolverTypeWrapper<
     Omit<Device, "newestDeviceVersions" | "tenant"> & {
       newestDeviceVersions: Array<ResolversTypes["DeviceVersion"]>;
@@ -749,22 +652,7 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Boolean: Scalars["Boolean"];
-  Configuration: Omit<
-    Configuration,
-    | "configurationType"
-    | "configurationVersions"
-    | "newestConfigurationVersion"
-    | "tenant"
-  > & {
-    configurationType?: Maybe<ResolversParentTypes["ConfigurationType"]>;
-    configurationVersions?: Maybe<
-      Array<Maybe<ResolversParentTypes["ConfigurationVersion"]>>
-    >;
-    newestConfigurationVersion?: Maybe<
-      ResolversParentTypes["ConfigurationVersion"]
-    >;
-    tenant: ResolversParentTypes["Tenant"];
-  };
+  Configuration: ConfigurationModel;
   ConfigurationType: Omit<ConfigurationType, "configurations"> & {
     configurations: Array<Maybe<ResolversParentTypes["Configuration"]>>;
   };
@@ -782,10 +670,7 @@ export type ResolversParentTypes = {
   CreateMsGraphResourceInput: CreateMsGraphResourceInput;
   CreateTenantInput: CreateTenantInput;
   Date: Scalars["Date"];
-  Deployment: Omit<Deployment, "configurations" | "tenants"> & {
-    configurations: Array<ResolversParentTypes["Configuration"]>;
-    tenants: Array<ResolversParentTypes["Tenant"]>;
-  };
+  Deployment: DeploymentModel;
   Device: Omit<Device, "newestDeviceVersions" | "tenant"> & {
     newestDeviceVersions: Array<ResolversParentTypes["DeviceVersion"]>;
     tenant?: Maybe<ResolversParentTypes["Tenant"]>;
@@ -900,10 +785,9 @@ export type DeploymentResolvers<
   ParentType extends ResolversParentTypes["Deployment"] = ResolversParentTypes["Deployment"]
 > = {
   configurations?: Resolver<
-    Array<ResolversTypes["Configuration"]>,
+    Array<Maybe<ResolversTypes["Configuration"]>>,
     ParentType,
-    ContextType,
-    RequireFields<DeploymentConfigurationsArgs, "limit">
+    ContextType
   >;
   createdAt?: Resolver<Maybe<ResolversTypes["Date"]>, ParentType, ContextType>;
   executionDate?: Resolver<
@@ -913,11 +797,10 @@ export type DeploymentResolvers<
   >;
   id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
   name?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
-  tenants?: Resolver<
-    Array<ResolversTypes["Tenant"]>,
+  targetTenants?: Resolver<
+    Array<Maybe<ResolversTypes["Tenant"]>>,
     ParentType,
-    ContextType,
-    RequireFields<DeploymentTenantsArgs, "limit">
+    ContextType
   >;
   updatedAt?: Resolver<Maybe<ResolversTypes["Date"]>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -1071,137 +954,65 @@ export type MutationResolvers<
   ContextType = ApolloContext,
   ParentType extends ResolversParentTypes["Mutation"] = ResolversParentTypes["Mutation"]
 > = {
-  configurationCreate?: Resolver<
-    Maybe<ResolversTypes["Configuration"]>,
-    ParentType,
-    ContextType,
-    RequireFields<MutationConfigurationCreateArgs, "record">
-  >;
-  configurationDelete?: Resolver<
-    Maybe<ResolversTypes["Configuration"]>,
-    ParentType,
-    ContextType,
-    RequireFields<MutationConfigurationDeleteArgs, "id">
-  >;
-  configurationTypeCreate?: Resolver<
+  createConfigurationType?: Resolver<
     Maybe<ResolversTypes["ConfigurationType"]>,
     ParentType,
     ContextType,
-    Partial<MutationConfigurationTypeCreateArgs>
+    Partial<MutationCreateConfigurationTypeArgs>
   >;
-  configurationTypeDelete?: Resolver<
+  createDeployment?: Resolver<
+    Maybe<ResolversTypes["Deployment"]>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationCreateDeploymentArgs, "record">
+  >;
+  createMsGraphResource?: Resolver<
+    Maybe<ResolversTypes["MsGraphResource"]>,
+    ParentType,
+    ContextType,
+    Partial<MutationCreateMsGraphResourceArgs>
+  >;
+  createTenant?: Resolver<
+    Maybe<ResolversTypes["Tenant"]>,
+    ParentType,
+    ContextType,
+    Partial<MutationCreateTenantArgs>
+  >;
+  deleteConfigurationType?: Resolver<
     Maybe<ResolversTypes["ConfigurationType"]>,
     ParentType,
     ContextType,
-    RequireFields<MutationConfigurationTypeDeleteArgs, "id">
+    RequireFields<MutationDeleteConfigurationTypeArgs, "id">
   >;
-  configurationVersionCreate?: Resolver<
-    Maybe<ResolversTypes["ConfigurationVersion"]>,
-    ParentType,
-    ContextType,
-    Partial<MutationConfigurationVersionCreateArgs>
-  >;
-  configurationVersionDelete?: Resolver<
-    Maybe<ResolversTypes["ConfigurationVersion"]>,
-    ParentType,
-    ContextType,
-    RequireFields<MutationConfigurationVersionDeleteArgs, "id">
-  >;
-  deploymentCreate?: Resolver<
+  deleteDeployment?: Resolver<
     Maybe<ResolversTypes["Deployment"]>,
     ParentType,
     ContextType,
-    RequireFields<MutationDeploymentCreateArgs, "record">
+    RequireFields<MutationDeleteDeploymentArgs, "id">
   >;
-  deploymentDelete?: Resolver<
-    Maybe<ResolversTypes["Deployment"]>,
-    ParentType,
-    ContextType,
-    RequireFields<MutationDeploymentDeleteArgs, "id">
-  >;
-  deploymentUpdate?: Resolver<
-    Maybe<ResolversTypes["Deployment"]>,
-    ParentType,
-    ContextType,
-    RequireFields<MutationDeploymentUpdateArgs, "id" | "record">
-  >;
-  deviceCreate?: Resolver<
-    Maybe<ResolversTypes["Device"]>,
-    ParentType,
-    ContextType,
-    Partial<MutationDeviceCreateArgs>
-  >;
-  deviceDelete?: Resolver<
-    Maybe<ResolversTypes["Device"]>,
-    ParentType,
-    ContextType,
-    RequireFields<MutationDeviceDeleteArgs, "id">
-  >;
-  deviceVersionCreate?: Resolver<
-    Maybe<ResolversTypes["DeviceVersion"]>,
-    ParentType,
-    ContextType,
-    RequireFields<MutationDeviceVersionCreateArgs, "record">
-  >;
-  deviceVersionDelete?: Resolver<
-    Maybe<ResolversTypes["DeviceVersion"]>,
-    ParentType,
-    ContextType,
-    RequireFields<MutationDeviceVersionDeleteArgs, "id">
-  >;
-  deviceWarrantyCreate?: Resolver<
-    Maybe<ResolversTypes["DeviceWarranty"]>,
-    ParentType,
-    ContextType,
-    RequireFields<MutationDeviceWarrantyCreateArgs, "record">
-  >;
-  deviceWarrantyDelete?: Resolver<
-    Maybe<ResolversTypes["DeviceWarranty"]>,
-    ParentType,
-    ContextType,
-    RequireFields<MutationDeviceWarrantyDeleteArgs, "id">
-  >;
-  jobCreate?: Resolver<
-    Maybe<ResolversTypes["Job"]>,
-    ParentType,
-    ContextType,
-    RequireFields<MutationJobCreateArgs, "record">
-  >;
-  jobDelete?: Resolver<
-    Maybe<ResolversTypes["Job"]>,
-    ParentType,
-    ContextType,
-    RequireFields<MutationJobDeleteArgs, "id">
-  >;
-  msGraphResourceCreate?: Resolver<
+  deleteMsGraphResource?: Resolver<
     Maybe<ResolversTypes["MsGraphResource"]>,
     ParentType,
     ContextType,
-    Partial<MutationMsGraphResourceCreateArgs>
+    RequireFields<MutationDeleteMsGraphResourceArgs, "id">
   >;
-  msGraphResourceDelete?: Resolver<
-    Maybe<ResolversTypes["MsGraphResource"]>,
-    ParentType,
-    ContextType,
-    RequireFields<MutationMsGraphResourceDeleteArgs, "id">
-  >;
-  tenantCreate?: Resolver<
+  deleteTenant?: Resolver<
     Maybe<ResolversTypes["Tenant"]>,
     ParentType,
     ContextType,
-    Partial<MutationTenantCreateArgs>
+    RequireFields<MutationDeleteTenantArgs, "id">
   >;
-  tenantDelete?: Resolver<
+  updateDeployment?: Resolver<
+    Maybe<ResolversTypes["Deployment"]>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationUpdateDeploymentArgs, "id" | "record">
+  >;
+  updateTenant?: Resolver<
     Maybe<ResolversTypes["Tenant"]>,
     ParentType,
     ContextType,
-    RequireFields<MutationTenantDeleteArgs, "id">
-  >;
-  tenantUpdate?: Resolver<
-    Maybe<ResolversTypes["Tenant"]>,
-    ParentType,
-    ContextType,
-    RequireFields<MutationTenantUpdateArgs, "id" | "record">
+    RequireFields<MutationUpdateTenantArgs, "id" | "record">
   >;
 };
 
@@ -1340,6 +1151,12 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryTenantByIdArgs, "id">
   >;
+  tenantByIds?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes["Tenant"]>>>,
+    ParentType,
+    ContextType,
+    Partial<QueryTenantByIdsArgs>
+  >;
   tenantMany?: Resolver<
     Array<ResolversTypes["Tenant"]>,
     ParentType,
@@ -1352,20 +1169,8 @@ export type TenantResolvers<
   ParentType extends ResolversParentTypes["Tenant"] = ResolversParentTypes["Tenant"]
 > = {
   appId?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
-  configurations?: Resolver<
-    Array<ResolversTypes["Configuration"]>,
-    ParentType,
-    ContextType,
-    RequireFields<TenantConfigurationsArgs, "limit">
-  >;
   createdAt?: Resolver<Maybe<ResolversTypes["Date"]>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
-  jobs?: Resolver<
-    Array<ResolversTypes["Job"]>,
-    ParentType,
-    ContextType,
-    RequireFields<TenantJobsArgs, "limit">
-  >;
   name?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   tenantId?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   updatedAt?: Resolver<Maybe<ResolversTypes["Date"]>, ParentType, ContextType>;

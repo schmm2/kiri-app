@@ -7,7 +7,7 @@ import { join } from "path";
 import { cosmosDataSources } from "./data/index";
 import resolvers from "./resolvers";
 
-let dataSources:any = cosmosDataSources //inMemoryDataSources;
+let dataSources:any = cosmosDataSources
 
 if(process.env.CosmosDB){
   console.log("using Cosmos DB");

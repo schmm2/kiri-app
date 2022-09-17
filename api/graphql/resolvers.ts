@@ -10,24 +10,45 @@ const resolvers: Resolvers = {
     tenantMany(_, __, { dataSources }) {
       return dataSources.tenant.getTenants();
     },
-    msGraphResourceById(_, {id}, { dataSources }){
+    msGraphResourceById(_, { id }, { dataSources }) {
       return dataSources.msgraphresource.getMsGraphResource(id);
     },
-    msGraphResourceMany(_, __, { dataSources }){
+    msGraphResourceMany(_, __, { dataSources }) {
       return dataSources.msgraphresource.getMsGraphResources();
     },
-    configurationMany(_, __, { dataSources }){
+    configurationMany(_, __, { dataSources }) {
       return dataSources.configuration.getConfigurations();
     },
-    configurationById(_, {id}, { dataSources }){
+    configurationById(_, { id }, { dataSources }) {
       return dataSources.configuration.getConfiguration(id);
     },
+    deploymentMany(_, __, { dataSources }) {
+      return dataSources.deployment.getDeployments();
+    },
   },
-  Configuration: {
-    async tenant(configuration, _, { dataSources }) {
-      const games = await dataSources.tenant.getTenant(configuration.tenant.id);
-
-      return games;
+  Deployment: {
+    async targetTenants(deployment, args, { dataSources }) {
+      let tenants = [];
+      if (deployment.targetTenants && deployment.targetTenants.length > 0) {
+        tenants = await dataSources.tenant.getTenantsByIds(
+          deployment.targetTenants
+        );
+      }
+      return tenants;
+    },
+  },
+  Mutation: {
+    async createTenant(_, { record }, { dataSources }) {
+      const newTenant = await dataSources.tenant.createTenant(record);
+      return newTenant;
+    },
+    async createDeployment(_, { record }, { dataSources }) {
+      console.log(record);
+      const newDeployment = await dataSources.deployment.createDeployment(
+        record
+      );
+      console.log(newDeployment);
+      return newDeployment;
     },
   }
 };

@@ -1,0 +1,6 @@
+mutation CreateTenant($record: CreateTenantInput!) {
+  createTenant(record: $record) {
+    id,
+    name
+  }
+}

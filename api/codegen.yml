@@ -7,6 +7,8 @@ generates:
       contextType: "./apolloContext#ApolloContext"
       mappers:
         Tenant: ./data/types#TenantModel
+        Deployment: ./data/types#DeploymentModel
+        Configuration: ./data/types#ConfigurationModel
     plugins:
       - "typescript"
       - "typescript-resolvers"

@@ -1,5 +1,0 @@
-mutation MsGraphResourceCreate($record: CreateMsGraphResourceInput!) {
-  msGraphResourceCreate(record: $record) {
-    id
-  }
-}

@@ -1,0 +1,5 @@
+mutation CreateMsGraphResource($record: CreateMsGraphResourceInput!) {
+  createMsGraphResource(record: $record) {
+    id
+  }
+}

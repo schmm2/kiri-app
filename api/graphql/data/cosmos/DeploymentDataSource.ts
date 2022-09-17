@@ -1,12 +1,18 @@
 import { CosmosDataSource } from "apollo-datasource-cosmosdb";
 import { arrayRandomiser, idGenerator } from "../../../utils";
-import { MsGraphResource } from "../../generated";
-import { IDeploymentDataSource, DeploymentModel, ModelType, ConfigurationModel, TenantModel } from "../types";
+import { CreateDeploymentInput } from "../../generated";
+import {
+  IDeploymentDataSource,
+  DeploymentModel,
+  ModelType,
+  ConfigurationModel,
+  TenantModel,
+} from "../types";
 
 export class DeploymentDataSource
   extends CosmosDataSource<DeploymentModel, any>
-  implements IDeploymentDataSource {
-
+  implements IDeploymentDataSource
+{
   async getDeployments() {
     const Deployments = await this.findManyByQuery({
       query: "SELECT * FROM c",
@@ -18,26 +24,25 @@ export class DeploymentDataSource
   async getDeployment(id: string) {
     const Deployment = await this.findManyByQuery({
       query: "SELECT TOP 1 * FROM c WHERE c.id = @id",
-      parameters: [
-        { name: "@id", value: id }
-      ],
+      parameters: [{ name: "@id", value: id }],
     });
 
     return Deployment.resources[0];
   }
 
-  async createDeployment(displayName: string, configurations: ConfigurationModel[], executionDate: string, result: string, tenant: TenantModel) {
+  async createDeployment(record: CreateDeploymentInput) {
     const newDeployment: DeploymentModel = {
       id: idGenerator(),
       modelType: ModelType.Deployment,
-      displayName,
-      configurations,
-      executionDate,
-      result,     
-      tenant
+      name: record.name,
+      configurations: record.configurations,
+      targetTenants: record.targetTenants,
+      executionDate: "",
+      result: "",
     };
 
     const savedDeployment = await this.createOne(newDeployment);
+    console.log(savedDeployment);
 
     return savedDeployment.resource;
   }

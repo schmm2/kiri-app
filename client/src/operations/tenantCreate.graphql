@@ -1,6 +1,0 @@
-mutation TenantCreate($record: CreateTenantInput!) {
-  tenantCreate(record: $record) {
-    id,
-    name
-  }
-}
