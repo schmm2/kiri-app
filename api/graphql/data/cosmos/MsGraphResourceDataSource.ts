@@ -1,12 +1,16 @@
 import { CosmosDataSource } from "apollo-datasource-cosmosdb";
 import { arrayRandomiser, idGenerator } from "../../../utils";
 import { CreateMsGraphResourceInput } from "../../generated";
-import { IMsGraphResourceDataSource, MsGraphResourceModel, ModelType } from "../types";
+import {
+  IMsGraphResourceDataSource,
+  MsGraphResourceModel,
+  ModelType,
+} from "../types";
 
 export class MsGraphResourceDataSource
   extends CosmosDataSource<MsGraphResourceModel, any>
-  implements IMsGraphResourceDataSource {
-
+  implements IMsGraphResourceDataSource
+{
   async getMsGraphResources() {
     const MsGraphResources = await this.findManyByQuery({
       query: "SELECT * FROM c",
@@ -18,16 +22,20 @@ export class MsGraphResourceDataSource
   async getMsGraphResource(id: string) {
     const MsGraphResource = await this.findManyByQuery({
       query: "SELECT TOP 1 * FROM c WHERE c.id = @id",
-      parameters: [
-        { name: "@id", value: id }
-      ],
+      parameters: [{ name: "@id", value: id }],
     });
+    return MsGraphResource.resources[0];
+  }
 
+  async getMsGraphResourceByName(name: string) {
+    const MsGraphResource = await this.findManyByQuery({
+      query: "SELECT TOP 1 * FROM c WHERE c.name = @name",
+      parameters: [{ name: "@name", value: name }],
+    });
     return MsGraphResource.resources[0];
   }
 
   async createMsGraphResource(record: CreateMsGraphResourceInput) {
-    
     const newMsGraphResource: MsGraphResourceModel = {
       id: idGenerator(),
       modelType: ModelType.MsGraphResource,
@@ -36,7 +44,9 @@ export class MsGraphResourceDataSource
       version: record.version,
       nameAttribute: record.nameAttribute,
       category: record.category,
-      expandAttributes: record.expandAttributes
+      expandAttributes: record.expandAttributes,
+      transformRulesCreate: [],
+      transformRulesPatch: []
     };
 
     const savedMsGraphResource = await this.createOne(newMsGraphResource);

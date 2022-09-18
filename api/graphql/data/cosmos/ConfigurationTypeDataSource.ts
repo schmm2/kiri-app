@@ -8,10 +8,12 @@ export class ConfigurationTypeDataSource
   implements IConfigurationTypeDataSource {
 
   async getConfigurationTypes() {
+    console.log("ctypes")
     const ConfigurationTypes = await this.findManyByQuery({
-      query: "SELECT * FROM c",
+      query: "SELECT * FROM configurationType",
       parameters: [],
     });
+    console.log(ConfigurationTypes)
     return ConfigurationTypes.resources;
   }
 
@@ -24,6 +26,17 @@ export class ConfigurationTypeDataSource
     });
 
     return ConfigurationType.resources[0];
+  }
+
+  async getConfigurationTypeByMsGraphResource(msGraphResourceId: string) {
+    const ConfigurationType = await this.findManyByQuery({
+      query: "SELECT * FROM c WHERE c.msGraphResource = @id",
+      parameters: [
+        { name: "@id", value: msGraphResourceId }
+      ],
+    });
+
+    return ConfigurationType.resources;
   }
 
   async createConfigurationType(record: CreateConfigurationTypeInput) {

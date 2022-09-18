@@ -8,6 +8,7 @@ import {
   DeploymentModel,
   ConfigurationModel,
   ConfigurationTypeModel,
+  MsGraphResourceModel,
   JobModel,
 } from "./data/types";
 import { ApolloContext } from "./apolloContext";
@@ -174,6 +175,8 @@ export type CreateMsGraphResourceInput = {
   name: Scalars["String"];
   nameAttribute?: InputMaybe<Scalars["String"]>;
   resource: Scalars["String"];
+  transformRulesCreate?: InputMaybe<Array<InputMaybe<TransformRuleInput>>>;
+  transformRulesPatch?: InputMaybe<Array<InputMaybe<TransformRuleInput>>>;
   updatedAt?: InputMaybe<Scalars["Date"]>;
   version: Scalars["String"];
 };
@@ -300,12 +303,15 @@ export type LogInput = {
 export type MsGraphResource = {
   __typename?: "MsGraphResource";
   category?: Maybe<Scalars["String"]>;
+  configurationTypes?: Maybe<Array<Maybe<ConfigurationType>>>;
   createdAt?: Maybe<Scalars["Date"]>;
   expandAttributes?: Maybe<Array<Maybe<Scalars["String"]>>>;
   id: Scalars["ID"];
   name: Scalars["String"];
   nameAttribute?: Maybe<Scalars["String"]>;
   resource: Scalars["String"];
+  transformRulesCreate?: Maybe<Array<Maybe<TransformRule>>>;
+  transformRulesPatch?: Maybe<Array<Maybe<TransformRule>>>;
   updatedAt?: Maybe<Scalars["Date"]>;
   version: Scalars["String"];
 };
@@ -476,6 +482,17 @@ export type Tenant = {
   verified?: Maybe<Scalars["Boolean"]>;
 };
 
+export type TransformRule = {
+  __typename?: "TransformRule";
+  action?: Maybe<Scalars["String"]>;
+  property?: Maybe<Scalars["String"]>;
+};
+
+export type TransformRuleInput = {
+  action?: InputMaybe<Scalars["String"]>;
+  property?: InputMaybe<Scalars["String"]>;
+};
+
 export type UpdateDeploymentInput = {
   configurations?: InputMaybe<Array<InputMaybe<Scalars["ID"]>>>;
   createdAt?: InputMaybe<Scalars["Date"]>;
@@ -640,11 +657,13 @@ export type ResolversTypes = {
   Job: ResolverTypeWrapper<JobModel>;
   Log: ResolverTypeWrapper<Log>;
   LogInput: LogInput;
-  MsGraphResource: ResolverTypeWrapper<MsGraphResource>;
+  MsGraphResource: ResolverTypeWrapper<MsGraphResourceModel>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars["String"]>;
   Tenant: ResolverTypeWrapper<TenantModel>;
+  TransformRule: ResolverTypeWrapper<TransformRule>;
+  TransformRuleInput: TransformRuleInput;
   UpdateDeploymentInput: UpdateDeploymentInput;
   UpdateTenantInput: UpdateTenantInput;
 };
@@ -682,11 +701,13 @@ export type ResolversParentTypes = {
   Job: JobModel;
   Log: Log;
   LogInput: LogInput;
-  MsGraphResource: MsGraphResource;
+  MsGraphResource: MsGraphResourceModel;
   Mutation: {};
   Query: {};
   String: Scalars["String"];
   Tenant: TenantModel;
+  TransformRule: TransformRule;
+  TransformRuleInput: TransformRuleInput;
   UpdateDeploymentInput: UpdateDeploymentInput;
   UpdateTenantInput: UpdateTenantInput;
 };
@@ -929,6 +950,11 @@ export type MsGraphResourceResolvers<
   ParentType extends ResolversParentTypes["MsGraphResource"] = ResolversParentTypes["MsGraphResource"]
 > = {
   category?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
+  configurationTypes?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes["ConfigurationType"]>>>,
+    ParentType,
+    ContextType
+  >;
   createdAt?: Resolver<Maybe<ResolversTypes["Date"]>, ParentType, ContextType>;
   expandAttributes?: Resolver<
     Maybe<Array<Maybe<ResolversTypes["String"]>>>,
@@ -943,6 +969,16 @@ export type MsGraphResourceResolvers<
     ContextType
   >;
   resource?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  transformRulesCreate?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes["TransformRule"]>>>,
+    ParentType,
+    ContextType
+  >;
+  transformRulesPatch?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes["TransformRule"]>>>,
+    ParentType,
+    ContextType
+  >;
   updatedAt?: Resolver<Maybe<ResolversTypes["Date"]>, ParentType, ContextType>;
   version?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -1180,6 +1216,15 @@ export type TenantResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type TransformRuleResolvers<
+  ContextType = ApolloContext,
+  ParentType extends ResolversParentTypes["TransformRule"] = ResolversParentTypes["TransformRule"]
+> = {
+  action?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
+  property?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type Resolvers<ContextType = ApolloContext> = {
   Configuration?: ConfigurationResolvers<ContextType>;
   ConfigurationType?: ConfigurationTypeResolvers<ContextType>;
@@ -1195,4 +1240,5 @@ export type Resolvers<ContextType = ApolloContext> = {
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Tenant?: TenantResolvers<ContextType>;
+  TransformRule?: TransformRuleResolvers<ContextType>;
 };

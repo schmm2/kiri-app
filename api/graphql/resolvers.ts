@@ -11,10 +11,10 @@ const resolvers: Resolvers = {
       return dataSources.tenant.getTenants();
     },
     msGraphResourceById(_, { id }, { dataSources }) {
-      return dataSources.msgraphresource.getMsGraphResource(id);
+      return dataSources.msGraphResource.getMsGraphResource(id);
     },
     msGraphResourceMany(_, __, { dataSources }) {
-      return dataSources.msgraphresource.getMsGraphResources();
+      return dataSources.msGraphResource.getMsGraphResources();
     },
     configurationTypeMany(_, __, { dataSources }) {
       return dataSources.configurationType.getConfigurationTypes();
@@ -50,6 +50,12 @@ const resolvers: Resolvers = {
         );
       }
       return tenants;
+    },
+  },
+  MsGraphResource: {
+    async configurationTypes(msGraphResource, args, { dataSources }) {
+      let configurationTypes = dataSources.configurationType.getConfigurationTypeByMsGraphResource(msGraphResource.id)
+      return configurationTypes
     },
   },
   Mutation: {

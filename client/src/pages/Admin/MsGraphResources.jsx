@@ -1,9 +1,9 @@
 import React from "react"
-import { msGraphResourceMany, getMsGraphResource } from "graphql/queries";
 import { msGraphResourceRemoveById as msGraphResourceRemoveByIdMutation } from "graphql/mutations";
 import { Link } from "react-router-dom";
 import { useQuery, useMutation } from '@apollo/client';
 import { openNotificationWithIcon } from 'util/openNotificationWithIcon';
+import { GetMsGraphResourcesDocument } from "generated";
 
 // antd components
 import { Table, Button, Space } from "antd";
@@ -12,8 +12,9 @@ import DefaultPage from '../../layouts/DefaultPage';
 
 
 export default function MsGraphResources() {
-    const { loading, error, data = [] } = useQuery(msGraphResourceMany, {
-        fetchPolicy: "cache-and-network"
+    const { loading, error, data = [] } = useQuery(GetMsGraphResourcesDocument, {
+        fetchPolicy: "cache-and-network",
+        onCompleted: (data) => console.log(data)
     });
 
     const [deleteMsGraphResource] = useMutation(msGraphResourceRemoveByIdMutation, {
@@ -28,7 +29,7 @@ export default function MsGraphResources() {
     const columns = [
         {
             title: "Id",
-            dataIndex: "_id",
+            dataIndex: "id",
         },
         {
             title: "Name",
@@ -62,7 +63,7 @@ export default function MsGraphResources() {
                         deleteMsGraphResource({
                             variables: { id: record._id },
                             refetchQueries: [
-                                { query: msGraphResourceMany }
+                                { query: GetMsGraphResourcesDocument }
                             ]
                         });
                     }}>Delete</Button>

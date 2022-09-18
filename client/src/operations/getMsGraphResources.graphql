@@ -1,6 +1,13 @@
 query getMsGraphResources {
   msGraphResourceMany {
     name,
-    id
+    id,
+    resource,
+    version,
+    expandAttributes,
+    configurationTypes {
+      name,
+      id
+    }
   }
 }

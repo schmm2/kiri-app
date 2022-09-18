@@ -17,7 +17,7 @@ export type ApolloContext = {
     configuration: IConfigurationDataSource,
     configurationVersion: IConfigurationVersionDataSource,
     configurationType: IConfigurationTypeDataSource,
-    msgraphresource: IMsGraphResourceDataSource
+    msGraphResource: IMsGraphResourceDataSource
     device: IDeviceDataSource,
     deviceWarranty: IDeviceWarrantyDataSource,
     deviceVersion: IDeviceVersionDataSource,

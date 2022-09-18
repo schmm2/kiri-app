@@ -26,7 +26,7 @@ type Query {
   configurationById(id: ID!): Configuration
   configurationMany: [Configuration!]!
   configurationByIds(ids: [ID!]!, limit: Int = 100): [Configuration!]!
-  
+
   msGraphResourceByIds(ids: [ID!]!, limit: Int = 100): [MsGraphResource!]!
   msGraphResourceById(id: ID!): MsGraphResource
   msGraphResourceMany: [MsGraphResource!]!
@@ -119,7 +119,9 @@ type MsGraphResource {
   id: ID!
   updatedAt: Date
   createdAt: Date
-  
+  transformRulesCreate: [TransformRule],
+  transformRulesPatch: [TransformRule],
+  configurationTypes: [ConfigurationType]
 }
 
 input CreateMsGraphResourceInput {
@@ -130,7 +132,19 @@ input CreateMsGraphResourceInput {
   expandAttributes: [String]
   category: String
   updatedAt: Date
-  createdAt: Date
+  createdAt: Date,
+  transformRulesCreate: [TransformRuleInput],
+  transformRulesPatch: [TransformRuleInput]
+}
+
+type TransformRule {
+  action: String,
+  property: String
+}
+
+input TransformRuleInput {
+   action: String,
+  property: String
 }
 
 type ConfigurationType {

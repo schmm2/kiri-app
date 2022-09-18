@@ -12,7 +12,7 @@ import SideMenu from "components/SideMenu";
 import TenantContext from 'components/TenantContext';
 
 import { useQuery } from '@apollo/client';
-import { tenantMany } from "graphql/queries";
+import { GetTenantsDocument } from "generated";
 import { useMsal } from "@azure/msal-react";
 
 import './MainLayout.css'
@@ -22,7 +22,7 @@ const { Sider, Content, Header } = Layout;
 export default function MainLayout(props) {
   const { instance } = useMsal();
 
-  const { data } = useQuery(tenantMany, {
+  const { data } = useQuery(GetTenantsDocument, {
     fetchPolicy: 'cache-and-network',
     onCompleted: data => {
       // console.log('data', data.tenantMany);

@@ -1,0 +1,8 @@
+query getConfigurationTypes {
+ configurationTypeMany {
+    name,
+    id,
+    platform,
+    category
+  }
+}

@@ -10,6 +10,7 @@ generates:
         Deployment: ./data/types#DeploymentModel
         Configuration: ./data/types#ConfigurationModel
         ConfigurationType: ./data/types#ConfigurationTypeModel
+        MsGraphResource: ./data/types#MsGraphResourceModel
         Job: ./data/types#JobModel
     plugins:
       - "typescript"

@@ -2,59 +2,63 @@ import React, { useEffect, useContext } from "react";
 import { jobMany } from "graphql/queries";
 import { Table, Button, Tag, Space, Badge } from "antd";
 import { Link } from "react-router-dom";
-import { renderDate } from 'util/renderDate'
-import { useLazyQuery } from '@apollo/client';
-import DefaultPage from '../../layouts/DefaultPage';
-import TenantContext from "components/TenantContext"
-import moment from 'moment';
+import { renderDate } from "util/renderDate";
+import { useLazyQuery } from "@apollo/client";
+import DefaultPage from "../../layouts/DefaultPage";
+import TenantContext from "components/TenantContext";
+import moment from "moment";
+import { GetJobsDocument } from "generated";
 
-import {
-  ReloadOutlined
-} from '@ant-design/icons';
+import { ReloadOutlined } from "@ant-design/icons";
 
 export default function Jobs(props) {
   const selectedTenant = useContext(TenantContext);
 
-  const [getJobs, { loadingJobs, data: jobdata }] = useLazyQuery(jobMany, {
-    onCompleted: (data) => console.log(jobdata),
-    onError: (error) => console.log(error),
-    fetchPolicy: "cache-and-network"
-  });
+  const [getJobs, { loadingJobs, data: jobdata }] = useLazyQuery(
+    GetJobsDocument,
+    {
+      onCompleted: (data) => console.log(jobdata),
+      onError: (error) => console.log(error),
+      fetchPolicy: "cache-and-network",
+    }
+  );
 
   useEffect(() => {
     if (selectedTenant) {
-      getJobs({ variables: { filter: { tenant: selectedTenant._id }, limit: 50 } });
+      getJobs({
+        variables: { filter: { tenant: selectedTenant._id }, limit: 50 },
+      });
     } else {
       getJobs({ variables: { limit: 50 } }); // no tenant defined, load all jobs
     }
   }, [selectedTenant, getJobs]);
 
   const expandedRowRender = (dataRow) => {
-    const logs = dataRow.log
+    const logs = dataRow.log;
     const data = [];
     const columns = [
-      { title: 'Message', dataIndex: 'message', key: 'message' },
-      { title: 'Action', dataIndex: 'action', key: 'action' },
+      { title: "Message", dataIndex: "message", key: "message" },
+      { title: "Action", dataIndex: "action", key: "action" },
       {
-        title: 'State',
-        key: 'state',
+        title: "State",
+        key: "state",
         render: (record) => (
           <span>
             <Badge status={record.state.toLowerCase()} text={record.state} />
           </span>
         ),
-      }
-    ]
+      },
+    ];
 
     for (let i = 0; i < logs.length; ++i) {
       data.push({
         key: i,
         message: logs[i].message,
-        state: logs[i].state
+        state: logs[i].state,
       });
     }
     return <Table columns={columns} dataSource={data} pagination={false} />;
-  }
+  };
 
   const columns = [
     {
@@ -105,7 +109,7 @@ export default function Jobs(props) {
       dataIndex: "updatedAt",
       render: (text, record) => renderDate(text),
       sorter: (a, b) => moment(a.updatedAt).unix() - moment(b.updatedAt).unix(),
-      defaultSortOrder: 'descend'
+      defaultSortOrder: "descend",
     },
   ];
 
@@ -118,7 +122,9 @@ export default function Jobs(props) {
       <h1>Jobs</h1>
       <div className="controlTop">
         <Space align="end">
-          <Button onClick={getJobs}>Refresh <ReloadOutlined /></Button>
+          <Button onClick={getJobs}>
+            Refresh <ReloadOutlined />
+          </Button>
         </Space>
       </div>
       <Table
@@ -127,7 +133,8 @@ export default function Jobs(props) {
         columns={columns}
         expandable={{ expandedRowRender }}
         dataSource={jobdata && jobdata.jobMany}
-        onChange={onChange} />
+        onChange={onChange}
+      />
       <div className="controlBottom">
         <Space align="end">
           <Button>
@@ -135,6 +142,6 @@ export default function Jobs(props) {
           </Button>
         </Space>
       </div>
-    </DefaultPage >
+    </DefaultPage>
   );
 }

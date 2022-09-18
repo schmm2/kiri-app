@@ -17,6 +17,7 @@ export const cosmosDataSources = () => {
   const client = new CosmosClient(process.env.CosmosDB);
   const tenantContainer = client.database("kiri").container("tenant");
   const configurationContainer = client.database("kiri").container("configuration");
+  const configurationTypeContainer = client.database("kiri").container("configurationType");
   const deviceContainer = client.database("kiri").container("device");
   const msGraphResourceContainer = client.database("kiri").container("msGraphResource");
   const jobContainer = client.database("kiri").container("job");
@@ -26,7 +27,7 @@ export const cosmosDataSources = () => {
     tenant: new CosmosTenantDataSource(tenantContainer),
     configuration: new CosmosConfigurationDataSource(configurationContainer),
     configurationVersion: new CosmosConfigurationVersionDataSource(configurationContainer),
-    configurationType: new CosmosConfigurationTypeDataSource (configurationContainer),
+    configurationType: new CosmosConfigurationTypeDataSource (configurationTypeContainer),
     device: new CosmosDeviceDataSource(deviceContainer),
     deviceWarranty: new CosmosDeviceWarrantyDataSource(deviceContainer),
     deviceVersion: new CosmosDeviceVersionDataSource(deviceContainer),

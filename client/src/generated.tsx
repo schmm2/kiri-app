@@ -158,6 +158,8 @@ export type CreateMsGraphResourceInput = {
   name: Scalars["String"];
   nameAttribute?: InputMaybe<Scalars["String"]>;
   resource: Scalars["String"];
+  transformRulesCreate?: InputMaybe<Array<InputMaybe<TransformRuleInput>>>;
+  transformRulesPatch?: InputMaybe<Array<InputMaybe<TransformRuleInput>>>;
   updatedAt?: InputMaybe<Scalars["Date"]>;
   version: Scalars["String"];
 };
@@ -284,12 +286,15 @@ export type LogInput = {
 export type MsGraphResource = {
   __typename?: "MsGraphResource";
   category?: Maybe<Scalars["String"]>;
+  configurationTypes?: Maybe<Array<Maybe<ConfigurationType>>>;
   createdAt?: Maybe<Scalars["Date"]>;
   expandAttributes?: Maybe<Array<Maybe<Scalars["String"]>>>;
   id: Scalars["ID"];
   name: Scalars["String"];
   nameAttribute?: Maybe<Scalars["String"]>;
   resource: Scalars["String"];
+  transformRulesCreate?: Maybe<Array<Maybe<TransformRule>>>;
+  transformRulesPatch?: Maybe<Array<Maybe<TransformRule>>>;
   updatedAt?: Maybe<Scalars["Date"]>;
   version: Scalars["String"];
 };
@@ -460,6 +465,17 @@ export type Tenant = {
   verified?: Maybe<Scalars["Boolean"]>;
 };
 
+export type TransformRule = {
+  __typename?: "TransformRule";
+  action?: Maybe<Scalars["String"]>;
+  property?: Maybe<Scalars["String"]>;
+};
+
+export type TransformRuleInput = {
+  action?: InputMaybe<Scalars["String"]>;
+  property?: InputMaybe<Scalars["String"]>;
+};
+
 export type UpdateDeploymentInput = {
   configurations?: InputMaybe<Array<InputMaybe<Scalars["ID"]>>>;
   createdAt?: InputMaybe<Scalars["Date"]>;
@@ -514,6 +530,32 @@ export type DeleteTenantMutation = {
   deleteTenant?: { __typename?: "Tenant"; id: string } | null;
 };
 
+export type GetConfigurationTypesQueryVariables = Exact<{
+  [key: string]: never;
+}>;
+
+export type GetConfigurationTypesQuery = {
+  __typename?: "Query";
+  configurationTypeMany: Array<{
+    __typename?: "ConfigurationType";
+    name: string;
+    id: string;
+    platform: string;
+    category: string;
+  }>;
+};
+
+export type GetJobsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetJobsQuery = {
+  __typename?: "Query";
+  jobMany: Array<{
+    __typename?: "Job";
+    id: string;
+    tenant?: { __typename?: "Tenant"; name: string } | null;
+  }>;
+};
+
 export type GetMsGraphResourcesQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetMsGraphResourcesQuery = {
@@ -522,6 +564,14 @@ export type GetMsGraphResourcesQuery = {
     __typename?: "MsGraphResource";
     name: string;
     id: string;
+    resource: string;
+    version: string;
+    expandAttributes?: Array<string | null> | null;
+    configurationTypes?: Array<{
+      __typename?: "ConfigurationType";
+      name: string;
+      id: string;
+    } | null> | null;
   }>;
 };
 
@@ -751,6 +801,72 @@ export const DeleteTenantDocument = {
   DeleteTenantMutation,
   DeleteTenantMutationVariables
 >;
+export const GetConfigurationTypesDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "getConfigurationTypes" },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "configurationTypeMany" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "name" } },
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "platform" } },
+                { kind: "Field", name: { kind: "Name", value: "category" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  GetConfigurationTypesQuery,
+  GetConfigurationTypesQueryVariables
+>;
+export const GetJobsDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "getJobs" },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "jobMany" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "tenant" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "name" } },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<GetJobsQuery, GetJobsQueryVariables>;
 export const GetMsGraphResourcesDocument = {
   kind: "Document",
   definitions: [
@@ -769,6 +885,23 @@ export const GetMsGraphResourcesDocument = {
               selections: [
                 { kind: "Field", name: { kind: "Name", value: "name" } },
                 { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "resource" } },
+                { kind: "Field", name: { kind: "Name", value: "version" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "expandAttributes" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "configurationTypes" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "name" } },
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                    ],
+                  },
+                },
               ],
             },
           },

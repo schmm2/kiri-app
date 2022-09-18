@@ -1,0 +1,8 @@
+query getJobs {
+  jobMany {
+    id
+    tenant {
+      name
+    }
+  }
+}

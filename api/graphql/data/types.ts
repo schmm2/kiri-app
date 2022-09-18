@@ -99,7 +99,14 @@ export type MsGraphResourceModel = {
   category: string;
   nameAttribute: string;
   expandAttributes: string[];
+  transformRulesCreate: TransformRule[];
+  transformRulesPatch: TransformRule[];
 } & BaseModel;
+
+export type TransformRule = {
+  action: string;
+  property: string
+}
 
 export interface ITenantDataSource {
   getTenants(): Promise<TenantModel[]>;
@@ -170,4 +177,5 @@ export interface IConfigurationTypeDataSource {
   updateConfigurationType(
     configurationType: ConfigurationTypeModel
   ): Promise<ConfigurationTypeModel>;
+  getConfigurationTypeByMsGraphResource(msGraphResourceId: string): Promise<ConfigurationTypeModel[]>;
 }

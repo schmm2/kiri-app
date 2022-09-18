@@ -5,14 +5,16 @@ import { Link } from "react-router-dom";
 import { useQuery, useMutation } from '@apollo/client';
 import { openNotificationWithIcon } from 'util/openNotificationWithIcon';
 import DefaultPage from '../../layouts/DefaultPage';
+import {GetConfigurationTypesDocument  } from "generated"
 
 // antd components
 import { Table, Button, Space } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 
 export default function ConfigurationTypes() {
-    const { loading, error, data = [] } = useQuery(configurationTypeMany, {
-        fetchPolicy: "cache-and-network"
+    const { loading, error, data = [] } = useQuery(GetConfigurationTypesDocument, {
+        fetchPolicy: "cache-and-network",
+        onCompleted: (data)=> console.log(data)
     });
 
     const [deleteConfigurationType] = useMutation(configurationTypeRemoveByIdMutation, {
@@ -27,7 +29,7 @@ export default function ConfigurationTypes() {
     const columns = [
         {
             title: "Id",
-            dataIndex: "_id",
+            dataIndex: "id",
         },
         {
             title: "Name",
