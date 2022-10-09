@@ -12,7 +12,7 @@ import { deploymentUpdateOne as deploymentUpdateOneMutation } from "graphql/muta
 import { SearchOutlined } from '@ant-design/icons';
 import { useHistory } from "react-router-dom";
 import { DeleteModal } from "components/DeleteModal";
-import { postBackendApi } from 'util/api';
+import { postWorkerApi } from 'util/api';
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
 
 export default function MEMConfigurations(props) {
@@ -49,7 +49,7 @@ export default function MEMConfigurations(props) {
         openNotificationWithIcon('Pull Data', 'start Job', 'success');
 
         try {
-            let response = await postBackendApi("orchestrators/ORC1111GetConfigs", { tenantDbId: tenantDbId, configType: props.category })
+            let response = await postWorkerApi("orchestrators/ORC1111GetConfigs", { tenantDbId: tenantDbId, configType: props.category })
             let job = await response.json();
 
             if (job.statusQueryGetUri) {
@@ -368,7 +368,7 @@ export default function MEMConfigurations(props) {
 
         console.log(configsToDeletePerTenant);
 
-        postBackendApi("orchestrators/ORC1102MEMConfigurationsDelete", configsToDeletePerTenant)
+        postWorkerApi("orchestrators/ORC1102MEMConfigurationsDelete", configsToDeletePerTenant)
             .then(response => response.json())
             .then(data => {
                 //console.log(data);       

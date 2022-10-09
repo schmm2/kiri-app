@@ -2,7 +2,7 @@ import React from "react"
 import DefaultPage from '../../layouts/DefaultPage';
 import { List } from 'antd';
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
-import { postBackendApi } from "util/api";
+import { postWorkerApi } from "util/api";
 
 export default function AdminTools() {
 
@@ -10,7 +10,7 @@ export default function AdminTools() {
         console.log("stage database initialized");
 
         openNotificationWithIcon('Stage Database', 'start', 'success');
-        postBackendApi("TRG3000StageDatabase", {})
+        postWorkerApi("TRG3000StageDatabase", {})
             .then(response => response.json())
             .then(data => {
                 console.log(data);
@@ -27,7 +27,7 @@ export default function AdminTools() {
         console.log("clear database initialized");
 
         openNotificationWithIcon('Clear Database', 'start', 'success');
-        postBackendApi("TRG3001ClearDatabase", {})
+        postWorkerApi("TRG3001ClearDatabase", {})
             .then(response => response.json())
             .then(data => {
                 console.log(data);
@@ -40,7 +40,7 @@ export default function AdminTools() {
 
     function clearLogs() {
         openNotificationWithIcon('Clear Logs', 'start', 'success');
-        postBackendApi("TRG3002ClearLogs", {})
+        postWorkerApi("TRG3002ClearLogs", {})
             .then(response => response.json())
             .then(data => {
                 console.log(data);
@@ -55,7 +55,7 @@ export default function AdminTools() {
         console.log("stop tasks initialized");
 
         openNotificationWithIcon('Stop Tasks', 'start', 'success');
-        postBackendApi("TRG1002OrchestratorTerminateRunningInstance", {})
+        postWorkerApi("TRG1002OrchestratorTerminateRunningInstance", {})
             .then(response => response.json())
             .then(data => {
                 console.log(data);

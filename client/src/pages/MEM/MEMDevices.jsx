@@ -8,7 +8,7 @@ import MyBarChart from "components/BarChart";
 import DoughnutChart from 'components/DoughnutChart'
 import { useQuery } from '@apollo/client';
 import DefaultPage from "layouts/DefaultPage";
-import { postBackendApi } from 'util/api';
+import { postWorkerApi } from 'util/api';
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
 
 import {
@@ -245,7 +245,7 @@ export default function MEMDeviceConfigurations() {
     function triggerWarranytCheck() {
         openNotificationWithIcon('Check Warrenty', 'Job started', 'info');
 
-        postBackendApi("orchestrators/ORC1011DevicesWarrantyCheckPerTenant", { tenantDbId: selectedTenant._id })
+        postWorkerApi("orchestrators/ORC1011DevicesWarrantyCheckPerTenant", { tenantDbId: selectedTenant._id })
             .then(response => response.json())
             .then(data => {
                 console.log(data);

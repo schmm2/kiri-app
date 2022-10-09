@@ -4,7 +4,7 @@ import { tenantRemoveById } from "graphql/mutations";
 import { Link } from "react-router-dom";
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
 import { useQuery, useMutation } from "@apollo/client";
-import { postBackendApi } from "util/api";
+import { postWorkerApi } from "util/api";
 import { AddToDeploymentModal } from "components/AddToDeploymentModal";
 import { deploymentUpdateOne as deploymentUpdateOneMutation } from "graphql/mutations";
 import {
@@ -95,7 +95,7 @@ export default function Tenants() {
     //console.log("update tenant data for tenantId: " + tenantDbId);
     openNotificationWithIcon("Pull Data", "start Job", "success");
 
-    postBackendApi("orchestrators/ORC1000AzureDataCollect", {
+    postWorkerApi("orchestrators/ORC1000TenantDataCollect", {
       tenantDbId: tenantDbId,
       msGraphResourceDbIdFilter: msGraphResourceDbIdFilter,
     })
@@ -114,7 +114,7 @@ export default function Tenants() {
     //console.log("update tenant data for tenantId: " + tenantDbId);
     openNotificationWithIcon("Pull Data", "start Job", "success");
 
-    postBackendApi("orchestrators/ORC5101MEMConfigurationCreateTest", {
+    postWorkerApi("orchestrators/ORC5101MEMConfigurationCreateTest", {
       tenantDbId: tenantDbId,
     })
       .then((response) => response.json())
@@ -132,7 +132,7 @@ export default function Tenants() {
     //console.log("update tenant data for tenantId: " + tenantDbId);
     openNotificationWithIcon("Check Data", "start Job", "success");
 
-    postBackendApi("orchestrators/ORC1400AzureCheckDataConsistencyInDB", {
+    postWorkerApi("orchestrators/ORC1400AzureCheckDataConsistencyInDB", {
       tenantDbId: tenantDbId,
     })
       .then((response) => response.json())
@@ -151,7 +151,7 @@ export default function Tenants() {
     // console.log("backup config for tenant " + tenantDbId);
     openNotificationWithIcon("Backup", "Backup Job started", "success", 8.0);
 
-    postBackendApi("TRG2000ConfigurationBackupCreate", {
+    postWorkerApi("TRG2000ConfigurationBackupCreate", {
       tenantDbId: tenantDbId,
     })
       .then((response) => {

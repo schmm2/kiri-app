@@ -17,6 +17,8 @@ const isFirefox = firefox > 0; // Only needed if you need to support the redirec
 const appClientId = process.env.REACT_APP_AUTHAPPID;
 const backendApiUrl = process.env.REACT_APP_BACKENDAPIURL;
 const backendApiAppId = process.env.REACT_APP_APIAPPID;
+const workerApiAppId = process.env.REACT_APP_APIAPPID;
+const workerApiUrl = process.env.REACT_APP_WORKERAPIURL;
 
 // Config object to be passed to Msal on creation
 export const msalConfig = {
@@ -70,4 +72,9 @@ export const msGraphConfig = {
 export const backendApiRequest = {
     url: backendApiUrl,
     scopes: ['api://' + backendApiAppId + "/user_impersonation"],
+}
+
+export const workerApiRequest = {
+    url: workerApiUrl,
+    scopes: ['api://' + workerApiAppId + "/user_impersonation"],
 }

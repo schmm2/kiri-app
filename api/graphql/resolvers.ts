@@ -25,6 +25,9 @@ const resolvers: Resolvers = {
     configurationMany(_, __, { dataSources }) {
       return dataSources.configuration.getConfigurations();
     },
+    configurationVersionMany(_, __, { dataSources }) {
+      return dataSources.configurationVersion.getConfigurationVersions();
+    },
     configurationById(_, { id }, { dataSources }) {
       return dataSources.configuration.getConfiguration(id);
     },
@@ -39,6 +42,11 @@ const resolvers: Resolvers = {
     },
     jobById(_, {id}, { dataSources }) {
       return dataSources.job.getJob(id);
+    }
+  },
+  ConfigurationVersion: {
+    async configuration(configuration, args, { dataSources }) {
+      return dataSources.configuration.getConfiguration(configuration.id)
     }
   },
   Deployment: {

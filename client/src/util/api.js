@@ -1,4 +1,4 @@
-import { backendApiRequest, msGraphConfig, loginRequest } from "../authConfig";
+import { backendApiRequest, workerApiRequest, msGraphConfig, loginRequest } from "../authConfig";
 import { msalInstance } from "../index";
 
 export async function getBearerToken(scopes) {
@@ -33,17 +33,17 @@ async function buildHeader(token) {
 }
 
 function buildFunctionUrl(functionName) {
-    const backendApiUrlBase = process.env.REACT_APP_BACKENDAPIURL
-    let backendApiUrl = backendApiUrlBase + "/" + functionName;
+    const workerApiUrlBase = process.env.REACT_APP_WORKERAPIURL
+    let workerApiUrl = workerApiUrlBase + "/" + functionName;
 
     // if prod env AND function key is set we have to adjust url
     if (process.env.NODE_ENV || process.env.NODE_ENV !== 'development') {
         // api auth with function key
         if (process.env.REACT_APP_FUNCTIONKEY) {
-            backendApiUrl = backendApiUrl + "?code=" + process.env.REACT_APP_FUNCTIONKEY
+            workerApiUrl = workerApiUrl + "?code=" + process.env.REACT_APP_FUNCTIONKEY
         }
     }
-    return backendApiUrl
+    return workerApiUrl
 }
 
 export async function getMsGraphProfile() {
@@ -60,13 +60,13 @@ export async function getMsGraphProfile() {
         .catch(error => console.log(error));
 }
 
-export async function postBackendApi(functionName, payload) {
+export async function postWorkerApi(functionName, payload) {
     const environment = process.env.NODE_ENV || 'development'
     let token = null
 
     // prod env, auth needed
     if (environment !== "development") {
-        token = await getBearerToken(backendApiRequest);
+        token = await getBearerToken(workerApiRequest);
     }
 
     const headers = await buildHeader(token)

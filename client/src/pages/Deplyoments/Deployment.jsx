@@ -5,7 +5,7 @@ import { Button, Space, Table } from 'antd';
 import { Link } from "react-router-dom";
 import { Row, Col } from 'antd';
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
-import { postBackendApi } from 'util/api';
+import { postWorkerApi } from 'util/api';
 
 export default function Deployment(props) {
 
@@ -43,7 +43,7 @@ export default function Deployment(props) {
     ]
 
     async function triggerDeploymentRun() {
-        postBackendApi("orchestrators/ORC1300DeploymentRun", { deploymentId: params.deploymentId })
+        postWorkerApi("orchestrators/ORC1300DeploymentRun", { deploymentId: params.deploymentId })
             .then(response => {
                 console.log(response)
             })

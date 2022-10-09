@@ -6,7 +6,7 @@ import { renderDate } from 'util/renderDate';
 import { findType } from 'util/findType';
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
 import { useQuery } from '@apollo/client';
-import { postBackendApi } from 'util/api';
+import { postWorkerApi } from 'util/api';
 import ReactJson from 'react-json-view'
 import DefaultPage from '../../layouts/DefaultPage';
 
@@ -287,7 +287,7 @@ export default function MEMConfiguration(props) {
         let tenantDbId = state.configuration.tenant._id;
         let configurationVersionDbId = state.selectedConfigurationVersion._id;
 
-        postBackendApi("orchestrators/ORC1100MEMConfigurationUpdate", {
+        postWorkerApi("orchestrators/ORC1100MEMConfigurationUpdate", {
             tenantDbId: tenantDbId,
             configurationVersionDbId: configurationVersionDbId
         })
@@ -310,7 +310,7 @@ export default function MEMConfiguration(props) {
     }
 
     function copyConfiguration(data) {
-        postBackendApi("orchestrators/ORC1101MEMConfigurationCreate", {
+        postWorkerApi("orchestrators/ORC1101MEMConfigurationCreate", {
             tenantDbId: data.targetTenant._id,
             configurationName: data.newConfigName,
             configurationVersionDbId: state.newestConfigurationVersion._id,

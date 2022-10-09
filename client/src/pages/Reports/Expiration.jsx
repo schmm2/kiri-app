@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import DefaultPage from '../../layouts/DefaultPage';
 import { openNotificationWithIcon } from "util/openNotificationWithIcon";
-import { postBackendApi } from 'util/api';
+import { postWorkerApi } from 'util/api';
 import TenantContext from "components/TenantContext"
 import { Table } from "antd";
 
@@ -48,7 +48,7 @@ export default function Expiration() {
     openNotificationWithIcon('Pull Data', 'start Job', 'success');
 
     try {
-      let response = await postBackendApi("orchestrators/ORC1005AzureExpirationCheck", { tenantDbId: tenantDbId })
+      let response = await postWorkerApi("orchestrators/ORC1005AzureExpirationCheck", { tenantDbId: tenantDbId })
       let job = await response.json();
 
       if (job.statusQueryGetUri) {

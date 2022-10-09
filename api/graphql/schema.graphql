@@ -92,11 +92,9 @@ type Configuration {
   graphCreatedAt: String!
   tenant: Tenant!
   configurationType: ConfigurationType
-  newestConfigurationVersion: ConfigurationVersion
   id: ID!
   updatedAt: Date
   createdAt: Date
-  configurationVersions(skip: Int, limit: Int = 100): [ConfigurationVersion]
 }
 
 input CreateConfigurationInput {
@@ -174,7 +172,6 @@ type Device {
   id: ID!
   updatedAt: Date
   createdAt: Date
-  newestDeviceVersions(skip: Int, limit: Int = 100): [DeviceVersion!]!
 }
 
 input CreateDeviceInput {
@@ -213,7 +210,6 @@ type DeviceVersion {
   upn: String
   osVersion: String
   osVersionName: String
-  state: EnumDeviceVersionState!
   value: String!
   version: String!
   device: Device
@@ -230,7 +226,6 @@ input CreateDeviceVersionInput {
   upn: String
   osVersion: String
   osVersionName: String
-  state: EnumDeviceVersionState!
   value: String!
   version: String!
   device: ID
@@ -243,7 +238,6 @@ input CreateConfigurationVersionInput {
   displayName: String!
   graphModifiedAt: String!
   graphVersion: String
-  state: EnumConfigurationVersionState!
   value: String!
   version: String!
   configuration: ID
@@ -251,29 +245,16 @@ input CreateConfigurationVersionInput {
   createdAt: Date
 }
 
-enum EnumDeviceVersionState {
-  new
-  modified
-  deleted
-}
-
 type ConfigurationVersion {
   displayName: String!
   graphModifiedAt: String!
   graphVersion: String
-  state: EnumConfigurationVersionState!
   value: String!
   version: String!
   configuration: Configuration
   id: ID!
   updatedAt: Date
   createdAt: Date
-}
-
-enum EnumConfigurationVersionState {
-  new
-  modified
-  deleted
 }
 
 type Job {

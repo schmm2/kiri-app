@@ -8,7 +8,6 @@ import Main from 'layouts/MainLayout';
 import Home from 'pages/Home';
 import Profile from 'pages/Profile';
 import Team from 'pages/Team';
-import MEMDeviceConfigurations from 'pages/MEM/MEMDeviceConfigurations';
 import MEMDeviceConfiguration from 'pages/MEM/MEMDeviceConfiguration';
 import Tenants from 'pages/Tenants/Tenants';
 import TenantAdd from 'pages/Tenants/TenantAdd';
@@ -20,16 +19,7 @@ import ConfigurationTypeAdd from 'pages/Admin/ConfigurationTypeAdd';
 import MsGraphResources from 'pages/Admin/MsGraphResources';
 
 // CSS
-import '@aws-amplify/ui/dist/style.css';
 import './App.css';
-
-// Aws
-import { withAuthenticator } from 'aws-amplify-react'; // or 'aws-amplify-react-native';
-import Amplify from 'aws-amplify';
-// Get the aws resources configuration parameters
-import awsconfig from './aws-exports'; // if you are using Amplify CLI
-
-Amplify.configure(awsconfig);
 
 function App() {
   return (

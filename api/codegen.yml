@@ -9,6 +9,7 @@ generates:
         Tenant: ./data/types#TenantModel
         Deployment: ./data/types#DeploymentModel
         Configuration: ./data/types#ConfigurationModel
+        ConfigurationVersion: ./data/types#ConfigurationVersionModel
         ConfigurationType: ./data/types#ConfigurationTypeModel
         MsGraphResource: ./data/types#MsGraphResourceModel
         Job: ./data/types#JobModel

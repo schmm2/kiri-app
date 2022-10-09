@@ -23,19 +23,12 @@ export type Scalars = {
 export type Configuration = {
   __typename?: "Configuration";
   configurationType?: Maybe<ConfigurationType>;
-  configurationVersions?: Maybe<Array<Maybe<ConfigurationVersion>>>;
   createdAt?: Maybe<Scalars["Date"]>;
   graphCreatedAt: Scalars["String"];
   graphId: Scalars["String"];
   id: Scalars["ID"];
-  newestConfigurationVersion?: Maybe<ConfigurationVersion>;
   tenant: Tenant;
   updatedAt?: Maybe<Scalars["Date"]>;
-};
-
-export type ConfigurationConfigurationVersionsArgs = {
-  limit?: InputMaybe<Scalars["Int"]>;
-  skip?: InputMaybe<Scalars["Int"]>;
 };
 
 export type ConfigurationType = {
@@ -62,7 +55,6 @@ export type ConfigurationVersion = {
   graphModifiedAt: Scalars["String"];
   graphVersion?: Maybe<Scalars["String"]>;
   id: Scalars["ID"];
-  state: EnumConfigurationVersionState;
   updatedAt?: Maybe<Scalars["Date"]>;
   value: Scalars["String"];
   version: Scalars["String"];
@@ -93,7 +85,6 @@ export type CreateConfigurationVersionInput = {
   displayName: Scalars["String"];
   graphModifiedAt: Scalars["String"];
   graphVersion?: InputMaybe<Scalars["String"]>;
-  state: EnumConfigurationVersionState;
   updatedAt?: InputMaybe<Scalars["Date"]>;
   value: Scalars["String"];
   version: Scalars["String"];
@@ -124,7 +115,6 @@ export type CreateDeviceVersionInput = {
   operatingSystem?: InputMaybe<Scalars["String"]>;
   osVersion?: InputMaybe<Scalars["String"]>;
   osVersionName?: InputMaybe<Scalars["String"]>;
-  state: EnumDeviceVersionState;
   successorVersion?: InputMaybe<Scalars["ID"]>;
   updatedAt?: InputMaybe<Scalars["Date"]>;
   upn?: InputMaybe<Scalars["String"]>;
@@ -190,14 +180,8 @@ export type Device = {
   deviceId: Scalars["String"];
   deviceWarranty?: Maybe<DeviceWarranty>;
   id: Scalars["ID"];
-  newestDeviceVersions: Array<DeviceVersion>;
   tenant?: Maybe<Tenant>;
   updatedAt?: Maybe<Scalars["Date"]>;
-};
-
-export type DeviceNewestDeviceVersionsArgs = {
-  limit?: InputMaybe<Scalars["Int"]>;
-  skip?: InputMaybe<Scalars["Int"]>;
 };
 
 export type DeviceVersion = {
@@ -210,7 +194,6 @@ export type DeviceVersion = {
   operatingSystem?: Maybe<Scalars["String"]>;
   osVersion?: Maybe<Scalars["String"]>;
   osVersionName?: Maybe<Scalars["String"]>;
-  state: EnumDeviceVersionState;
   successorVersion?: Maybe<Scalars["ID"]>;
   updatedAt?: Maybe<Scalars["Date"]>;
   upn?: Maybe<Scalars["String"]>;
@@ -229,18 +212,6 @@ export type DeviceWarranty = {
   startDate: Scalars["Date"];
   updatedAt?: Maybe<Scalars["Date"]>;
 };
-
-export enum EnumConfigurationVersionState {
-  Deleted = "deleted",
-  Modified = "modified",
-  New = "new",
-}
-
-export enum EnumDeviceVersionState {
-  Deleted = "deleted",
-  Modified = "modified",
-  New = "new",
-}
 
 export enum EnumJobState {
   Error = "ERROR",
