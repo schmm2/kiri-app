@@ -1,5 +1,4 @@
 import React, { useEffect, useContext } from "react";
-import { jobMany } from "graphql/queries";
 import { Table, Button, Tag, Space, Badge } from "antd";
 import { Link } from "react-router-dom";
 import { renderDate } from "util/renderDate";
@@ -129,7 +128,7 @@ export default function Jobs(props) {
       </div>
       <Table
         loading={loadingJobs}
-        rowKey="_id"
+        rowKey="id"
         columns={columns}
         expandable={{ expandedRowRender }}
         dataSource={jobdata && jobdata.jobMany}

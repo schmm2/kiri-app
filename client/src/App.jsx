@@ -124,7 +124,7 @@ function Pages() {
       <Route path="/tenantverification" component={TenantVerification} />
     </Switch>
   )
-}
+} 
 
 //@ts-ignore
 export default App;

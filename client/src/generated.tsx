@@ -180,6 +180,7 @@ export type Device = {
   deviceId: Scalars["String"];
   deviceWarranty?: Maybe<DeviceWarranty>;
   id: Scalars["ID"];
+  newestDeviceVersion?: Maybe<DeviceVersion>;
   tenant?: Maybe<Tenant>;
   updatedAt?: Maybe<Scalars["Date"]>;
 };
@@ -523,7 +524,17 @@ export type GetJobsQuery = {
   jobMany: Array<{
     __typename?: "Job";
     id: string;
-    tenant?: { __typename?: "Tenant"; name: string } | null;
+    state: EnumJobState;
+    type: string;
+    updatedAt?: any | null;
+    tenant?: { __typename?: "Tenant"; name: string; id: string } | null;
+    log?: Array<{
+      __typename?: "Log";
+      message?: string | null;
+      state?: EnumLogState | null;
+      id: string;
+      action?: string | null;
+    } | null> | null;
   }>;
 };
 
@@ -543,6 +554,35 @@ export type GetMsGraphResourcesQuery = {
       name: string;
       id: string;
     } | null> | null;
+  }>;
+};
+
+export type GetNewestDeviceVersionsQueryVariables = Exact<{
+  [key: string]: never;
+}>;
+
+export type GetNewestDeviceVersionsQuery = {
+  __typename?: "Query";
+  deviceMany: Array<{
+    __typename?: "Device";
+    id: string;
+    tenant?: { __typename?: "Tenant"; id: string } | null;
+    newestDeviceVersion?: {
+      __typename?: "DeviceVersion";
+      deviceName: string;
+      manufacturer?: string | null;
+      operatingSystem?: string | null;
+      osVersion?: string | null;
+      osVersionName?: string | null;
+      upn?: string | null;
+      value: string;
+      id: string;
+    } | null;
+    deviceWarranty?: {
+      __typename?: "DeviceWarranty";
+      startDate: any;
+      endDate: any;
+    } | null;
   }>;
 };
 
@@ -819,7 +859,6 @@ export const GetJobsDocument = {
             selectionSet: {
               kind: "SelectionSet",
               selections: [
-                { kind: "Field", name: { kind: "Name", value: "id" } },
                 {
                   kind: "Field",
                   name: { kind: "Name", value: "tenant" },
@@ -827,9 +866,33 @@ export const GetJobsDocument = {
                     kind: "SelectionSet",
                     selections: [
                       { kind: "Field", name: { kind: "Name", value: "name" } },
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
                     ],
                   },
                 },
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "state" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "log" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "message" },
+                      },
+                      { kind: "Field", name: { kind: "Name", value: "state" } },
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "action" },
+                      },
+                    ],
+                  },
+                },
+                { kind: "Field", name: { kind: "Name", value: "type" } },
+                { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
               ],
             },
           },
@@ -883,6 +946,93 @@ export const GetMsGraphResourcesDocument = {
 } as unknown as DocumentNode<
   GetMsGraphResourcesQuery,
   GetMsGraphResourcesQueryVariables
+>;
+export const GetNewestDeviceVersionsDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "GetNewestDeviceVersions" },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "deviceMany" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "tenant" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "newestDeviceVersion" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "deviceName" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "manufacturer" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "operatingSystem" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "osVersion" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "osVersionName" },
+                      },
+                      { kind: "Field", name: { kind: "Name", value: "upn" } },
+                      { kind: "Field", name: { kind: "Name", value: "value" } },
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "deviceWarranty" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "startDate" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "endDate" },
+                      },
+                    ],
+                  },
+                },
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  GetNewestDeviceVersionsQuery,
+  GetNewestDeviceVersionsQueryVariables
 >;
 export const GetTenantDocument = {
   kind: "Document",

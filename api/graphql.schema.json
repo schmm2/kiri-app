@@ -1741,6 +1741,18 @@
             "deprecationReason": null
           },
           {
+            "name": "newestDeviceVersion",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "DeviceVersion",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "tenant",
             "description": null,
             "args": [],

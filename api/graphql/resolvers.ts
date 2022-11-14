@@ -38,6 +38,7 @@ const resolvers: Resolvers = {
       return dataSources.deployment.getDeployment(id);
     },
     jobMany(_, __, { dataSources }) {
+      console.log("jobs")
       return dataSources.job.getJobs();
     },
     jobById(_, {id}, { dataSources }) {
@@ -64,6 +65,19 @@ const resolvers: Resolvers = {
     async configurationTypes(msGraphResource, args, { dataSources }) {
       let configurationTypes = dataSources.configurationType.getConfigurationTypeByMsGraphResource(msGraphResource.id)
       return configurationTypes
+    },
+  },
+  Job: {
+    async tenant(job, args, { dataSources }) {
+      let tenant = await dataSources.tenant.getTenant(job.tenant)
+      console.log(tenant)
+      return tenant
+    },
+  },
+  Device: {
+    async newestDeviceVersion(device, args, { dataSources }) {
+      let deviceVersion = await dataSources.deviceVersion.getDeviceVersion(devic)
+      return deviceVersion
     },
   },
   Mutation: {

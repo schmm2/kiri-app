@@ -1,0 +1,22 @@
+query GetNewestDeviceVersions {
+  deviceMany {
+    tenant {
+      id
+    }
+    newestDeviceVersion {
+      deviceName
+      manufacturer
+      operatingSystem
+      osVersion
+      osVersionName
+      upn
+      value
+      id
+    }
+    deviceWarranty {
+      startDate
+      endDate
+    }
+    id
+  }
+}

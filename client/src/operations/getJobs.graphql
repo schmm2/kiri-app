@@ -1,8 +1,18 @@
 query getJobs {
   jobMany {
-    id
     tenant {
       name
+      id
     }
+    id
+    state
+    log {
+      message
+      state
+      id
+      action
+    }
+    type
+    updatedAt
   }
 }

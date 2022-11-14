@@ -198,6 +198,7 @@ export type Device = {
   deviceId: Scalars["String"];
   deviceWarranty?: Maybe<DeviceWarranty>;
   id: Scalars["ID"];
+  newestDeviceVersion?: Maybe<DeviceVersion>;
   tenant?: Maybe<Tenant>;
   updatedAt?: Maybe<Scalars["Date"]>;
 };
@@ -607,7 +608,10 @@ export type ResolversTypes = {
   Date: ResolverTypeWrapper<Scalars["Date"]>;
   Deployment: ResolverTypeWrapper<DeploymentModel>;
   Device: ResolverTypeWrapper<
-    Omit<Device, "tenant"> & { tenant?: Maybe<ResolversTypes["Tenant"]> }
+    Omit<Device, "newestDeviceVersion" | "tenant"> & {
+      newestDeviceVersion?: Maybe<ResolversTypes["DeviceVersion"]>;
+      tenant?: Maybe<ResolversTypes["Tenant"]>;
+    }
   >;
   DeviceVersion: ResolverTypeWrapper<
     Omit<DeviceVersion, "device"> & { device?: Maybe<ResolversTypes["Device"]> }
@@ -649,7 +653,8 @@ export type ResolversParentTypes = {
   CreateTenantInput: CreateTenantInput;
   Date: Scalars["Date"];
   Deployment: DeploymentModel;
-  Device: Omit<Device, "tenant"> & {
+  Device: Omit<Device, "newestDeviceVersion" | "tenant"> & {
+    newestDeviceVersion?: Maybe<ResolversParentTypes["DeviceVersion"]>;
     tenant?: Maybe<ResolversParentTypes["Tenant"]>;
   };
   DeviceVersion: Omit<DeviceVersion, "device"> & {
@@ -781,6 +786,11 @@ export type DeviceResolvers<
     ContextType
   >;
   id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
+  newestDeviceVersion?: Resolver<
+    Maybe<ResolversTypes["DeviceVersion"]>,
+    ParentType,
+    ContextType
+  >;
   tenant?: Resolver<Maybe<ResolversTypes["Tenant"]>, ParentType, ContextType>;
   updatedAt?: Resolver<Maybe<ResolversTypes["Date"]>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

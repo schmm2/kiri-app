@@ -7,7 +7,7 @@ import { ConfigurationTypeDataSource as CosmosConfigurationTypeDataSource } from
 import { DeviceDataSource as CosmosDeviceDataSource } from "./cosmos/DeviceDataSource";
 import { DeviceWarrantyDataSource as CosmosDeviceWarrantyDataSource } from "./cosmos/DeviceWarrantyDataSource";
 import { DeviceVersionDataSource as CosmosDeviceVersionDataSource } from "./cosmos/DeviceVersionDataSource";
-import { JobDataSource as CosmosJobDataSource } from "./cosmos/JobsDataSource"; 
+import { JobDataSource as CosmosJobDataSource } from "./cosmos/JobDataSource"; 
 import { DeploymentDataSource as CosmosDeploymentDataSource } from "./cosmos/DeploymentDataSource";
 
 export const cosmosDataSources = () => {

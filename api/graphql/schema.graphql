@@ -171,7 +171,8 @@ type Device {
   deviceWarranty: DeviceWarranty
   id: ID!
   updatedAt: Date
-  createdAt: Date
+  createdAt: Date,
+  newestDeviceVersion: DeviceVersion
 }
 
 input CreateDeviceInput {
